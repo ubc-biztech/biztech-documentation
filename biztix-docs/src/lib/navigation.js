@@ -6,7 +6,14 @@ export const navigation = [
   {
     title: 'Getting Started',
     links: [
-      { title: 'Documentation Guide', href: '/docs/documentation-guide' },
+      {
+        title: 'Adding a page',
+        href: '/docs/documentation-guide/adding-a-page',
+      },
+      {
+        title: 'Markdown Guide',
+        href: '/docs/documentation-guide/markdown-guide',
+      },
       { title: 'Example Page 1', href: '/docs/example-page-1' },
       { title: 'Example Page 2', href: '/docs/example-page-2' },
     ],

@@ -22,7 +22,7 @@ Welcome to the BizTech documentation site - your central resource for understand
 
 This documentation site serves as the hub for all technical information related to BizTech projects. Whether you're a new contributor, an organizer, or a returning developer, this site aims to make working with BizTech's code easy, efficient, and collaborative.
 
-Here, you'll find guides, architecture breakdowns, API references, and more — covering everything from our internal tooling and infrastructure to event-specific apps and open-source initiatives.
+Here, you'll find guides, architecture breakdowns, API references, and more - covering everything from our internal tooling and infrastructure to event-specific apps and open-source initiatives.
 
 ## Who This Is For
 
@@ -41,10 +41,10 @@ Here, you'll find guides, architecture breakdowns, API references, and more — 
 
 ## Requirements
 
-You’ll need basic familiarity with Git, JavaScript/TypeScript, and modern development tools. Each project may have its own specific dependencies — these will be outlined in the relevant sections.
+You’ll need basic familiarity with Git, JavaScript/TypeScript, and modern development tools. Each project may have its own specific dependencies - these will be outlined in the relevant sections.
 
 All tools and platforms are accessible via modern web browsers. Make sure you’re using an up-to-date version of Chrome, Firefox, Safari, or Edge for best results.
 
 ## Conclusion
 
-BizTech is built on the efforts of a growing, collaborative community. This documentation is here to make it easier for everyone to contribute effectively, understand our systems, and build tools that support our mission. Dive in, explore, and if something’s unclear — contribute a fix!
+BizTech is built on the efforts of a growing, collaborative community. This documentation is here to make it easier for everyone to contribute effectively, understand our systems, and build tools that support our mission. Dive in, explore, and if something’s unclear - contribute a fix!
