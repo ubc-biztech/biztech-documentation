@@ -146,6 +146,8 @@ ___
 
 ___
 ## PATCH /profiles/user/
+*this is an endpoint that allows users to update parts of their profile, changing visibility for optional components, or adding more information to their profile. Can send an entire state or partial one.*
+
 
 **Request**
 
