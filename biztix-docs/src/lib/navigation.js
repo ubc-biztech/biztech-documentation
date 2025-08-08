@@ -22,6 +22,10 @@ export const navigation = [
         title: 'Example Page 2',
         href: '/docs/documentation-guide/example-page-2',
       },
+      {
+        title: 'Profiles API',
+        href: '/docs/profiles/',
+      },
     ],
   },
   // {
