@@ -54,7 +54,7 @@ ___
 | major             | string                                                             | Y         |
 | hobby1            |                                                                    | N         |
 | hobby2            |                                                                    | N         |
-| funQuestion1      | question is not provided. <br>may need to be hardcoded on frontend | N         |
+| funQuestion1      | question is not provided. may need to be hardcoded on frontend     | N         |
 | funQuestion2      | ditto                                                              | N         |
 | linkedin          | linkedin url                                                       | N         |
 | profilePictureURL |                                                                    | N         |
@@ -97,7 +97,7 @@ ___
 | pronouns          | e.g. "He/Him"                                                                                                   | Y         |
 | year              | string, not int                                                                                                 | Y         |
 | major             | string                                                                                                          | Y         |
-| viewableMap       | {\[string]: boolean}<br>map of keys to whether<br>they will be returned in<br>GET /profiles/profile/{profileID} | Y         |
+| viewableMap       | {\[string]: boolean} map of keys to whether they will be returned in GET /profiles/profile/{profileID}          | Y         |
 | hobby1            |                                                                                                                 | N         |
 | hobby2            |                                                                                                                 | N         |
 | funQuestion1      | question is not provided. <br>may need to be hardcoded on frontend                                              | N         |
@@ -159,7 +159,7 @@ ___
 
 | Properties        | Description                                                                                                                                                                                       | Required? |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------- |
-| viewableMap       | {\[string]: boolean}<br>only changing the boolean for<br>attributes listed below will<br>change visibility.<br>However, sending at least an<br>empty object to indicate no<br>updates is required | Y         |
+| viewableMap       | {\[string]: boolean} only changing the boolean for attributes listed below will change visibility. However, sending at least an empty object to indicate no updates is required | Y         |
 | hobby1            | accepts string                                                                                                                                                                                    | N         |
 | hobby2            | accepts string                                                                                                                                                                                    | N         |
 | funQuestion1      | accepts string                                                                                                                                                                                    | N         |
