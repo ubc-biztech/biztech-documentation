@@ -3,7 +3,7 @@ title: Profiles API
 nextjs:
   metadata:
     title: Profiles API
-    description: Detailed explanation of the profile's endpoints and purposes
+    description: Detailed explanation of the profiles endpoints and purposes
 ---
 
 
