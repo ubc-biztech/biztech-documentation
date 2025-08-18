@@ -15,12 +15,16 @@ export const navigation = [
         href: '/docs/documentation-guide/markdown-guide',
       },
       {
-        title: 'Profiles API',
-        href: '/docs/profiles/',
-      },
-      {
         title: 'Connections API',
         href: '/docs/connections/',
+      },
+      {
+        title: 'Members API',
+        href: '/docs/members/',
+      },
+      {
+        title: 'Profiles API',
+        href: '/docs/profiles/',
       },
     ],
   },

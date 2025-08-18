@@ -24,7 +24,7 @@ this endpoint creates a profile based on the email provided by the authorization
 
 **Response**
 
-```json
+```javascript
 {
 	message: "Created profile for [email]"
 	profile: {
@@ -64,7 +64,7 @@ ___
 
 Example Response
 GET /profiles/profile/BENNYchin
-```json
+```javascript
 {
     "profileType": "EXEC",
     "lname": "Chinvanich",
@@ -106,7 +106,7 @@ ___
 | profilePictureURL |                                                                                                                 | N         |
 | additionalLink    | any link                                                                                                        | N         |
 | description       |                                                                                                                 | N         |
-```json
+```javascript
 {
     "viewableMap": {
         "profilePictureURL": false,
@@ -172,7 +172,7 @@ ___
 | description       | accepts string                                                                                                                                                                                    | N         |
 
 **Example Request**
-```json
+```javascript
 {
     "viewableMap": {
         "description": true
@@ -186,7 +186,7 @@ ___
 Generally the response to this api is not useful except for the status code of the request.
 However, if for whatever reason you are curious, this is what would be returned from the previous request
 
-```json
+```javascript
 {
     "message": "successfully updated profile: kevin.xiao27@gmail.com",
     "data": {
