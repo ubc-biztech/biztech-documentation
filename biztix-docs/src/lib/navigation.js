@@ -26,6 +26,10 @@ export const navigation = [
         title: 'Profiles API',
         href: '/docs/profiles/',
       },
+      {
+        title: 'Teams API',
+        href: '/docs/teams/',
+      },
     ],
   },
   // {
