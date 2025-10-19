@@ -30,6 +30,10 @@ export const navigation = [
         title: 'Teams API',
         href: '/docs/teams/',
       },
+      {
+        title: 'Investments API',
+        href: '/docs/investments/',
+      },
     ],
   },
   // {
