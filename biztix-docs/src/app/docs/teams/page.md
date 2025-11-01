@@ -371,3 +371,59 @@ PUT /team/round/3
 ```
 
 ---
+
+### 16. Join a Team
+- **Method**: `POST`
+- **Path**: `/team/join`
+
+#### Request
+```json
+{
+  "eventID": "kickstart",
+  "year": 2025,
+  "memberID": "isaac@ubcbiztech.com",
+  "teamID": "206abfa6-4b56-4316-af59-9cc3c1b0863c"
+}
+```
+
+#### Response
+```json
+{
+  "message": "Successfully joined team.",
+  "response": {
+    "eventID": "kickstart",
+    "year": 2025,
+    "memberID": "isaac@ubcbiztech.com",
+    "teamID": "206abfa6-4b56-4316-af59-9cc3c1b0863c"
+  }
+}
+```
+
+---
+
+### 17. Leave a Team
+- **Method**: `POST`
+- **Path**: `/team/leave`
+
+#### Request
+```json
+{
+  "eventID": "kickstart",
+  "year": 2025,
+  "memberID": "isaac@ubcbiztech.com"
+}
+```
+
+#### Response
+```json
+{
+  "message": "Successfully left team.",
+  "response": {
+    "eventID": "kickstart",
+    "year": 2025,
+    "memberID": "isaac@ubcbiztech.com"
+  }
+}
+```
+
+
