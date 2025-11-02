@@ -39,68 +39,46 @@ This page describes the **Investments API** endpoints used for managing investme
 
 ---
 
-### 2. Get User Investment Status
-- **Method**: `POST`
-- **Path**: `/user/status`
+### 2. Get Team Funding Status
+- **Method**: `GET`
+- **Path**: `investments/teamStatus/{teamId}`
 
 #### Request
-```json
-{
-  "userId": "user123"
-}
+| Path Param | Description     |
+| ---------- | --------------- |
+| teamId     | Team’s ID       |
+
+**Example Request**
+```
+GET /investments/teamStatus/team456
 ```
 
 #### Response
 ```json
 {
-  "balance": 5000,
-  "stakes": {
-    "team456": 1000,
-    "team789": 2000
-  }
-}
-```
-
-#### Error Responses
-- **400 Bad Request**: If user is not found or not registered for the event
-
----
-
-### 3. Get Team Investment Status
-- **Method**: `POST`
-- **Path**: `/team/status`
-
-#### Request
-```json
-{
-  "teamId": "team456"
-}
-```
-
-#### Response
-```json
-{
-  "funding": 5000,
+  "funding": 40600,
   "investments": [
     {
-      "id": "inv123",
-      "investorId": "user123",
-      "investorName": "John Doe",
-      "amount": 1000,
-      "comment": "Great pitch!",
-      "createdAt": "2025-10-18T21:30:00Z"
+      "isPartner": false,
+      "eventID;year": "kickstart;2025",
+      "amount": 10000,
+      "teamId": "team456",
+      "investorId": "benny@ubcbiztech.com",
+      "investorName": "Benny",
+      "comment": "Wonderful",
+      "id": "5f41605b-2c3f-4c94-b730-18e6f126cfc3"
     },
     {
-      "id": "inv124",
-      "investorId": "user456",
-      "investorName": "Jane Smith",
-      "amount": 2000,
-      "comment": "Love the idea!",
-      "createdAt": "2025-10-18T22:15:00Z"
+      "teamName": "test",
+      "isPartner": false,
+      "eventID;year": "kickstart;2025",
+      "amount": 10000,
+      "teamId": "team456",
+      "investorId": "benny@ubcbiztech.com",
+      "investorName": "Benny",
+      "comment": "Wonderful",
+      "id": "6da2470c-cad5-4df6-a822-ff04c962363f"
     }
   ]
 }
 ```
-
-#### Error Responses
-- **400 Bad Request**: If team is not found for the event
