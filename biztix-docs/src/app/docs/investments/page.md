@@ -59,6 +59,7 @@ GET /investments/teamStatus/team456
   "funding": 40600,
   "investments": [
     {
+      "createdAt": 1754717442711,
       "isPartner": false,
       "eventID;year": "kickstart;2025",
       "amount": 10000,
@@ -69,6 +70,7 @@ GET /investments/teamStatus/team456
       "id": "5f41605b-2c3f-4c94-b730-18e6f126cfc3"
     },
     {
+      "createdAt": 1754717442715,
       "teamName": "test",
       "isPartner": false,
       "eventID;year": "kickstart;2025",
