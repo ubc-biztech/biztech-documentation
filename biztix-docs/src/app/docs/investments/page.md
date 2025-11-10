@@ -67,6 +67,7 @@ GET /investments/teamStatus/team456
   "funding": 40600,
   "investments": [
     {
+      "teamName": "test",
       "createdAt": 1754717442711,
       "isPartner": false,
       "eventID;year": "kickstart;2025",
@@ -78,8 +79,8 @@ GET /investments/teamStatus/team456
       "id": "5f41605b-2c3f-4c94-b730-18e6f126cfc3"
     },
     {
-      "createdAt": 1754717442715,
       "teamName": "test",
+      "createdAt": 1754717442715,
       "isPartner": false,
       "eventID;year": "kickstart;2025",
       "amount": 10000,
@@ -118,6 +119,7 @@ GET /investments
 ```json
 [
   {
+    "teamName": "test",
     "isPartner": false,
     "createdAt": "1729021722333",
     "eventID;year": "kickstart;2025",
@@ -129,6 +131,7 @@ GET /investments
     "id": "e0131a38-cedd-4ddd-a296-dcee3f31c7e6"
   },
   {
+    "teamName": "test",
     "isPartner": false,
     "createdAt": "1729021722332",
     "eventID;year": "kickstart;2025",
