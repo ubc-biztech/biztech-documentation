@@ -26,6 +26,10 @@ This page describes the **Investments API** endpoints used for managing investme
 }
 ```
 
+**Description**
+
+Makes an investment in a team. Increments team's funding, decrements investor's balance, and creates a new investment record.
+
 #### Response
 ```json
 {
@@ -47,6 +51,10 @@ This page describes the **Investments API** endpoints used for managing investme
 | Path Param | Description     |
 | ---------- | --------------- |
 | teamId     | Team’s ID       |
+
+**Description**
+
+Returns the funding status of a team, including the total funding received and a list of investments. Note that the investments here are NOT sorted.
 
 **Example Request**
 ```
@@ -84,3 +92,52 @@ GET /investments/teamStatus/team456
   ]
 }
 ```
+
+---
+
+### 3. Get All Investments
+- **Method**: `GET`
+- **Path**: `investments`
+
+#### Request
+| Query Param | Description     |
+| ----------- | --------------- |
+| limit | Number of most recent investments to return |
+
+**Description**
+
+Returns a list of all investments, sorted by most recent.
+Specifying an optional *limit* query parameter will limit the number of investments returned.
+
+**Example Request**
+```
+GET /investments?limit=2
+GET /investments
+```
+#### Response
+```json
+[
+  {
+    "isPartner": false,
+    "createdAt": "1729021722333",
+    "eventID;year": "kickstart;2025",
+    "amount": 20000,
+    "teamId": "206abfa6-4b56-4316-af59-9cc3c1b0863c",
+    "investorId": "benny@ubcbiztech.com",
+    "investorName": "Benny",
+    "comment": "SUPERB!!!",
+    "id": "e0131a38-cedd-4ddd-a296-dcee3f31c7e6"
+  },
+  {
+    "isPartner": false,
+    "createdAt": "1729021722332",
+    "eventID;year": "kickstart;2025",
+    "amount": 500,
+    "teamId": "206abfa6-4b56-4316-af59-9cc3c1b0863c",
+    "investorId": "benny@ubcbiztech.com",
+    "investorName": "Benny",
+    "comment": "Fantastic",
+    "id": "a7a4e318-0fd2-46fc-b48a-cdd970cccace"
+  }
+]
+
