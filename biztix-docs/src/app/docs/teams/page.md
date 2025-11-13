@@ -390,6 +390,8 @@ PUT /team/round/3
 ```json
 {
   "message": "Successfully joined team.",
+  "teamName": "test",
+  "memberIDs": ["isaac@ubcbiztech.com", "benny@ubcbiztech.com"],
   "response": {
     "eventID": "kickstart",
     "year": 2025,
