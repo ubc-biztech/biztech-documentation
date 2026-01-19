@@ -38,6 +38,10 @@ export const navigation = [
         title: 'Quizzes API',
         href: '/docs/quizzes/',
       },
+      {
+        title: 'Quests API',
+        href: '/docs/quests/',
+      },
     ],
   },
   // {
