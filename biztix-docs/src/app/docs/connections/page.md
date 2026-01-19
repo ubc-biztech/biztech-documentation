@@ -53,11 +53,25 @@ example response
 | ------------- | ------------ |
 | Authorization | Bearer Token |
 
+#### Query Parameters (optional)
+
+You may optionally filter connections by **event** and/or **year** using query string parameters.
+
+| Parameter | Type   | Description |
+|----------|--------|-------------|
+| eventId  | string | Filters connections associated with a specific event |
+| year     | string | Filters connections by event year |
+
+## Example request
+`GET /interactions/journal`
+
+`GET /interactions/journal?eventId=blueprint&year=2025`
+
 **Response**
 
 *All connections will include the fields in the following response. Note that by default, all connections will be sorted from most to least recent in the response*
 
-example response
+## Example response
 ```javascript
 {
     "message": "all connections for kevin.xiao27@gmail.com",
