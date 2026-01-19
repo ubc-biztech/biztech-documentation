@@ -34,6 +34,10 @@ export const navigation = [
         title: 'Investments API',
         href: '/docs/investments/',
       },
+      {
+        title: 'Quizzes API',
+        href: '/docs/quizzes/',
+      },
     ],
   },
   // {
