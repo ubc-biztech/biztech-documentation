@@ -2,7 +2,7 @@
 title: Quests API
 nextjs:
   metadata:
-    title: Quests Serive Documentation
+    title: Quests Service Documentation
     description: Detailed documentation for the QR service
     url: https://github.com/ubc-biztech/serverless-biztechapp/blob/master/services/quests/handler.js
 ---
