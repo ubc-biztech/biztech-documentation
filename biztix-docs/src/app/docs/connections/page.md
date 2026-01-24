@@ -128,3 +128,28 @@ Some behaviour to note is that this endpoint will return false if a user checks 
 *currently deprecated... more infrastructure of new profiles needs to be built to support quests and badges at the moment*
 {% /callout %}
 
+## POST /interactions/search
+*this endpoint is used to semantically search a user’s connections based on a free-text query.*
+
+This endpoint allows an authenticated user to search through their existing connections using natural language. It is typically backed by semantic or embedding-based search, rather than exact keyword matching.
+
+**Request**
+
+| Headers       | Type         |
+| ------------- | ------------ |
+| Authorization | Bearer Token |
+| Content-Type  | application/json |
+
+| Body  | Type   | Description |
+|------|--------|-------------|
+| query | string | A free-text query describing the type of people or connections the user wants to find |
+
+### Example request
+```bash
+curl -X POST "https://api-dev.ubcbiztech.com/interactions/search" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <JWT_TOKEN>" \
+  -d '{
+    "query": "I want to meet Lumeno AI interns"
+  }'
+
