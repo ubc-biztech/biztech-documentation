@@ -40,11 +40,12 @@ All endpoints return JSON and support CORS.
 ## Get a user's report
 
 - **Method**: GET
-- **Path**: `/quizzes/report/{id}`
+- **Path**: `/quizzes/report/`
 - **Purpose**: Retrieve a single user's computed report (averages and MBTI) for the current event year.
 
-### Path parameters
-- **id**: string, required
+### Required
+- Authorized call, the id will be read from the user's email
+
 
 ### Successful response
 ```json
