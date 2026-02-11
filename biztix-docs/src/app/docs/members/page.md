@@ -247,3 +247,67 @@ DELETE /members/student@example.com
 - `403` Unauthorized
 - `400` Invalid email
 - `404` Member not found
+
+---
+
+## POST /members/membership
+Grant or revoke a membership for an existing user. This endpoint also creates or deletes the member profile as part of the membership flow.
+
+**Request**
+
+| Headers       | Type         |
+| ------------ | ------------ | 
+| Authorization | Bearer Token | 
+
+| Body Property | Description |
+| ------------ | ----------- |
+| email        | User email (must already exist in `biztechUsers`) |
+| membership   | `true` to grant, `false` to revoke |
+
+**Example Request (Grant)**
+```javascript
+{
+  "email": "isaacliu@gmail.com",
+  "membership": true
+}
+```
+
+**Example Request (Revoke)**
+```javascript
+{
+  "email": "kevinxiao27@gmail.com",
+  "membership": false
+}
+```
+
+**Response**
+```javascript
+{
+  "message": "Membership granted"
+}
+```
+
+**Response (Revoke)**
+```javascript
+{
+  "message": "Membership revoked"
+}
+```
+
+**Behavior**
+- **Grant**
+  - Updates `biztechUsers.isMember = true`
+  - Creates a member row in `biztechMembers2026` if missing
+  - Creates a profile via `createProfile(...)` if none exists
+  - No behavior if membership already existed
+- **Revoke**
+  - Updates `biztechUsers.isMember = false`
+  - Deletes the member row from `biztechMembers2026`
+  - Deletes the profile from `biztechProfiles` (if it exists)
+  - No behavior if no membership exists
+
+**Errors**
+- `403` Unauthorized if caller is not `@ubcbiztech.com`
+- `400` Invalid email format
+- `404` User not found
+- `502` Internal server error
