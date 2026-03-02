@@ -13,12 +13,12 @@ The `QR` API service allows admin to create QR codes for many purposes.
 
 ---
 
-## Endpoint - Post /qrscan
+## Endpoint - Post /qrscan/
 
 The `qrscan` API endpoint is used to handle a qr scan from the user. It updates the corresponding registration.
 
 ```
-POST /qrscan
+POST /qrscan/
 ```
 
 ### Method
@@ -61,11 +61,12 @@ The request body must contain a JSON object with the following properties:
 - updates their registration with the new points
 - opens a socket connection to companion app to update live leaderboards
 
-## Endpoint - GET /qr
+## Endpoint - GET /qr/
 
 ```
-GET /qr
+GET /qr/
 ```
+**Auth:** Required (Cognito User Pools)
 
 ### Method
 
@@ -111,10 +112,10 @@ Uses the `handler.getOne` method
 
 1. Gets specific qr code
 
-## Endpoint - POST /qr
+## Endpoint - POST /qr/
 
 ```
-POST /qr
+POST /qr/
 ```
 
 ### Method
@@ -151,6 +152,7 @@ The request body must contain a JSON object with the following properties:
 ```
 PATCH /qr/{id}/{eventID}/{year}
 ```
+**Auth:** Required (Cognito User Pools)
 
 ### Method
 
@@ -188,10 +190,11 @@ The request body must contain a JSON object with the following properties:
 ```
 DELETE /qr/{id}/{eventID}/{year}
 ```
+**Auth:** Required (Cognito User Pools)
 
 ### Method
 
-Uses the `handler.delete` method
+Uses the `handler.del method
 
 ### Request Params
 

@@ -5,6 +5,14 @@ nextjs:
     title: Users Service Overview
     description: Overview of the Users service API endpoints.
 ---
+> **Users API is active.**  
+> The Users API manages account-level user data (identity, profile, authentication).
+>
+> The **Members API** manages organization or event-level membership (roles, permissions, participation).
+>
+> Use:
+> - **Users API** for account-level operations  
+> - **Members API** for membership and roles
 
 The Users service handles all user-related operations, including creating, updating, retrieving, and deleting user data. This overview provides a summary of the available API endpoints, their purposes, and usage. {% .lead %}
 
