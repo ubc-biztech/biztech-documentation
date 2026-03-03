@@ -44,6 +44,27 @@ export const navigation = [
       },
     ],
   },
+  {
+    title: 'BizTech Judging Portal',
+    links: [
+      {
+        title: 'Overview',
+        href: '/docs/judging-portal/',
+      },
+      {
+        title: 'Setup',
+        href: '/docs/judging-portal/setup/',
+      },
+      {
+        title: 'Data Model (In Progress)',
+        href: '/docs/judging-portal/data-model/',
+      },
+      {
+        title: 'Routes',
+        href: '/docs/judging-portal/routes/',
+      },
+    ],
+  },
   // {
   //   title: 'Users',
   //   links: [

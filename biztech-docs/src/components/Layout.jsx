@@ -20,6 +20,20 @@ function GitHubIcon(props) {
   )
 }
 
+function SidebarToggleIcon(props) {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" {...props}>
+      <path
+        d="M12 5l-5 5 5 5"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
 function Header() {
   let [isScrolled, setIsScrolled] = useState(false)
 
@@ -68,6 +82,7 @@ function Header() {
 export function Layout({ children }) {
   let pathname = usePathname()
   let isHomePage = pathname === '/'
+  let [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
 
   return (
     <div className="flex w-full flex-col">
@@ -76,13 +91,38 @@ export function Layout({ children }) {
       {isHomePage && <Hero />}
 
       <div className="relative mx-auto flex w-full max-w-8xl flex-auto justify-center sm:px-2 lg:px-8 xl:px-12">
-        <div className="hidden lg:relative lg:block lg:flex-none">
-          <div className="absolute inset-y-0 right-0 w-[50vw] bg-slate-50 dark:hidden" />
-          <div className="absolute bottom-0 right-0 top-16 hidden h-12 w-px bg-gradient-to-t from-slate-800 dark:block" />
-          <div className="absolute bottom-0 right-0 top-28 hidden w-px bg-slate-800 dark:block" />
-          <div className="sticky top-[4.75rem] -ml-0.5 h-[calc(100vh-4.75rem)] w-64 overflow-y-auto overflow-x-hidden py-16 pl-0.5 pr-8 xl:w-72 xl:pr-16">
-            <Navigation />
-          </div>
+        <div className="hidden lg:relative lg:block lg:flex-none lg:overflow-visible">
+          <button
+            type="button"
+            onClick={() => setIsSidebarCollapsed((previous) => !previous)}
+            aria-controls="docs-sidebar-navigation"
+            aria-expanded={!isSidebarCollapsed}
+            aria-label={isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            className={clsx(
+              'absolute top-20 z-20 flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:border-slate-300 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:border-slate-600 dark:hover:text-white',
+              isSidebarCollapsed ? 'left-0 translate-x-2' : 'right-6 xl:right-12',
+            )}
+          >
+            <SidebarToggleIcon
+              className={clsx(
+                'h-4 w-4 transition-transform',
+                isSidebarCollapsed && 'rotate-180',
+              )}
+            />
+          </button>
+          {!isSidebarCollapsed && (
+            <>
+              <div className="absolute inset-y-0 right-0 w-[50vw] bg-slate-50 dark:hidden" />
+              <div className="absolute bottom-0 right-0 top-16 hidden h-12 w-px bg-gradient-to-t from-slate-800 dark:block" />
+              <div className="absolute bottom-0 right-0 top-28 hidden w-px bg-slate-800 dark:block" />
+              <div
+                id="docs-sidebar-navigation"
+                className="sticky top-[4.75rem] -ml-0.5 h-[calc(100vh-4.75rem)] w-64 overflow-y-auto overflow-x-hidden py-16 pl-0.5 pr-8 xl:w-72 xl:pr-16"
+              >
+                <Navigation />
+              </div>
+            </>
+          )}
         </div>
         {children}
       </div>
