@@ -18,6 +18,7 @@ export const navigation = [
         title: 'Connections API',
         href: '/docs/connections/',
       },
+      { title: 'PR Test', href: '/docs/title/' },
       {
         title: 'Members API',
         href: '/docs/members/',
