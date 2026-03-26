@@ -63,6 +63,7 @@ export const navigation = [
         title: 'Routes',
         href: '/docs/judging-portal/routes/',
       },
+      { title: 'Title', href: '/docs/title/' },
     ],
   },
   // {
