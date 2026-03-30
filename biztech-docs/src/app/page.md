@@ -2,17 +2,17 @@
 title: Introduction
 ---
 
-Welcome to the BizTech documentation site - your central resource for understanding, using, and contributing to all BizTech codebases. {% .lead %}
+Welcome to the BizTech documentation site; your central resource for understanding, using, and contributing to all BizTech codebases. {% .lead %}
 
 {% quick-links %}
 
-{% quick-link title="Quickstart" icon="installation" href="/" description="Step-by-step guides to setting up your environment and working with our codebases." /%}
+{% quick-link title="Getting Started" icon="installation" href="/docs/getting-started/" description="Set up your local dev environment and start contributing to BizTech projects." /%}
 
-{% quick-link title="Architecture guide" icon="presets" href="/" description="Learn how our systems are structured and how to contribute effectively." /%}
+{% quick-link title="Architecture Guide" icon="presets" href="/docs/frontend-architecture/" description="Understand how our frontend and backend systems are structured." /%}
 
-{% quick-link title="Projects" icon="plugins" href="/" description="Explore the different BizTech projects and their purposes." /%}
+{% quick-link title="API Reference" icon="plugins" href="/docs/api-reference/" description="Explore every endpoint across our 19 microservices." /%}
 
-{% quick-link title="API reference" icon="theming" href="/" description="Understand how to interact with and extend our APIs." /%}
+{% quick-link title="Page Builder" icon="theming" href="/builder" description="Create new documentation pages visually and submit them as pull requests." /%}
 
 {% /quick-links %}
 
@@ -20,14 +20,14 @@ Welcome to the BizTech documentation site - your central resource for understand
 
 ## Overview
 
-This documentation site serves as the hub for all technical information related to BizTech projects. Whether you're a new contributor, an organizer, or a returning developer, this site aims to make working with BizTech's code easy, efficient, and collaborative.
+This documentation site serves as the hub for all technical information related to BizTech development  projects. Whether you're a new contributor, an organizer, or a returning developer, this site aims to make working with BizTech's code easy, efficient, and collaborative.
 
 Here, you'll find guides, architecture breakdowns, API references, and more - covering everything from our internal tooling and infrastructure to event-specific apps and open-source initiatives.
 
 ## Who This Is For
 
 - **Contributors** – Developers and designers working on BizTech projects looking for guidelines, best practices, and technical references.
-- **Organizers** – Team leads and coordinators needing to understand how to deploy, maintain, or extend BizTech systems.
+- **Organizers** – Team leads and directors needing to understand how to deploy, maintain, or extend BizTech systems.
 - **Newcomers** – Anyone interested in getting involved with BizTech development and learning how to get started.
 
 ## What's Included

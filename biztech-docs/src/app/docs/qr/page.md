@@ -54,7 +54,7 @@ The request body must contain a JSON object with the following properties:
 ### Internals
 
 1. Checks if the QR code is valid, if so, sends control flow to process this qr redemption
-2. Processes a QR code redemption via DynamoDB — adds points to user's event registration (Registration table), adds the QR code key as being used (Registration table), then returns updated progress.
+2. Processes a QR code redemption via DynamoDB. This adds points to user's event registration (Registration table), adds the QR code key as being used (Registration table), then returns updated progress.
 
 - If QR is type partner, then users can only redeem this qr points once.
 - Validates that user has not already scanned the QR code (unless unlimited scans allowed)

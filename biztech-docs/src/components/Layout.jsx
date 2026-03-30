@@ -69,7 +69,13 @@ function Header() {
       <div className="-my-5 mr-6 sm:mr-8 md:mr-0">
         <Search />
       </div>
-      <div className="relative flex basis-0 justify-end gap-6 sm:gap-8 md:flex-grow">
+      <div className="relative flex basis-0 items-center justify-end gap-6 sm:gap-8 md:flex-grow">
+        <Link
+          href="/builder"
+          className="hidden text-sm font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 sm:block"
+        >
+          Page Builder
+        </Link>
         <ThemeSelector className="relative z-10" />
         <Link href="https://github.com/ubc-biztech/bt-web-v2" className="group" aria-label="GitHub">
           <GitHubIcon className="h-6 w-6 fill-slate-400 group-hover:fill-slate-500 dark:group-hover:fill-slate-300" />
@@ -82,7 +88,13 @@ function Header() {
 export function Layout({ children }) {
   let pathname = usePathname()
   let isHomePage = pathname === '/'
+  let isBuilderPage = pathname?.startsWith('/builder')
   let [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
+
+  // builder gets its own full-screen layout with no docs chrome
+  if (isBuilderPage) {
+    return <div className="w-full">{children}</div>
+  }
 
   return (
     <div className="flex w-full flex-col">

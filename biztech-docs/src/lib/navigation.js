@@ -7,40 +7,217 @@ export const navigation = [
     title: 'Getting Started',
     links: [
       {
-        title: 'Adding a page',
+        title: 'Setup & Installation',
+        href: '/docs/getting-started',
+      },
+      {
+        title: 'Adding a Docs Page',
         href: '/docs/documentation-guide/adding-a-page',
       },
       {
         title: 'Markdown Guide',
         href: '/docs/documentation-guide/markdown-guide',
       },
+    ],
+  },
+  {
+    title: 'Frontend',
+    links: [
+      {
+        title: 'Architecture Overview',
+        href: '/docs/frontend-architecture',
+      },
+      {
+        title: 'Routing & Data Fetching',
+        href: '/docs/frontend-architecture/routing',
+      },
+      {
+        title: 'Styling & Configuration',
+        href: '/docs/frontend-architecture/styling',
+      },
+      {
+        title: 'Component Library',
+        href: '/docs/frontend-components',
+      },
+      {
+        title: 'Feature Components',
+        href: '/docs/frontend-components/feature-components',
+      },
+      {
+        title: 'Patterns & Conventions',
+        href: '/docs/frontend-components/patterns',
+      },
+    ],
+  },
+  {
+    title: 'Backend',
+    links: [
+      {
+        title: 'Architecture Overview',
+        href: '/docs/backend-architecture',
+      },
+      {
+        title: 'Shared Libraries',
+        href: '/docs/backend-architecture/shared-libraries',
+      },
+      {
+        title: 'Services & Patterns',
+        href: '/docs/backend-architecture/services',
+      },
+    ],
+  },
+  {
+    title: 'API Reference',
+    links: [
+      {
+        title: 'Overview',
+        href: '/docs/api-reference',
+      },
+      {
+        title: 'Core APIs',
+        href: '/docs/api-reference/core',
+      },
+      {
+        title: 'Profile & Social APIs',
+        href: '/docs/api-reference/social',
+      },
+      {
+        title: 'Admin & Specialized APIs',
+        href: '/docs/api-reference/admin',
+      },
+    ],
+  },
+  {
+    title: 'Database',
+    links: [
+      {
+        title: 'Overview & Tables',
+        href: '/docs/database',
+      },
+      {
+        title: 'Schemas & Access Patterns',
+        href: '/docs/database/schemas',
+      },
+    ],
+  },
+  {
+    title: 'Infrastructure',
+    links: [
+      {
+        title: 'Auth Overview',
+        href: '/docs/authentication',
+      },
+      {
+        title: 'Auth Implementation',
+        href: '/docs/authentication/implementation',
+      },
+      {
+        title: 'Deployment',
+        href: '/docs/deployment',
+      },
+    ],
+  },
+  {
+    title: 'Live Wall',
+    links: [
+      {
+        title: 'Overview',
+        href: '/docs/deep-dives/live-wall',
+      },
+      {
+        title: 'Frontend Architecture',
+        href: '/docs/deep-dives/live-wall/frontend',
+      },
+      {
+        title: 'Key Features',
+        href: '/docs/deep-dives/live-wall/features',
+      },
+      {
+        title: 'Backend & WebSocket',
+        href: '/docs/deep-dives/live-wall/backend',
+      },
+      {
+        title: 'Customization & Reference',
+        href: '/docs/deep-dives/live-wall/customization',
+      },
+    ],
+  },
+  {
+    title: 'BTX Exchange',
+    links: [
+      {
+        title: 'Overview',
+        href: '/docs/deep-dives/btx',
+      },
+      {
+        title: 'Price Mechanics',
+        href: '/docs/deep-dives/btx/price-mechanics',
+      },
+      {
+        title: 'Database & API',
+        href: '/docs/deep-dives/btx/database-api',
+      },
+      {
+        title: 'Trade Execution & Frontend',
+        href: '/docs/deep-dives/btx/trade-execution',
+      },
+      {
+        title: 'Configuration & Development',
+        href: '/docs/deep-dives/btx/configuration',
+      },
+    ],
+  },
+  {
+    title: 'NFC & QR',
+    links: [
+      {
+        title: 'Overview',
+        href: '/docs/deep-dives/nfc-cards',
+      },
+      {
+        title: 'QR Code Check-In',
+        href: '/docs/deep-dives/nfc-cards/qr-checkin',
+      },
+      {
+        title: 'NFC Card Writing',
+        href: '/docs/deep-dives/nfc-cards/nfc-writing',
+      },
+      {
+        title: 'Connections, Errors & Testing',
+        href: '/docs/deep-dives/nfc-cards/connections',
+      },
+    ],
+  },
+  {
+    title: 'API Docs (Legacy)',
+    links: [
       {
         title: 'Connections API',
-        href: '/docs/connections/',
+        href: '/docs/connections',
       },
       {
         title: 'Members API',
-        href: '/docs/members/',
+        href: '/docs/members',
       },
       {
         title: 'Profiles API',
-        href: '/docs/profiles/',
+        href: '/docs/profiles',
       },
       {
         title: 'Teams API',
-        href: '/docs/teams/',
+        href: '/docs/teams',
       },
       {
         title: 'Investments API',
-        href: '/docs/investments/',
+        href: '/docs/investments',
       },
       {
         title: 'Quizzes API',
-        href: '/docs/quizzes/',
+        href: '/docs/quizzes',
       },
       {
         title: 'Quests API',
-        href: '/docs/quests/',
+        href: '/docs/quests',
       },
     ],
   },
@@ -49,56 +226,20 @@ export const navigation = [
     links: [
       {
         title: 'Overview',
-        href: '/docs/judging-portal/',
+        href: '/docs/judging-portal',
       },
       {
         title: 'Setup',
-        href: '/docs/judging-portal/setup/',
+        href: '/docs/judging-portal/setup',
       },
       {
         title: 'Data Model (In Progress)',
-        href: '/docs/judging-portal/data-model/',
+        href: '/docs/judging-portal/data-model',
       },
       {
         title: 'Routes',
-        href: '/docs/judging-portal/routes/',
+        href: '/docs/judging-portal/routes',
       },
     ],
   },
-  // {
-  //   title: 'Users',
-  //   links: [
-  //     { title: 'Overview', href: '/docs/users' },
-  //     { title: 'Create User', href: '/docs/users/create' },
-  //     { title: 'Check User', href: '/docs/users/check-user' },
-  //     {
-  //       title: 'Check Membership',
-  //       href: '/docs/users/check-user-membership',
-  //     },
-  //     {
-  //       title: 'Get User',
-  //       href: '/docs/users/get-user',
-  //     },
-  //     {
-  //       title: 'Update User',
-  //       href: '/docs/users/update-user',
-  //     },
-  //     {
-  //       title: 'Get All Users',
-  //       href: '/docs/users/get-all',
-  //     },
-  //     {
-  //       title: 'Favourite Event',
-  //       href: '/docs/users/favourite-event',
-  //     },
-  //     {
-  //       title: 'Delete User',
-  //       href: '/docs/users/delete-user',
-  //     },
-  //   ],
-  // },
-  // {
-  //   title: 'QR Codes',
-  //   links: [{ title: 'QR Code', href: '/docs/qr' }],
-  // },
 ]

@@ -5,6 +5,11 @@ import clsx from 'clsx'
 
 import { navigation } from '@/lib/navigation'
 
+/** strip trailing slash for consistent comparison  */
+function normalize(path) {
+  return path.length > 1 && path.endsWith('/') ? path.slice(0, -1) : path
+}
+
 function ChevronIcon(props) {
   return (
     <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" {...props}>
@@ -27,7 +32,7 @@ export function Navigation({ className, onLinkClick }) {
 
   useEffect(() => {
     let activeSection = navigation.find((section) =>
-      section.links.some((link) => link.href === pathname),
+      section.links.some((link) => normalize(link.href) === normalize(pathname)),
     )
 
     if (!activeSection) return
@@ -81,7 +86,7 @@ export function Navigation({ className, onLinkClick }) {
                         onClick={onLinkClick}
                         className={clsx(
                           'block w-full pl-3.5 before:pointer-events-none before:absolute before:-left-1 before:top-1/2 before:h-1.5 before:w-1.5 before:-translate-y-1/2 before:rounded-full',
-                          link.href === pathname
+                          normalize(link.href) === normalize(pathname)
                             ? 'font-semibold text-sky-500 before:bg-sky-500'
                             : 'text-slate-500 before:hidden before:bg-slate-300 hover:text-slate-600 hover:before:block dark:text-slate-400 dark:before:bg-slate-700 dark:hover:text-slate-300',
                         )}

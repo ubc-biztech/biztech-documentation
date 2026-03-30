@@ -8,3 +8,13 @@
     display: none;
   }
 }
+
+/* builder focus mode that will dim non-focused blocks */
+.builder-focus-mode [data-block]:not(:focus-within) {
+  opacity: 0.45;
+  transition: opacity 0.2s ease;
+}
+.builder-focus-mode [data-block]:focus-within {
+  opacity: 1;
+  transition: opacity 0.15s ease;
+}

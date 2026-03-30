@@ -6,6 +6,11 @@ import clsx from 'clsx'
 
 import { navigation } from '@/lib/navigation'
 
+/** strip trailing slash for consistent comparison  */
+function normalize(path) {
+  return path.length > 1 && path.endsWith('/') ? path.slice(0, -1) : path
+}
+
 function ArrowIcon(props) {
   return (
     <svg viewBox="0 0 16 16" aria-hidden="true" {...props}>
@@ -44,7 +49,7 @@ function PageLink({ title, href, dir = 'next', ...props }) {
 export function PrevNextLinks() {
   let pathname = usePathname()
   let allLinks = navigation.flatMap((section) => section.links)
-  let linkIndex = allLinks.findIndex((link) => link.href === pathname)
+  let linkIndex = allLinks.findIndex((link) => normalize(link.href) === normalize(pathname))
   let previousPage = linkIndex > -1 ? allLinks[linkIndex - 1] : null
   let nextPage = linkIndex > -1 ? allLinks[linkIndex + 1] : null
 
