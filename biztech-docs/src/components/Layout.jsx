@@ -34,7 +34,7 @@ function SidebarToggleIcon(props) {
   )
 }
 
-function Header() {
+function Header({ onSidebarToggle, isSidebarCollapsed }) {
   let [isScrolled, setIsScrolled] = useState(false)
 
   useEffect(() => {
@@ -61,6 +61,18 @@ function Header() {
         <MobileNavigation />
       </div>
       <div className="relative flex flex-grow basis-0 items-center">
+        {onSidebarToggle && (
+          <button
+            type="button"
+            onClick={onSidebarToggle}
+            className="mr-4 hidden h-6 w-6 items-center justify-center text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 lg:flex"
+            aria-label={isSidebarCollapsed ? 'Show sidebar' : 'Hide sidebar'}
+          >
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        )}
         {/* <Link href="/" aria-label="Home page">
           <Logomark className="h-9 w-9 lg:hidden" />
           <Logo className="hidden h-9 w-auto fill-slate-700 dark:fill-sky-100 lg:block" />
@@ -98,30 +110,15 @@ export function Layout({ children }) {
 
   return (
     <div className="flex w-full flex-col">
-      <Header />
+      <Header 
+        onSidebarToggle={isHomePage || isBuilderPage ? undefined : () => setIsSidebarCollapsed(!isSidebarCollapsed)}
+        isSidebarCollapsed={isSidebarCollapsed}
+      />
 
       {isHomePage && <Hero />}
 
       <div className="relative mx-auto flex w-full max-w-8xl flex-auto justify-center sm:px-2 lg:px-8 xl:px-12">
         <div className="hidden lg:relative lg:block lg:flex-none lg:overflow-visible">
-          <button
-            type="button"
-            onClick={() => setIsSidebarCollapsed((previous) => !previous)}
-            aria-controls="docs-sidebar-navigation"
-            aria-expanded={!isSidebarCollapsed}
-            aria-label={isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            className={clsx(
-              'absolute top-20 z-20 flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:border-slate-300 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:border-slate-600 dark:hover:text-white',
-              isSidebarCollapsed ? 'left-0 translate-x-2' : 'right-6 xl:right-12',
-            )}
-          >
-            <SidebarToggleIcon
-              className={clsx(
-                'h-4 w-4 transition-transform',
-                isSidebarCollapsed && 'rotate-180',
-              )}
-            />
-          </button>
           {!isSidebarCollapsed && (
             <>
               <div className="absolute inset-y-0 right-0 w-[50vw] bg-slate-50 dark:hidden" />
