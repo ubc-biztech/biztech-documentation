@@ -85,6 +85,7 @@ export const navigation = [
         title: 'Admin & Specialized APIs',
         href: '/docs/api-reference/admin',
       },
+      { title: '[Service] API', href: '/docs/service-api' },
     ],
   },
   {
