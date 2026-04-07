@@ -53,6 +53,78 @@ Team management, point systems, and judging.
 
 ---
 
+## Event Feedback
+
+Built-in post-event feedback forms for attendees and partners.
+
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| `GET` | `/events/{id}/{year}/feedback/{formType}` | 🌐 | Get form metadata + question config |
+| `POST` | `/events/{id}/{year}/feedback/{formType}` | 🌐 | Submit feedback response |
+| `GET` | `/events/{id}/{year}/feedback/{formType}/submissions` | 🔓 | Admin: list stored submissions |
+
+`formType` must be `attendee` or `partner`.
+
+Key behavior:
+- submissions are allowed whenever the form is enabled
+- required validation is enforced per question type
+- response keys must match known `questionId` values
+
+---
+
+## Instagram Analytics
+
+Admin analytics service for Instagram account and post-level performance.
+
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| `GET` | `/instagram/analytics` | 🔓 | Fetch dashboard payload (supports `since`, `until`) |
+| `GET` | `/instagram/token/status` | 🔓 | Get token source/expiry status |
+| `POST` | `/instagram/token/refresh` | 🔓 | Manually refresh long-lived token |
+
+---
+
+## Partnerships CRM
+
+Admin CRM service for partner directory, event sponsorship tracking, reporting, and Google Sheets sync.
+
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| `GET` | `/partnerships/dashboard` | 🔓 | Overview metrics, pace, pipeline, and action items |
+| `GET` | `/partnerships/partners` | 🔓 | List partners with filters + directory summary |
+| `POST` | `/partnerships/partners` | 🔓 | Create partner |
+| `GET` | `/partnerships/partners/{partnerId}` | 🔓 | Partner detail with involvements/docs/comms |
+| `PATCH` | `/partnerships/partners/{partnerId}` | 🔓 | Update or archive partner |
+| `GET` | `/partnerships/events` | 🔓 | List CRM events with computed metrics |
+| `POST` | `/partnerships/events` | 🔓 | Create CRM event |
+| `GET` | `/partnerships/events/{eventId}` | 🔓 | Event detail + linked partners |
+| `PATCH` | `/partnerships/events/{eventId}` | 🔓 | Update or archive CRM event |
+| `DELETE` | `/partnerships/events/{eventId}` | 🔓 | Delete event (only if no links) |
+| `POST` | `/partnerships/partners/{partnerId}/events` | 🔓 | Create partner-event involvement |
+| `PATCH` | `/partnerships/partner-events/{linkId}` | 🔓 | Update partner-event involvement |
+| `DELETE` | `/partnerships/partner-events/{linkId}` | 🔓 | Delete partner-event involvement |
+| `GET` | `/partnerships/partners/{partnerId}/documents` | 🔓 | List linked documents |
+| `POST` | `/partnerships/partners/{partnerId}/documents` | 🔓 | Create linked document record |
+| `PATCH` | `/partnerships/partner-documents/{documentId}` | 🔓 | Update linked document record |
+| `DELETE` | `/partnerships/partner-documents/{documentId}` | 🔓 | Delete linked document record |
+| `GET` | `/partnerships/partners/{partnerId}/communications` | 🔓 | List communication logs |
+| `POST` | `/partnerships/partners/{partnerId}/communications` | 🔓 | Create communication log |
+| `PATCH` | `/partnerships/partner-communications/{communicationId}` | 🔓 | Update communication log |
+| `DELETE` | `/partnerships/partner-communications/{communicationId}` | 🔓 | Delete communication log |
+| `GET` | `/partnerships/email/config` | 🔓 | Sender + merge-field config for Email Ops |
+| `GET` | `/partnerships/email/templates` | 🔓 | List email templates |
+| `POST` | `/partnerships/email/templates` | 🔓 | Create email template |
+| `PATCH` | `/partnerships/email/templates/{templateId}` | 🔓 | Update email template |
+| `DELETE` | `/partnerships/email/templates/{templateId}` | 🔓 | Archive email template |
+| `POST` | `/partnerships/email/send` | 🔓 | Send campaign emails (logs outbound comms) |
+| `GET` | `/partnerships/email/sync/status` | 🔓 | Email sync health + last ingest stats |
+| `POST` | `/partnerships/email/sync/ingest` | 🌐 | Service ingest route used by Apps Script |
+| `GET` | `/partnerships/export` | 🔓 | Export flattened rows for CSV/Sheets |
+| `GET` | `/partnerships/google-sheets/status` | 🔓 | Check Sheets configuration + health |
+| `POST` | `/partnerships/google-sheets/sync` | 🔓 | Run manual `push` / `pull` / `merge` sync |
+
+---
+
 ## QR Codes
 
 QR code generation and scanning with point rewards.

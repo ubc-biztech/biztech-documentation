@@ -32,7 +32,11 @@ Detailed schemas for the key DynamoDB tables, the GSIs that power secondary quer
 | `isApplicationBased` | boolean | Requires application to register |
 | `pricing` | object | `{ nonMember: number, member: number }` |
 | `registrationQuestions` | array | Custom form questions |
-| `feedbackQuestions` | array | Post-event feedback questions |
+| `attendeeFeedbackEnabled` | boolean | Whether attendee feedback is enabled |
+| `partnerFeedbackEnabled` | boolean | Whether partner feedback is enabled |
+| `attendeeFeedbackQuestions` | array | Attendee feedback form config |
+| `partnerFeedbackQuestions` | array | Partner feedback form config |
+| `feedback` | string | Legacy external feedback URL (older flow) |
 
 **Access Pattern:** Most queries use `id + year` composite key. List all events uses a full table scan.
 
@@ -154,6 +158,48 @@ This table stores both profiles and connections:
 | `inventory` | array | Items/prizes purchased |
 | `submission` | string | Project submission link |
 | `funding` | number | Investment funding received |
+
+---
+
+### `biztechEventFeedback`
+
+**Keys:** PK = `id` (string = UUID)
+**GSIs:** `event-form-query`, `event-year-query`
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | string | Submission UUID |
+| `eventID` | string | Event ID |
+| `year` | number | Event year |
+| `formType` | string | `attendee` or `partner` |
+| `eventFormKey` | string | `{eventId};{year};{formType}` |
+| `eventIDYear` | string | `{eventId};{year}` |
+| `submittedAt` | number | Submission timestamp |
+| `responses` | object | Answers keyed by `questionId` |
+| `respondentName` | string | Optional name |
+| `respondentEmail` | string | Optional email |
+| `createdAt` / `updatedAt` | number | Audit timestamps |
+
+**Access Pattern:**
+- get all attendee or partner responses for one event via `event-form-query`
+- get all feedback for an event/year via `event-year-query`
+
+---
+
+### `biztechInstagramAuth`
+
+**Keys:** PK = `id` (string)
+
+Used by the Instagram analytics service to persist token state across deploys/runtimes.
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | string | Record key (`primary`) |
+| `accessToken` | string | Current long-lived access token |
+| `expiresIn` | number | Expiry duration in seconds |
+| `expiresAt` | number | Computed absolute expiry timestamp (ms) |
+| `refreshedAt` | number | Last refresh timestamp (ms) |
+| `source` | string | Refresh source (`manual_refresh`, `scheduled_refresh`, etc.) |
 
 ---
 

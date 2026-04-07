@@ -189,6 +189,105 @@ export const navigation = [
     ],
   },
   {
+    title: 'Event Feedback',
+    links: [
+      {
+        title: 'Overview',
+        href: '/docs/deep-dives/event-feedback',
+      },
+      {
+        title: 'Admin Form Builder',
+        href: '/docs/deep-dives/event-feedback/admin-builder',
+      },
+      {
+        title: 'Public Forms',
+        href: '/docs/deep-dives/event-feedback/public-forms',
+      },
+      {
+        title: 'Backend API & Data Model',
+        href: '/docs/deep-dives/event-feedback/backend-api',
+      },
+    ],
+  },
+  {
+    title: 'Instagram Analytics',
+    links: [
+      {
+        title: 'Overview',
+        href: '/docs/deep-dives/instagram-analytics',
+      },
+      {
+        title: 'Dashboard Guide',
+        href: '/docs/deep-dives/instagram-analytics/dashboard',
+      },
+      {
+        title: 'Backend & Token Operations',
+        href: '/docs/deep-dives/instagram-analytics/backend-token',
+      },
+      {
+        title: 'Troubleshooting',
+        href: '/docs/deep-dives/instagram-analytics/troubleshooting',
+      },
+    ],
+  },
+  {
+    title: 'Partnerships CRM',
+    links: [
+      {
+        title: 'Overview',
+        href: '/docs/deep-dives/partnerships-crm',
+      },
+      {
+        title: 'Architecture & File Map',
+        href: '/docs/deep-dives/partnerships-crm/architecture',
+      },
+      {
+        title: 'Data Model',
+        href: '/docs/deep-dives/partnerships-crm/data-model',
+      },
+      {
+        title: 'Admin Workflows',
+        href: '/docs/deep-dives/partnerships-crm/admin-workflows',
+      },
+      {
+        title: 'Overview Tab',
+        href: '/docs/deep-dives/partnerships-crm/overview-tab',
+      },
+      {
+        title: 'Partners Tab',
+        href: '/docs/deep-dives/partnerships-crm/partners-tab',
+      },
+      {
+        title: 'Events Tab',
+        href: '/docs/deep-dives/partnerships-crm/events-tab',
+      },
+      {
+        title: 'Backend API',
+        href: '/docs/deep-dives/partnerships-crm/backend-api',
+      },
+      {
+        title: 'Email Ops',
+        href: '/docs/deep-dives/partnerships-crm/email-ops',
+      },
+      {
+        title: 'Gmail Sync Setup',
+        href: '/docs/deep-dives/partnerships-crm/gmail-sync',
+      },
+      {
+        title: 'Google Sheets Sync',
+        href: '/docs/deep-dives/partnerships-crm/google-sheets-sync',
+      },
+      {
+        title: 'Google Sheets Mapping',
+        href: '/docs/deep-dives/partnerships-crm/google-sheets-mapping',
+      },
+      {
+        title: 'Troubleshooting',
+        href: '/docs/deep-dives/partnerships-crm/troubleshooting',
+      },
+    ],
+  },
+  {
     title: 'API Docs (Legacy)',
     links: [
       {

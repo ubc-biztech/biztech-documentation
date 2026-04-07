@@ -54,6 +54,8 @@ Because both dev and staging have an empty suffix, they read from the same table
 | `biztechPrizes` | `id` (string) | - | Prize catalog |
 | `biztechTransactions` | `id` (string = UUID) | - | Point transactions |
 | `biztechInvestments` | `id` (string = UUID) | `eventID;year` (string) | Kickstart investments |
+| `biztechEventFeedback` | `id` (string = UUID) | - | Event attendee/partner feedback submissions |
+| `biztechInstagramAuth` | `id` (string) | - | Stored Instagram access token state |
 
 ### Connection & Real-Time Tables
 

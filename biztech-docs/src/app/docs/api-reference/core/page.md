@@ -12,7 +12,7 @@ The fundamental CRUD endpoints for events, registrations, users, and members. {%
 
 ## Events
 
-Manage events: create, read, update, delete, and image upload.
+Manage events: create, read, update, delete, image upload, and built-in feedback forms.
 
 | Method | Path | Auth | Description |
 | --- | --- | --- | --- |
@@ -23,6 +23,9 @@ Manage events: create, read, update, delete, and image upload.
 | `DELETE` | `/events/{eventId}/{year}` | 🔑 | Delete an event (admin only) |
 | `GET` | `/events/nearest` | 🌐 | Get the nearest upcoming event |
 | `POST` | `/events/upload` | 🔓 | Get a presigned S3 URL for image upload |
+| `GET` | `/events/{eventId}/{year}/feedback/{formType}` | 🌐 | Get attendee/partner feedback form metadata |
+| `POST` | `/events/{eventId}/{year}/feedback/{formType}` | 🌐 | Submit attendee/partner feedback |
+| `GET` | `/events/{eventId}/{year}/feedback/{formType}/submissions` | 🔓 | Admin: list feedback submissions |
 
 ### `POST /events`: Create Event
 
@@ -43,6 +46,10 @@ Manage events: create, read, update, delete, and image upload.
 | `isApplicationBased` | boolean | | Requires application to register |
 | `pricing` | object | | `{ nonMember: number, member: number }` |
 | `registrationQuestions` | array | | Custom registration form questions |
+| `attendeeFeedbackEnabled` | boolean | | Enable attendee feedback form |
+| `partnerFeedbackEnabled` | boolean | | Enable partner feedback form |
+| `attendeeFeedbackQuestions` | array | | Attendee feedback question config |
+| `partnerFeedbackQuestions` | array | | Partner feedback question config |
 
 ### `GET /events/{eventId}/{year}`
 

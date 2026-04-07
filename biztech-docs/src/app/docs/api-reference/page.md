@@ -40,7 +40,7 @@ The API reference is split into three sections for easier navigation:
 
 | Service | # Endpoints | Auth | Section |
 | --- | --- | --- | --- |
-| Events | 7 | 🔓 / 🌐 | [Core](/docs/api-reference/core) |
+| Events | 10+ | 🔓 / 🌐 | [Core](/docs/api-reference/core) |
 | Registrations | 7 | 🔓 | [Core](/docs/api-reference/core) |
 | Users | 8 | 🔓 / 🌐 | [Core](/docs/api-reference/core) |
 | Members | 7 | 🔓 / 🔑 | [Core](/docs/api-reference/core) |
@@ -55,6 +55,7 @@ The API reference is split into three sections for easier navigation:
 | Investments | 4 | 🔓 | [Admin](/docs/api-reference/admin) |
 | Emails | 5 | 🔑 | [Admin](/docs/api-reference/admin) |
 | Bots | 5 | 🌐 | [Admin](/docs/api-reference/admin) |
+| Instagram Analytics | 3 + scheduled job | 🔓 | [Admin](/docs/api-reference/admin) |
 | Prizes | 4 | 🔓 / 🔑 | [Admin](/docs/api-reference/admin) |
 | Transactions | 2 | 🔓 | [Admin](/docs/api-reference/admin) |
 | Stickers | WebSocket + 6 | 🔓 | [Admin](/docs/api-reference/admin) |
