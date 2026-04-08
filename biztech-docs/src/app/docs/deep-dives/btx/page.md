@@ -29,7 +29,7 @@ Admin creates projects → Attendees trade → Prices move → WebSocket broadca
 
 ## Key Files
 
-### Backend (`services/btx/`)
+### Backend (services/btx/)
 
 | File             | What it does                                                                 |
 | ---------------- | ---------------------------------------------------------------------------- |

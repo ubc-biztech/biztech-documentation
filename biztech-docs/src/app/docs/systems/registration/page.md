@@ -96,7 +96,7 @@ The form has two sections:
 }
 ```
 
-### 4. Backend Processing (`handler.js` → `post`)
+### 4. Backend Processing (handler.js → post)
 
 1. **Validate**: Email format, eventID (string), year (number), required fields
 2. **Event check**: Query `biztechEvents` — 404 if not found
@@ -138,9 +138,135 @@ If the event is full, the handler changes `registrationStatus` from `"registered
 
 ---
 
+## Registration Status Values
+
+Every registration has a `registrationStatus` and optionally an `applicationStatus`:
+
+| `registrationStatus` | Meaning                                                    |
+| -------------------- | ---------------------------------------------------------- |
+| `"registered"`       | Confirmed and attending                                    |
+| `"waitlist"`         | Event was full at registration time                        |
+| `"incomplete"`       | Started registration, payment pending (paid events)        |
+| `"checkedIn"`        | Checked in at the event                                    |
+| `"cancelled"`        | Cancelled by user or admin                                 |
+| `"accepted"`         | Application accepted, needs payment (paid app events)      |
+| `"acceptedPending"`  | Application accepted, needs confirmation (free app events) |
+| `"acceptedComplete"` | Application accepted + confirmed/paid                      |
+
+| `applicationStatus` | Meaning                             |
+| ------------------- | ----------------------------------- |
+| `"reviewing"`       | Application submitted, under review |
+| `"accepted"`        | Application accepted                |
+| `"rejected"`        | Application rejected                |
+| `"waitlist"`        | Application waitlisted              |
+
+---
+
+## End-to-End Trace: Free Event Registration
+
+What happens when a user clicks "Register" on a free event, from button click to database write and email sent:
+
+### 1. Frontend submit
+
+- User clicks Register → `handleSubmit()` in `register/index.tsx` (line ~260)
+- Builds payload with `basicInformation` + `dynamicResponses`
+- Calls `state.regForFree(payload)` on `RegistrationStateOld`
+- `regForFree()` sets `registrationStatus: "registered"`, `applicationStatus: ""`
+- POSTs to `/registrations` via `fetchBackend`
+
+### 2. Backend handler (post in handler.js)
+
+- Parses body, normalizes email to lowercase
+- Validates required fields: `email`, `eventID`, `year`, `registrationStatus`
+- Fetches event from `biztechEvents` table — 404 if not found
+- Checks for existing registration in `biztechRegistrations`
+  - If duplicate with `"incomplete"` status → returns existing `checkoutLink`
+  - If duplicate with other status → returns 400
+
+### 3. Capacity check
+
+- Calls `getEventCounts(eventID, year)` in `helpers.js`
+- Queries all registrations for this event via the `event-query` GSI
+- Counts by status: `registeredCount`, `checkedInCount`, `waitlistCount`
+- If `registeredCount >= event.capac` → **overrides status to `"waitlist"`**
+
+### 4. Emails sent
+
+- **QR code email** via `SESEmailService.sendDynamicQR()` — generates a QR image from `"email;eventID;year;fname"`, embeds it inline in an HTML email. Sent via AWS SES (nodemailer), from `dev@ubcbiztech.com`
+- **Calendar invite email** via `SESEmailService.sendCalendarInvite()` — generates an `.ics` file with event title, location, start/end time. Attached to email via SES
+- If waitlisted: QR email still sent (with "waitlist" status text), but **no calendar invite**
+
+### 5. Database write
+
+- `createRegistration()` calls DynamoDB `UpdateItem` on `biztechRegistrations`
+- Key: `{ id: email, "eventID;year": "eventID;year" }`
+- Uses `ConditionExpression: "attribute_not_exists(id)"` to prevent overwrites
+- Sets `createdAt` timestamp for new records
+- Returns 201
+
+### 6. Slack notification
+
+- Publishes to SNS topic (`process.env.SNS_TOPIC_ARN`)
+- Payload: `{ type: "registration_update", email, eventID, year, registrationStatus, timestamp }`
+- The bots service subscribes to SNS and posts to the Slack channel
+- SNS failure is caught and logged — does **not** fail the registration
+
+### 7. Frontend redirect
+
+- On success, `router.push(/event/{id}/{year}/register/success)`
+
+---
+
+## End-to-End Trace: Paid Event Registration
+
+### 1. Frontend submit
+
+- Calls `state.regForPaid(payload)` → sets `registrationStatus: "incomplete"`
+- POSTs to `/registrations` to create an incomplete record
+- Then POSTs to `/payments` with `paymentType: "Event"`, `success_url`, `email`, `eventID`, `year`
+- Backend creates a Stripe Checkout session and returns `session.url`
+- Frontend redirects to Stripe via `window.open(url, "_self")`
+
+### 2. No emails at registration time
+
+- `sendEmail()` skips `"incomplete"` status entirely — no QR, no calendar invite
+
+### 3. After Stripe payment
+
+- Stripe sends `checkout.session.completed` webhook to `POST /payments/webhook`
+- Webhook verifies signature, reads `metadata.paymentType === "Event"`
+- Calls `eventRegistration()` → queries the existing incomplete registration → updates status to `"registered"`
+- The update triggers `sendEmail()` again with `"registered"` status → QR + calendar emails sent
+
+### 4. Re-registration shortcut
+
+If a user tries to register again while they have an `"incomplete"` registration, the backend returns the existing `checkoutLink` (saved Stripe session URL) instead of creating a new one.
+
+---
+
+## Application-Based Events
+
+Application events have an additional review step between registration and confirmation.
+
+### Free application event
+
+1. Frontend calls `regForFreeApp()` → sets `registrationStatus: "registered"`, `applicationStatus: "reviewing"`
+2. Backend sends an application confirmation email (not a QR code)
+3. Admin reviews and accepts → status becomes `"acceptedPending"`
+4. User confirms attendance via `confirmAttendance()` → status becomes `"acceptedComplete"`
+
+### Paid application event
+
+1. Frontend calls `regForPaidApp()` → sets `registrationStatus: "incomplete"`, `applicationStatus: "reviewing"`
+2. After Stripe payment → `registrationStatus` becomes `"registered"`
+3. Admin reviews and accepts → `registrationStatus` becomes `"accepted"`
+4. User pays remaining or confirms → `registrationStatus` becomes `"acceptedComplete"`
+
+---
+
 ## Post-Registration: Check-In
 
-At the event, admins check attendees in via QR scanner or the dashboard. Check-in calls `PUT /registrations/{email}/{fname}` with `registrationStatus: "checkedIn"`.
+At the event, admins check attendees in via QR scanner or the event dashboard. Check-in calls `PUT /registrations/{email}/{fname}` with `registrationStatus: "checkedIn"`. After check-in, the NFC popup appears automatically for card writing.
 
 ---
 

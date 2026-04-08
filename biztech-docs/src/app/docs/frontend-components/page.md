@@ -41,7 +41,7 @@ If a component is used by only one page, it can live in that page's feature dire
 
 ---
 
-## UI Primitives (`src/components/ui/`)
+## UI Primitives (src/components/ui/)
 
 These are our building blocks. Most come from [shadcn/ui](https://ui.shadcn.com/) and are built on Radix UI primitives. They're unstyled by default and use Tailwind for styling.
 
@@ -85,7 +85,7 @@ This generates the component in `src/components/ui/` with proper Tailwind stylin
 
 ---
 
-## Common Components (`src/components/Common/`)
+## Common Components (src/components/Common/)
 
 Shared components used across multiple pages:
 

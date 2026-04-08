@@ -1,0 +1,20 @@
+name: Trigger Bot Update
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger serverless bot deploy
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.SERVERLESS_REPO_DISPATCH_TOKEN }}
+          repository: ubc-biztech/serverless-biztechapp
+          event-type: biztech_docs_updated
+          client-payload: '{"source_repository":"${{ github.repository }}","source_branch":"${{ github.ref_name }}","source_sha":"${{ github.sha }}"}'

@@ -31,7 +31,7 @@ Every API call follows the same path:
 
 All API calls go through one of two functions in `src/lib/db.ts`:
 
-### Client-Side (`fetchBackend`)
+### Client-Side (fetchBackend)
 
 Used in React components, hooks, and React Query queries:
 
@@ -50,7 +50,7 @@ This function:
 4. Parses the JSON response
 5. Throws on non-200 responses with `{ status, message }`
 
-### Server-Side (`fetchBackendFromServer`)
+### Server-Side (fetchBackendFromServer)
 
 Used in `getServerSideProps` and the Next.js middleware:
 
@@ -134,7 +134,7 @@ export const get = async (event) => {
 }
 ```
 
-### The `event` Object
+### The event Object
 
 The Lambda `event` object contains:
 

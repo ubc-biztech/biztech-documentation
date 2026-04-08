@@ -33,7 +33,7 @@ All 21 backend services share a single API Gateway REST API. The `hello` service
 
 ## How the Shared Gateway Works
 
-### Step 1: `hello` Creates It
+### Step 1: hello Creates It
 
 The `hello` service (`services/hello/serverless.yml`) is the only service that creates the REST API resource. It exports two CloudFormation values:
 

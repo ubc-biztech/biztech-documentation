@@ -49,9 +49,44 @@ EventsDashboard (admin page)
 
 ---
 
-## Database Records
+## Where Are User Connections Stored?
 
-### Member Card Count
+Connections are stored in the `biztechProfiles` table (constant: `PROFILES_TABLE` in `constants/tables.js`). They are **not** in the `bizConnections` table — that table exists but is unused.
+
+### Table keys
+
+| Key | Attribute     | Pattern                       |
+| --- | ------------- | ----------------------------- |
+| PK  | `compositeID` | `PROFILE#<profileID>`         |
+| SK  | `type`        | `CONNECTION#<otherProfileID>` |
+
+Profile records themselves use `type: "PROFILE"`. Connection records use `type: "CONNECTION#<targetID>"`.
+
+### Bidirectional edges
+
+Each connection creates **two records** via `db.putMultiple()`:
+
+1. `{ compositeID: "PROFILE#userA", type: "CONNECTION#userB", ... }` — User A's record
+2. `{ compositeID: "PROFILE#userB", type: "CONNECTION#userA", ... }` — User B's record
+
+### Attributes on each connection record
+
+Each record stores a denormalized snapshot of the target profile:
+
+- `connectionID` — target's profileID
+- `connectionType` — `ATTENDEE`, `PARTNER`, or `EXEC`
+- `fname`, `lname`, `pronouns`, `major`, `year`, `company`, `title`
+- `createdAt` — epoch milliseconds
+
+### Querying connections
+
+- **Get all for a user:** Query `compositeID = "PROFILE#<profileID>" AND begins_with(type, "CONNECTION#")`
+- **Check if connected:** Direct `GetItem` with `{ compositeID, type }`
+- No GSIs needed — all queries use the table's primary key
+
+---
+
+## Member Card Count
 
 The member's card count is tracked in the members table:
 
@@ -59,23 +94,11 @@ The member's card count is tracked in the members table:
 {
   "id": "benny@student.ubc.ca",
   "profileID": "abc-123-def",
-  "cardCount": 1,
-  "...other fields"
+  "cardCount": 1
 }
 ```
 
 When a card is written, `cardCount` is incremented via `PATCH /members/{email}`.
-
-### Profile Connection Records
-
-Connections are stored in the profiles table with composite keys:
-
-```
-compositeID: PROFILE#<userProfileID>
-type: CONNECTION#<otherProfileID>
-```
-
-Each record includes the connected person's name, major, year, company, pronouns, and the timestamp.
 
 ---
 

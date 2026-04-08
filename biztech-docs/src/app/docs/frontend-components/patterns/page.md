@@ -12,7 +12,7 @@ How we fetch data, handle forms, write styles, and structure code in the BizTech
 
 ## Data Fetching with React Query
 
-### Query Hooks (`src/queries/`)
+### Query Hooks (src/queries/)
 
 Each query hook follows this pattern:
 

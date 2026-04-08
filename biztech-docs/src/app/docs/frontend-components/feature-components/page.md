@@ -10,7 +10,7 @@ A walkthrough of the major feature components that make up the BizTech app, cove
 
 ---
 
-## NavBar (`src/components/NavBar/`)
+## NavBar (src/components/NavBar/)
 
 The main navigation component. Handles two modes:
 
@@ -25,7 +25,7 @@ The NavBar shows admin tabs only when the user has an `@ubcbiztech.com` email.
 
 ---
 
-## EventsDashboard (`src/components/EventsDashboard/`)
+## EventsDashboard (src/components/EventsDashboard/)
 
 The admin event dashboard at `/admin/event/[eventId]/[year]` uses a tab system:
 
@@ -45,7 +45,7 @@ The `DataTab` wraps the `RegistrationTable` component which is a feature-rich da
 
 ---
 
-## Registration Table (`src/components/RegistrationTable/`)
+## Registration Table (src/components/RegistrationTable/)
 
 This is one of the most complex components. Key pieces:
 
@@ -60,7 +60,7 @@ This is one of the most complex components. Key pieces:
 
 ---
 
-## Event Forms (`src/components/Events/`)
+## Event Forms (src/components/Events/)
 
 The event creation and editing forms:
 
@@ -74,7 +74,7 @@ The event creation and editing forms:
 
 ---
 
-## Companion (`src/components/Companion/`)
+## Companion (src/components/Companion/)
 
 The companion app shell:
 
@@ -88,7 +88,7 @@ The companion app shell:
 
 ---
 
-## LiveWall (`src/components/LiveWall/`)
+## LiveWall (src/components/LiveWall/)
 
 Real-time connection visualization:
 
@@ -101,7 +101,7 @@ Both connect via WebSocket to receive new connections in real-time and animate t
 
 ---
 
-## Feature Modules (`src/features/`)
+## Feature Modules (src/features/)
 
 Feature modules are event-specific UIs that plug into the companion system. Each follows this pattern:
 

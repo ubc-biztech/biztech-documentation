@@ -3,89 +3,135 @@ title: 'Event Feedback: Admin Form Builder'
 nextjs:
   metadata:
     title: 'Event Feedback Admin Builder'
-    description: 'How execs create and maintain attendee and partner feedback forms from the admin dashboard.'
+    description: 'How admins create and manage attendee and partner feedback forms — the builder interface, question types, save behavior, QR sharing, and response review.'
 ---
 
-This page covers the exec workflow for building and reviewing event feedback forms in the admin dashboard.
+How admins build feedback forms and review submissions from the event dashboard. {% .lead %}
 
 ---
 
 ## Where to Find It
 
-Path: `/admin/event/{eventId}/{year}`
+**Page:** `src/pages/admin/event/[eventId]/[year]/index.tsx`
+**Tab Component:** `src/components/EventsDashboard/FeedbackTab.tsx`
+**Question Builder:** `src/components/Events/FeedbackQuestionsBuilder.tsx`
 
-Open the **Feedback** tab (next to Data Table, Teams, and Analytics).
+Path: `/admin/event/{eventId}/{year}` → **Feedback** tab (next to Data Table, Teams, and Analytics).
 
 ---
 
 ## Builder Mode
 
-### 1. Enable forms
+### 1. Enable Forms
 
-Execs can independently toggle:
-- attendee form (`attendeeFeedbackEnabled`)
-- partner form (`partnerFeedbackEnabled`)
+Admins independently toggle:
 
-At least one must be enabled to collect responses.
+- **Attendee form** (`attendeeFeedbackEnabled`)
+- **Partner form** (`partnerFeedbackEnabled`)
 
-### 2. Define questions
+At least one must be enabled for feedback collection.
 
-Question builder supports:
+### 2. Define Questions
 
-| Type | Notes |
-| --- | --- |
-| `SHORT_TEXT` | Single-line style answer, max 280 chars |
-| `LONG_TEXT` | Longer freeform answer, max 4000 chars |
-| `MULTIPLE_CHOICE` | Single selection |
-| `CHECKBOXES` | Multi selection |
-| `LINEAR_SCALE` | Integer scale with min/max + labels |
+`FeedbackQuestionsBuilder.tsx` provides the question editor interface. Supported types:
 
-### 3. Default locked question
+| Type              | Description                     | Constraints                 |
+| ----------------- | ------------------------------- | --------------------------- |
+| `SHORT_TEXT`      | Single-line text answer         | Max 280 characters          |
+| `LONG_TEXT`       | Multi-line freeform answer      | Max 4000 characters         |
+| `MULTIPLE_CHOICE` | Single selection from options   | Requires ≥2 choices         |
+| `CHECKBOXES`      | Multiple selection from options | Requires ≥2 choices         |
+| `LINEAR_SCALE`    | Integer rating with labels      | Min/max 0-20, integers only |
 
-Each form always includes:
-- ID: `overall-rating`
-- Label: `How would you rate this event overall?`
-- Type: `LINEAR_SCALE`
-- Required: `true`
-- Range: `1` to `10`
+For each question, admins set:
 
-This question is locked in the UI (cannot be removed or modified).
+- Question label (max 500 characters)
+- Required flag
+- Type-specific config (choices for selectable types, scale bounds and labels for linear scale)
 
-### 4. Save behavior
+### 3. Default Locked Question
 
-Click **Save Feedback Forms** to patch the event record with:
-- form enabled flags
-- normalized question arrays for attendee/partner
+Every feedback form starts with a locked question that cannot be removed or modified:
 
-Backend validation runs before save is accepted (question type validity, options, scale bounds, etc).
+- **questionId:** `overall-rating`
+- **Type:** `LINEAR_SCALE`
+- **Label:** "How would you rate this event overall?"
+- **Required:** `true`
+- **Range:** 1 to 10 ("Poor" → "Excellent")
+
+This is enforced by `ensureDefaultOverallRatingQuestion()` in `feedbackHelpers.js`. The builder UI shows it as non-editable.
+
+### 4. Save Behavior
+
+Clicking **Save Feedback Forms** sends `PATCH /events/{id}/{year}` with:
+
+- `attendeeFeedbackEnabled` / `partnerFeedbackEnabled` flags
+- `attendeeFeedbackQuestions` / `partnerFeedbackQuestions` arrays
+
+Backend validation runs before the save is accepted:
+
+- `normalizeFeedbackQuestions()` validates types, labels, choices, scale bounds
+- Assigns UUIDs to new questions
+- Rejects duplicate questionIds
+- Max 50 questions per form
+- If enabled but no custom questions → returns 406
 
 ---
 
-## QR + Share Links
+## QR and Share Links
 
-The tab auto-generates one QR card per form:
-- attendee form QR
-- partner form QR
+The Feedback tab auto-generates QR codes and links for distribution:
+
+| Form     | Public URL                             |
+| -------- | -------------------------------------- |
+| Attendee | `/event/{id}/{year}/feedback/attendee` |
+| Partner  | `/event/{id}/{year}/feedback/partner`  |
 
 Each card includes:
-- direct public URL
-- copy-link action
-- open-in-new-tab action
+
+- QR code image
+- Direct public URL
+- Copy-link button
+- Open-in-new-tab button
+
+These URLs are public — attendees can submit feedback without logging in.
 
 ---
 
 ## Responses Mode
 
-Responses mode fetches both metadata and submissions for attendee + partner forms.
+The Feedback tab also shows submitted responses via `GET /events/{id}/{year}/feedback/{formType}/submissions`.
 
 Features:
-- role toggle (`attendee` / `partner`)
-- quick stats (submission count, identified responses, avg overall rating, latest response)
-- sort modes (newest, oldest, top rated, low rated)
-- full-text search across contact info + answers
-- expandable response cards
-- export current tab as JSON
+
+- **Role toggle** — switch between attendee and partner submissions
+- **Quick stats** — submission count, identified responses, average overall rating, latest response time
+- **Sort modes** — newest, oldest, top rated, lowest rated
+- **Full-text search** — across respondent name, email, and answer text
+- **Expandable cards** — click to expand individual responses
+- **JSON export** — export the current tab's responses
 
 {% callout title="Auth behavior" %}
-Public submissions are unauthenticated, but viewing response lists is admin-only (`GET /events/{id}/{year}/feedback/{formType}/submissions` requires Cognito auth).
+Public submissions are unauthenticated (anyone can submit), but viewing response lists requires Cognito auth (`GET .../submissions` is admin-only).
 {% /callout %}
+
+---
+
+## Key Files
+
+| File                                                    | Purpose                                               |
+| ------------------------------------------------------- | ----------------------------------------------------- |
+| `src/components/EventsDashboard/FeedbackTab.tsx`        | Tab component — builder + responses                   |
+| `src/components/Events/FeedbackQuestionsBuilder.tsx`    | Question editor interface                             |
+| `services/events/handler.js` → `update`                 | Saves feedback config via PATCH                       |
+| `services/events/handler.js` → `getFeedbackSubmissions` | Returns submissions                                   |
+| `services/events/feedbackHelpers.js`                    | Question normalization and default question injection |
+
+---
+
+## Related Pages
+
+- [Event Feedback Overview](/docs/deep-dives/event-feedback) — end-to-end feedback architecture
+- [Public Forms](/docs/deep-dives/event-feedback/public-forms) — the attendee-facing feedback form
+- [Backend API](/docs/deep-dives/event-feedback/backend-api) — endpoints and validation pipeline
+- [Admin Event Management](/docs/systems/admin-events) — the full admin dashboard

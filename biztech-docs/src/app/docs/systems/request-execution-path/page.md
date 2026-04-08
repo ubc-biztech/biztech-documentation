@@ -49,7 +49,7 @@ React Query checks its cache first. If the data is still fresh (within `staleTim
 
 ---
 
-## Step 2: `fetchBackend()` Sends the Request
+## Step 2: fetchBackend() Sends the Request
 
 If the cache is stale or empty, `fetchBackend()` in `src/lib/db.ts` runs:
 

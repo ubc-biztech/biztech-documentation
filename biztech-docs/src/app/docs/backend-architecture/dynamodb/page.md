@@ -36,7 +36,7 @@ export const MEMBERS_TABLE = 'biztechMembers2026'
 
 ### Read Operations
 
-#### `getOne(id, table, extraKeys?)`
+#### getOne(id, table, extraKeys?)
 
 Fetches a single item by primary key. Returns the item or `null`.
 
@@ -50,11 +50,11 @@ const event = await db.getOne('blueprint', EVENTS_TABLE, { year: 2026 })
 
 DynamoDB operation: `GetItem`
 
-#### `getOneCustom(params)`
+#### getOneCustom(params)
 
 Pass a raw DynamoDB `GetItem` params object. For non-standard key shapes.
 
-#### `scan(table, filterObj?, indexName?)`
+#### scan(table, filterObj?, indexName?)
 
 Fetches all items from a table. Automatically paginates (loops until `LastEvaluatedKey` is null).
 
@@ -72,7 +72,7 @@ DynamoDB operation: `Scan` (paginated)
 Scan reads every item in the table. For large tables, prefer `query` with an index.
 {% /callout %}
 
-#### `query(table, indexName, keyConditionExpression, expressionAttributeValues)`
+#### query(table, indexName, keyConditionExpression, expressionAttributeValues)
 
 Queries a table or index with a key condition. Much faster than scan for targeted lookups.
 
@@ -87,7 +87,7 @@ const regs = await db.query(
 
 DynamoDB operation: `Query`
 
-#### `batchGet(table, keys)`
+#### batchGet(table, keys)
 
 Fetches multiple items by their primary keys in a single request (max 100 per call).
 
@@ -104,7 +104,7 @@ DynamoDB operation: `BatchGetItem`
 
 ### Write Operations
 
-#### `create(item, table)`
+#### create(item, table)
 
 Creates a new item. **Fails if an item with the same key already exists** (uses a conditional expression).
 
@@ -124,7 +124,7 @@ DynamoDB operation: `PutItem` with `ConditionExpression: 'attribute_not_exists(i
 
 Throws `ConditionalCheckFailedException` if the item exists → handler typically returns 409.
 
-#### `put(item, table, createNew?)`
+#### put(item, table, createNew?)
 
 Creates or overwrites an item. If `createNew` is true, adds the `attribute_not_exists` condition (same as `create`).
 
@@ -138,7 +138,7 @@ await db.put(item, EVENTS_TABLE, true)
 
 DynamoDB operation: `PutItem`
 
-#### `updateDB(id, updateObj, table, extraKeys?)`
+#### updateDB(id, updateObj, table, extraKeys?)
 
 Partial update — only modifies the specified fields, leaving others untouched. Automatically generates the `UpdateExpression`.
 
@@ -162,15 +162,15 @@ Under the hood, `updateDB` calls `createUpdateExpression()` which:
 
 DynamoDB operation: `UpdateItem`
 
-#### `updateDBCustom(params)`
+#### updateDBCustom(params)
 
 Pass a raw DynamoDB `UpdateItem` params object. For advanced update expressions.
 
-#### `putMultiple(items, table)`
+#### putMultiple(items, table)
 
 Writes multiple items in a batch. Uses `BatchWriteItem` under the hood.
 
-#### `writeMultiple(writeRequests)`
+#### writeMultiple(writeRequests)
 
 Executes a raw `BatchWriteItem` with custom write requests (can mix puts and deletes across tables).
 
@@ -178,7 +178,7 @@ Executes a raw `BatchWriteItem` with custom write requests (can mix puts and del
 
 ### Delete Operations
 
-#### `deleteOne(id, table, extraKeys?)`
+#### deleteOne(id, table, extraKeys?)
 
 Deletes a single item by primary key.
 
@@ -188,7 +188,7 @@ await db.deleteOne('blueprint', EVENTS_TABLE, { year: 2026 })
 
 DynamoDB operation: `DeleteItem`
 
-#### `batchDelete(table, keys)`
+#### batchDelete(table, keys)
 
 Deletes multiple items by their primary keys in a single batch.
 
@@ -196,7 +196,7 @@ Deletes multiple items by their primary keys in a single batch.
 
 ### Utility Functions
 
-#### `createUpdateExpression(updateObj)`
+#### createUpdateExpression(updateObj)
 
 Generates the `UpdateExpression`, `ExpressionAttributeNames`, and `ExpressionAttributeValues` from a plain JavaScript object. Handles DynamoDB reserved words automatically.
 
@@ -210,7 +210,7 @@ const expr = db.createUpdateExpression({ name: 'New Name', capac: 100 })
 // }
 ```
 
-#### `dynamoErrorResponse(err)`
+#### dynamoErrorResponse(err)
 
 Formats a DynamoDB error into a structured error object for logging.
 

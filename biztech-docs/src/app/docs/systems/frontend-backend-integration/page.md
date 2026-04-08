@@ -23,7 +23,7 @@ Both do the same thing: build a request to the backend API, attach an auth token
 
 ---
 
-## `fetchBackend()` — Client-Side
+## fetchBackend() — Client-Side
 
 ```typescript
 import { fetchBackend } from '@/lib/db'
@@ -60,7 +60,7 @@ const user = await fetchBackend({
 
 ---
 
-## `fetchBackendFromServer()` — Server-Side
+## fetchBackendFromServer() — Server-Side
 
 Used in `getServerSideProps` to fetch data before the page renders:
 

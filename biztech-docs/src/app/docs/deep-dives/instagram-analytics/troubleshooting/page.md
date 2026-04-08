@@ -12,7 +12,7 @@ Use this page when the dashboard fails to load or metrics look off.
 
 ## Common Errors
 
-### `Instagram access token is not configured on the server.`
+### Instagram access token is not configured on the server.
 
 Check:
 
@@ -22,7 +22,7 @@ Check:
 
 ---
 
-### Date validation errors (`406`)
+### Date validation errors (406)
 
 - invalid format: must be `YYYY-MM-DD`
 - `since` after `until`

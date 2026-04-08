@@ -1,97 +1,49 @@
 ---
-title: Members API
+title: Members Service
 nextjs:
   metadata:
-    title: Members API
-    description: This service is responsible for managing BizTech members, including creating, retrieving, updating, and deleting member records stored in DynamoDB.
+    title: Members Service
+    description: The Members service manages BizTech membership records — CRUD operations on biztechMembers2026 and the grant flow.
 ---
 
-# Members API
-*This service is responsible for managing BizTech members, including creating, retrieving, updating, and deleting member records stored in DynamoDB.*
-
----
-
-## Authentication & Authorization
-- All endpoints (except `POST /members`) require **Cognito authentication**.
-- Only users with `@ubcbiztech.com` emails are authorized to call this service.
-- Unauthorized users will receive a `403 Unauthorized` response.
+The Members service manages membership records in the `biztechMembers2026` DynamoDB table. **All endpoints are admin-only** (caller must have a `@ubcbiztech.com` email). Handlers are in `services/members/handler.js`. {% .lead %}
 
 ---
 
-## POST /members/
-Creates a new member record.
+## Endpoints
 
-**Request**
+| Method   | Path                         | Handler               | Description                   |
+| -------- | ---------------------------- | --------------------- | ----------------------------- |
+| `POST`   | `/members`                   | `create`              | Create a member record        |
+| `GET`    | `/members/{id}`              | `get`                 | Get a member by email         |
+| `GET`    | `/members`                   | `getAll`              | List all members              |
+| `PATCH`  | `/members/{id}`              | `update`              | Update a member record        |
+| `DELETE` | `/members/{id}`              | `del`                 | Delete a member record        |
+| `POST`   | `/members/grant`             | `grantMembership`     | Grant membership              |
+| `GET`    | `/members/email/{profileID}` | `getEmailFromProfile` | Look up email from profile ID |
 
-| Headers       | Type         | Required? |
-| ------------- | ------------ | --------- |
-| Authorization | Bearer Token | Y         |
+All endpoints require Cognito authentication + `@ubcbiztech.com` email.
 
-| Body Property      | Description                   | Required? |
-| ------------------ | ----------------------------- | --------- |
-| email              | Email address (unique ID)     | Y         |
-| first_name         | First name                    | Y         |
-| last_name          | Last name                     | Y         |
-| pronouns           | Pronouns                      | N         |
-| student_number     | Student number                | N         |
-| faculty            | Faculty name                  | N         |
-| year               | Year of study                 | N         |
-| major              | Major/Program                 | N         |
-| prev_member        | Whether user is a returning member (boolean) | N |
-| international      | International student (boolean) | N       |
-| education          | Current education status      | N         |
-| topics             | Interests/topics array        | N         |
-| heard_from         | How they heard of BizTech     | N         |
-| heardFromSpecify   | Freeform detail on source     | N         |
-| diet               | Dietary restrictions          | N         |
-| university         | University name               | N         |
-| high_school        | High school name              | N         |
-| admin              | Admin flag (boolean)          | N         |
+---
 
-**Example Request**
-```javascript
-{
-  "email": "student@example.com",
-  "first_name": "Alice",
-  "last_name": "Wong",
-  "faculty": "Commerce",
-  "year": "3",
-  "major": "Accounting",
-  "prev_member": false,
-  "international": true,
-  "topics": ["Finance", "Tech"],
-  "heard_from": "Friend"
-}
-```
+## Tables
 
-**Response**
-```javascript
-{
-  "message": "Created!",
-  "params": {
-    "id": "student@example.com",
-    "firstName": "Alice",
-    "lastName": "Wong",
-    "faculty": "Commerce",
-    "year": "3",
-    "major": "Accounting",
-    "international": true,
-    "topics": ["Finance", "Tech"],
-    "createdAt": 1755702100000,
-    "updatedAt": 1755702100000
-  }
-}
-```
+The members service operates on multiple tables:
 
-**Errors**
-- `403` Unauthorized if caller is not `@ubcbiztech.com`.
-- `400` Invalid email format.
-- `409` Email already exists.
-- `502` Internal server error.
+| Table                | Role                                          |
+| -------------------- | --------------------------------------------- |
+| `biztechUsers`       | Updated during grant (`isMember` flag) |
+| `biztechMembers2026` | Primary member records                        |
+| `biztechProfiles`    | Created during grant if no profile exists     |
+
+{% callout type="note" title="Year-Suffixed Table" %}
+The table name `biztechMembers2026` includes the membership year. The constant `MEMBERS2026_TABLE` in `constants/tables.js` controls which year is active. When the year rolls over, this constant and the corresponding DynamoDB table must be updated.
+{% /callout %}
 
 ---
 
 ## GET /members/{id}
+
 Fetch a single member by email.
 
 **Request**
@@ -100,16 +52,18 @@ Fetch a single member by email.
 | ------------- | ------------ |
 | Authorization | Bearer Token |
 
-| Path Param | Description     |
-| ---------- | --------------- |
-| id         | Member’s email  |
+| Path Param | Description    |
+| ---------- | -------------- |
+| id         | Member’s email |
 
 **Example Request**
+
 ```
 GET /members/student@example.com
 ```
 
 **Response**
+
 ```javascript
 {
   "id": "student@example.com",
@@ -126,6 +80,7 @@ GET /members/student@example.com
 ```
 
 **Errors**
+
 - `403` Unauthorized
 - `400` Invalid email
 - `404` Member not found
@@ -133,6 +88,7 @@ GET /members/student@example.com
 ---
 
 ## GET /members/
+
 Fetch all members.
 
 **Request**
@@ -142,6 +98,7 @@ Fetch all members.
 | Authorization | Bearer Token |
 
 **Response**
+
 ```javascript
 {
   "message": "success",
@@ -169,6 +126,7 @@ Fetch all members.
 ---
 
 ## PATCH /members/{id}
+
 Update an existing member by email.
 
 **Request**
@@ -177,14 +135,16 @@ Update an existing member by email.
 | ------------- | ------------ |
 | Authorization | Bearer Token |
 
-| Path Param | Description     |
-| ---------- | --------------- |
-| id         | Member’s email  |
+| Path Param | Description    |
+| ---------- | -------------- |
+| id         | Member’s email |
 
 **Body**
+
 - Accepts any subset of the fields from `POST /members/`.
 
 **Example Request**
+
 ```javascript
 {
   "major": "Business Technology Management",
@@ -194,6 +154,7 @@ Update an existing member by email.
 ```
 
 **Response**
+
 ```javascript
 {
   "message": "Updated member with email student@example.com!",
@@ -209,6 +170,7 @@ Update an existing member by email.
 ```
 
 **Errors**
+
 - `403` Unauthorized
 - `400` Invalid email
 - `404` Member not found
@@ -216,6 +178,7 @@ Update an existing member by email.
 ---
 
 ## DELETE /members/{id}
+
 Delete a member by email.
 
 **Request**
@@ -224,16 +187,18 @@ Delete a member by email.
 | ------------- | ------------ |
 | Authorization | Bearer Token |
 
-| Path Param | Description     |
-| ---------- | --------------- |
-| id         | Member’s email  |
+| Path Param | Description    |
+| ---------- | -------------- |
+| id         | Member’s email |
 
 **Example Request**
+
 ```
 DELETE /members/student@example.com
 ```
 
 **Response**
+
 ```javascript
 {
   "message": "Member deleted!",
@@ -244,70 +209,83 @@ DELETE /members/student@example.com
 ```
 
 **Errors**
+
 - `403` Unauthorized
 - `400` Invalid email
 - `404` Member not found
 
 ---
 
-## POST /members/membership
-Grant or revoke a membership for an existing user. This endpoint also creates or deletes the member profile as part of the membership flow.
+## POST /members/grant
+
+Grant membership for a user. This endpoint creates or updates user, member, and profile records as needed. There is **no revocation path** — this handler only grants.
 
 **Request**
 
 | Headers       | Type         |
-| ------------ | ------------ | 
-| Authorization | Bearer Token | 
+| ------------- | ------------ |
+| Authorization | Bearer Token |
 
-| Body Property | Description |
-| ------------ | ----------- |
-| email        | User email (must already exist in `biztechUsers`) |
-| membership   | `true` to grant, `false` to revoke |
+The body must contain the full set of member fields (the handler reads all of them):
 
-**Example Request (Grant)**
+| Body Property         | Type     | Description                                 |
+| --------------------- | -------- | ------------------------------------------- |
+| email                 | String   | User email (required)                       |
+| firstName             | String   | First name                                  |
+| lastName              | String   | Last name                                   |
+| education             | String   | University or institution                   |
+| studentNumber         | String   | Student number                              |
+| pronouns              | String   | Pronouns                                    |
+| levelOfStudy / year   | String   | Year of study (handler checks both fields)  |
+| faculty               | String   | Faculty                                     |
+| major                 | String   | Major                                       |
+| internationalStudent  | Boolean  | International student flag                  |
+| previousMember        | Boolean  | Was a member in a previous year             |
+| dietaryRestrictions   | String   | Dietary restrictions                        |
+| referral              | String   | How they heard about BizTech                |
+| topics                | String[] | Topics of interest                          |
+
+**Example Request**
+
 ```javascript
 {
   "email": "isaacliu@gmail.com",
-  "membership": true
-}
-```
-
-**Example Request (Revoke)**
-```javascript
-{
-  "email": "kevinxiao27@gmail.com",
-  "membership": false
+  "firstName": "Isaac",
+  "lastName": "Liu",
+  "education": "University of British Columbia",
+  "studentNumber": "12345678",
+  "pronouns": "He/Him/His",
+  "levelOfStudy": "3",
+  "faculty": "Commerce",
+  "major": "BUCS",
+  "internationalStudent": false,
+  "previousMember": true,
+  "dietaryRestrictions": "None",
+  "referral": "Friend",
+  "topics": ["Finance", "Tech"]
 }
 ```
 
 **Response**
+
 ```javascript
 {
   "message": "Membership granted"
 }
 ```
 
-**Response (Revoke)**
-```javascript
-{
-  "message": "Membership revoked"
-}
-```
-
 **Behavior**
-- **Grant**
-  - Updates `biztechUsers.isMember = true`
-  - Creates a member row in `biztechMembers2026` if missing
-  - Creates a profile via `createProfile(...)` if none exists
-  - No behavior if membership already existed
-- **Revoke**
-  - Updates `biztechUsers.isMember = false`
-  - Deletes the member row from `biztechMembers2026`
-  - Deletes the profile from `biztechProfiles` (if it exists)
-  - No behavior if no membership exists
+
+1. If the user does not exist in `biztechUsers`, creates a new user record via `db.put`
+2. If the user exists, updates the user record via `db.updateDB` and sets `isMember: true`
+3. If no member record exists in `biztechMembers2026`, creates one with all provided fields plus `cardCount: 0`
+4. If no profile exists (checked via `profileID` on the member record), creates a profile via `createProfile()` — type is `EXEC` for `@ubcbiztech.com` emails, `ATTENDEE` otherwise
+
+{% callout type="warning" title="No Revocation" %}
+Despite the handler name, `grantMembership` only grants. There is no `membership: false` flag and no code path for revoking membership or deleting records. To revoke membership, update the DynamoDB records directly.
+{% /callout %}
 
 **Errors**
+
 - `403` Unauthorized if caller is not `@ubcbiztech.com`
 - `400` Invalid email format
-- `404` User not found
-- `502` Internal server error

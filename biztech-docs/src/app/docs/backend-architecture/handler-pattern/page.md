@@ -200,7 +200,7 @@ All from `lib/handlerHelpers.js`:
 
 ---
 
-## Complete Example: Events `create` Handler
+## Complete Example: Events create Handler
 
 ```javascript
 import helpers from '../../lib/handlerHelpers'

@@ -70,7 +70,7 @@ Admin-only endpoints additionally check the email domain in handler code:
 
 ## Local Development
 
-### How `index.js` Works
+### How index.js Works
 
 When you run `npm start`, the entry point (`index.js`) does the following:
 

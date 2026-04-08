@@ -3,29 +3,29 @@ title: Users Service
 nextjs:
   metadata:
     title: Users Service
-    description: API endpoints for the Users service in serverless-biztechapp-1, covering user CRUD, membership checks, favorites, and the GET /users/self pattern.
+    description: API endpoints for the Users service — user CRUD, membership checks, favorites, and the GET /users/self pattern.
 ---
 
-The Users service manages user accounts in the `biztechUsers` DynamoDB table. Handlers live in `services/users/handler.js`. {% .lead %}
+The Users service manages user accounts in the `biztechUsers` DynamoDB table. Handlers are in `services/users/handler.js`. {% .lead %}
 
 ---
 
 ## Endpoints
 
-| Method   | Path                             | Auth       | Description                                    |
-| -------- | -------------------------------- | ---------- | ---------------------------------------------- |
-| `POST`   | `/users`                         | 🌐         | Create a user                                  |
-| `GET`    | `/users/check/{email}`           | 🌐         | Check whether a user record exists             |
-| `GET`    | `/users/checkMembership/{email}` | 🌐         | Check whether a user's `isMember` flag is true |
-| `GET`    | `/users/{email}`                 | 🔓         | Get a user record (see behavior note below)    |
-| `GET`    | `/users`                         | 🔓 (admin) | List all users                                 |
-| `PATCH`  | `/users/{email}`                 | 🔓         | Update a user                                  |
-| `PATCH`  | `/users/favEvent/{email}`        | 🔓         | Toggle a favorite event                        |
-| `DELETE` | `/users/{email}`                 | 🔓         | Delete a user                                  |
+| Method   | Path                             | Auth          | Handler               | Description                        |
+| -------- | -------------------------------- | ------------- | --------------------- | ---------------------------------- |
+| `POST`   | `/users`                         | Public        | `create`              | Create a user                      |
+| `GET`    | `/users/check/{email}`           | Public        | `checkUser`           | Check whether a user record exists |
+| `GET`    | `/users/checkMembership/{email}` | Public        | `checkUserMembership` | Check `isMember` flag              |
+| `GET`    | `/users/{email}`                 | Cognito       | `get`                 | Get user record (see self pattern) |
+| `GET`    | `/users`                         | Cognito       | `getAll`              | List all users (no handler-level admin check) |
+| `PATCH`  | `/users/{email}`                 | Cognito       | `update`              | Update a user                      |
+| `PATCH`  | `/users/favEvent/{email}`        | Cognito       | `favouriteEvent`      | Toggle a favorite event            |
+| `DELETE` | `/users/{email}`                 | Cognito       | `del`                 | Delete a user                      |
 
 ---
 
-## `GET /users/{email}` — Self vs. Admin Lookup
+## GET /users/{email} Self vs. Admin Lookup
 
 This endpoint has a special behavior: **non-admin callers always get their own record**, regardless of the `{email}` path param.
 
@@ -46,81 +46,109 @@ if (
 
 ---
 
-## User Object Shape
+## User Record Shape
 
-| Field                | Type          | Description                                                                 |
-| -------------------- | ------------- | --------------------------------------------------------------------------- |
-| `id`                 | string        | User's email (primary key)                                                  |
-| `fname`              | string        | First name                                                                  |
-| `lname`              | string        | Last name                                                                   |
-| `email`              | string        | Redundant email field (same as `id`)                                        |
-| `education`          | string        | Education status                                                            |
-| `studentId`          | number        | UBC student number                                                          |
-| `faculty`            | string        | Faculty                                                                     |
-| `major`              | string        | Major/program                                                               |
-| `year`               | number        | Year of study                                                               |
-| `gender`             | string        | Pronouns/gender                                                             |
-| `diet`               | string        | Dietary restrictions                                                        |
-| `isMember`           | boolean       | Whether the user has paid membership                                        |
-| `admin`              | boolean       | Whether the user is a BizTech admin (auto-set for `@ubcbiztech.com` emails) |
-| `favedEventsID;year` | Set\<string\> | Favorite event IDs in `"eventId;year"` format                               |
-| `createdAt`          | number        | Unix timestamp (ms)                                                         |
-| `updatedAt`          | number        | Unix timestamp (ms)                                                         |
+| Field                | Type      | Description                                                   |
+| -------------------- | --------- | ------------------------------------------------------------- |
+| `id`                 | String    | Email address (primary key)                                   |
+| `fname`              | String    | First name                                                    |
+| `lname`              | String    | Last name                                                     |
+| `email`              | String    | Email (redundant with `id`)                                   |
+| `education`          | String    | Education status                                              |
+| `studentId`          | Number    | UBC student number                                            |
+| `faculty`            | String    | Faculty                                                       |
+| `major`              | String    | Major/program                                                 |
+| `year`               | Number    | Year of study                                                 |
+| `gender`             | String    | Pronouns/gender                                               |
+| `diet`               | String    | Dietary restrictions                                          |
+| `isMember`           | Boolean   | `true` after membership payment or admin grant                |
+| `admin`              | Boolean   | Auto-set for `@ubcbiztech.com` emails. **Immutable via API.** |
+| `favedEventsID;year` | StringSet | Favorite event IDs in `"eventId;year"` format                 |
+| `createdAt`          | Number    | Unix timestamp (ms)                                           |
+| `updatedAt`          | Number    | Unix timestamp (ms)                                           |
 
 ### Immutable Fields
 
-The `admin` field cannot be changed via `PATCH /users/{email}`. It is set on creation and treated as immutable. See `constants/tables.js` → `IMMUTABLE_USER_PROPS`.
+The `admin` field cannot be changed via `PATCH /users/{email}`. The handler checks for immutable props and **throws an error** (not a silent strip) if any are included in the update bodyhrows an error** (not a silent strip) if any are included in the update bodyhrows an error** (not a silent strip) if any are included in the update body. See `constants/tables.js` → `IMMUTABLE_USER_PROPS`.
 
 ---
 
-## `POST /users`: Create User
+## POST /users Create User
+
+**Auth:** Public (no Cognito required)
+
+Creates a user record. The email is validated and lowercased.
+
+- If the email ends with `@ubcbiztech.com`, `admin` is set to `true` automatically
+- Returns `409` if a user with this email already exists (enforced by DynamoDB `ConditionExpression: attribute_not_exists(id)`)
+- Returns `201` with the created user params on success
+- Optional `favedEventsArray` (array of strings, validated for uniqueness, stored as DynamoDB StringSet)
+
+---
+
+## GET /users/check/{email}
+
+**Auth:** Public
+
+Returns `true` (200) if a user record exists, `false` (200) if not. Used before registration to check whether an account needs to be created.
+
+---
+
+## GET /users/checkMembership/{email}
+
+**Auth:** Public
+
+Returns the value of `isMember` if the user exists, `false` if the user does not exist. Used by the membership signup flow to skip the payment step for existing members.
+
+---
+
+## PATCH /users/{email} Update User
+
+**Auth:** Cognito
+
+Updates user fields. The handler validates the user exists first. If the request body contains any field in `IMMUTABLE_USER_PROPS` (currently `["admin"]`), the handler **throws an error** — it does not silently strip the fieldshe fieldshe fields.
+
+---
+
+## PATCH /users/favEvent/{email} Toggle Favorite Event
+
+**Auth:** Cognito
+
+Toggles a favorite event on or off.
 
 **Request body:**
 
-```json
-{
-  "email": "student@example.com",
-  "fname": "Alice",
-  "lname": "Wong",
-  "education": "Bachelor's",
-  "studentId": 12345678,
-  "faculty": "Commerce",
-  "major": "Accounting",
-  "year": 3,
-  "gender": "She/Her",
-  "diet": "None",
-  "isMember": false
-}
-```
+| Field         | Type    | Required | Description                      |
+| ------------- | ------- | -------- | -------------------------------- |
+| `eventID`     | String  | Yes      | Event ID                         |
+| `year`        | Number  | Yes      | Event year                       |
+| `isFavourite` | Boolean | Yes      | `true` to add, `false` to remove |
 
-**Behavior:**
-
-- Email is validated and lowercased.
-- If the email domain is `ubcbiztech.com`, `admin` is set to `true` automatically.
-- Returns `409` if a user with this email already exists.
-- Returns `201` with the created user params on success.
+The handler validates that the event exists in `biztechEvents` and the user exists in `biztechUsers`. It uses DynamoDB `ADD`/`DELETE` operations on the `favedEventsID;year` StringSet.
 
 ---
 
-## `GET /users/check/{email}`
+## DELETE /users/{email}
 
-Returns `true` if a user record exists, `false` otherwise. Used before registration to check if an account needs to be created. No auth required.
+**Auth:** Cognito
+
+Deletes the user record from `biztechUsers`. Validates the user exists first.
 
 ---
 
-## `GET /users/checkMembership/{email}`
+## IAM Permissions
 
-Returns `true` if the user exists and has `isMember: true`. Used by the membership signup flow to skip the payment step if the user is already a member. No auth required.
+The users service has IAM access to:
+
+- `biztechUsers*` — Scan, GetItem, PutItem, UpdateItem, DeleteItem
+- `biztechEvents*` — GetItem (for favourite event validation)
+- `inviteCodes*` — GetItem (legacy invite code system)
 
 ---
 
 ## Related Pages
 
-- [Create User](/docs/users/create) — detailed create endpoint docs
-- [Get User](/docs/users/get-user) — detailed get endpoint docs
-- [Update User](/docs/users/update-user) — detailed update endpoint docs
-- [Check User](/docs/users/check-user) — check existence
-- [Check Membership](/docs/users/check-user-membership) — check membership flag
-- [Favourite Event](/docs/users/favourite-event) — toggle favorite events
-- [Delete User](/docs/users/delete-user) — delete user
-- [Authentication](/docs/authentication) — how users authenticate and how the JWT claims work
+- [User, Member & Profile Relationships](/docs/identity/relationships) — How user, member, and profile records connect
+- [Account Creation](/docs/flows/account-creation) — How user records are created during signup
+- [Authentication Overview](/docs/authentication) — Cognito auth and the JWT claims used by this service
+- [Admin Detection](/docs/authentication/admin-detection) — How the `admin` field is set and enforced

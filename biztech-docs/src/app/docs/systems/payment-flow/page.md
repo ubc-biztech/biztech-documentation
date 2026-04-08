@@ -6,8 +6,6 @@ nextjs:
     description: Stripe Checkout integration for event registration and membership payments.
 ---
 
-# Payment Flow
-
 BizTech uses **Stripe Checkout Sessions** for all paid transactions — event registration fees and membership dues. The backend creates a session, the frontend redirects to Stripe's hosted checkout page, and a webhook confirms the payment.
 
 ---
@@ -43,9 +41,9 @@ The `paymentType` field in the request body determines the post-payment behavior
 | `paymentType`   | When used                           | Webhook action                                                                                              |
 | --------------- | ----------------------------------- | ----------------------------------------------------------------------------------------------------------- |
 | `"Event"`       | Paid event registration             | Updates registration status from `incomplete` → `registered` (or `acceptedComplete` for application events) |
-| `"Member"`      | Membership purchase (existing user) | Updates user in `biztechUsers`, creates member record in `biztechMembers2026`                               |
-| `"UserMember"`  | Membership + new Cognito signup     | Creates Cognito user, then user + member records                                                            |
-| `"OAuthMember"` | Membership for OAuth user           | Creates user + member records (no Cognito step)                                                             |
+| `"Member"`      | Membership purchase (existing user) | Updates user in `biztechUsers`, creates member record in `biztechMembers2026`, creates profile             |
+| `"UserMember"`  | Membership + new Cognito signup     | Creates Cognito user, then user + member + profile records                                                  |
+| `"OAuthMember"` | Membership for OAuth user           | Creates user + member + profile records (no Cognito step)                                                   |
 
 ---
 
@@ -61,7 +59,7 @@ All handlers in `services/payments/handler.js`:
 
 ---
 
-## Session Creation — `payment()`
+## Session Creation payment()
 
 **File:** `services/payments/handler.js` (line ~362)
 
@@ -91,7 +89,7 @@ For event payments, the returned `session.url` is also saved as `checkoutLink` o
 
 ---
 
-## Webhook — `webhook()`
+## Webhook webhook()
 
 **File:** `services/payments/handler.js` (line ~36)
 
@@ -99,12 +97,12 @@ For event payments, the returned `session.url` is also saved as `checkoutLink` o
 2. Handles only `checkout.session.completed` events
 3. Reads `metadata.paymentType` and dispatches to the matching helper:
 
-| Helper function       | Payment type    | Actions                                                                                  |
-| --------------------- | --------------- | ---------------------------------------------------------------------------------------- |
-| `eventRegistration()` | `"Event"`       | Queries registration, updates status `incomplete` → `registered` (or `acceptedComplete`) |
-| `memberSignup()`      | `"Member"`      | Updates `biztechUsers`, creates `biztechMembers2026` record                              |
-| `userMemberSignup()`  | `"UserMember"`  | Cognito signup → user + member record creation                                           |
-| `OAuthMemberSignup()` | `"OAuthMember"` | User + member record creation (no Cognito)                                               |
+| Helper function       | Payment type    | Actions                                                                                            |
+| --------------------- | --------------- | -------------------------------------------------------------------------------------------------- |
+| `eventRegistration()` | `"Event"`       | Queries registration, updates status `incomplete` → `registered` (or `acceptedComplete`)           |
+| `memberSignup()`      | `"Member"`      | Updates `biztechUsers`, creates `biztechMembers2026` record, creates profile via `createProfile()` |
+| `userMemberSignup()`  | `"UserMember"`  | Cognito signup → user + member + profile record creation                                           |
+| `OAuthMemberSignup()` | `"OAuthMember"` | User + member + profile record creation (no Cognito)                                               |
 
 ---
 
@@ -204,5 +202,7 @@ const stripe = require('stripe')(
 ## Related Pages
 
 - [Registration](/docs/systems/registration) — registration state machine that payment completes
+- [Membership Flow](/docs/flows/membership) — full membership path including admin bypasses
+- [User, Member & Profile Relationships](/docs/identity/relationships) — the three records created by membership payment
 - [Authentication](/docs/authentication) — Cognito auth context for membership signup
 - [Event Lifecycle](/docs/flows/event-lifecycle) — where payment fits in the broader event flow

@@ -9,22 +9,31 @@ nextjs:
 
 # Quests API
 
-This page documents the quests endpoints for retrieving user quest progress, handling quest events, and managing gamification features. The service tracks user progress across various quest types including connections and company interactions.
+This service tracks gamification progress during events — counting connections made, companies talked to, and other activities. Quest progress is used by the Companion App to show achievement badges.
+
+## DynamoDB Table
+
+Table: `biztechQuests` (constant `QUESTS_TABLE`). PK: `email`, SK: `eventID#year`.
+
+Handler: `services/quests/handler.js`
 
 All endpoints return JSON and support CORS. Authentication is required for all endpoints using JWT tokens.
 
 ## Supported Quest Types
 
 ### Quest Types
+
 - **COUNTER**: Incremental counting quests that track progress toward a numeric target
 - **UNIQUE_SET**: Quests that track unique items (e.g., companies) with a numeric target
 
 ### Event Types
+
 - **NEW_CONNECTION**: Triggered when a user makes a new connection
 - **RECOMMENDED_CONNECTION**: Triggered when a user connects with a recommended person
 - **COMPANY_TALK**: Triggered when a user interacts with a company representative
 
 ### Active Quests
+
 - **new_connections_5**: Make 5 new connections (COUNTER type, target: 5)
 - **new_connections_10**: Make 10 new connections (COUNTER type, target: 10)
 - **new_connections_20**: Make 20 new connections (COUNTER type, target: 20)
@@ -43,15 +52,18 @@ Path: /quests/{event_id}/{year}
 Update quest progress for the authenticated user based on an event type and parameters.
 
 ### Authentication
+
 Required: JWT token with email claim
 
 ### Path Parameters
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| event_id | string | Yes | Event identifier (e.g., "blueprint") |
-| year | number | Yes | Event year (e.g., 2026) |
+
+| Parameter | Type   | Required | Description                          |
+| --------- | ------ | -------- | ------------------------------------ |
+| event_id  | string | Yes      | Event identifier (e.g., "blueprint") |
+| year      | number | Yes      | Event year (e.g., 2026)              |
 
 ### Request Body
+
 ```json
 {
   "type": "connection" | "company",
@@ -66,23 +78,26 @@ Required: JWT token with email claim
 }
 ```
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| type | string | Yes | Event type ("connection" or "company") |
-| argument | object/string | Yes | Event-specific parameters |
+| Field    | Type          | Required | Description                            |
+| -------- | ------------- | -------- | -------------------------------------- |
+| type     | string        | Yes      | Event type ("connection" or "company") |
+| argument | object/string | Yes      | Event-specific parameters              |
 
 #### Connection event argument
-| Field | Type | Description |
-|-------|------|-------------|
+
+| Field       | Type    | Description                                       |
+| ----------- | ------- | ------------------------------------------------- |
 | recommended | boolean | Whether the connection was recommended (optional) |
-| profileId | string | Profile ID of the connected user (optional) |
+| profileId   | string  | Profile ID of the connected user (optional)       |
 
 #### Company event argument
-| Field | Type | Description |
-|-------|------|-------------|
+
+| Field   | Type   | Description                      |
+| ------- | ------ | -------------------------------- |
 | company | string | Company name for unique tracking |
 
 ### Successful Response
+
 ```json
 {
   "quests": {
@@ -113,10 +128,11 @@ Required: JWT token with email claim
 ```
 
 ### Error Responses
-| Status | Response | Description |
-|--------|----------|-------------|
-| 400 | `{ "message": "Missing required field: type..." }` | Invalid or missing request body |
-| 500 | `{ "message": "Internal server error" }` | Database or processing failure |
+
+| Status | Response                                           | Description                     |
+| ------ | -------------------------------------------------- | ------------------------------- |
+| 400    | `{ "message": "Missing required field: type..." }` | Invalid or missing request body |
+| 500    | `{ "message": "Internal server error" }`           | Database or processing failure  |
 
 ---
 
@@ -130,15 +146,18 @@ Path: /quests/{event_id}/{year}
 Retrieve quest progress for the authenticated user for a specific event.
 
 ### Authentication
+
 Required: JWT token with email claim
 
 ### Path Parameters
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| event_id | string | Yes | Event identifier |
-| year | number | Yes | Event year |
+
+| Parameter | Type   | Required | Description      |
+| --------- | ------ | -------- | ---------------- |
+| event_id  | string | Yes      | Event identifier |
+| year      | number | Yes      | Event year       |
 
 ### Successful Response
+
 ```json
 {
   "quests": {
@@ -162,6 +181,7 @@ Required: JWT token with email claim
 ```
 
 If no quest data exists for this event/year:
+
 ```json
 {
   "quests": {}
@@ -169,10 +189,11 @@ If no quest data exists for this event/year:
 ```
 
 ### Error Responses
-| Status | Response | Description |
-|--------|----------|-------------|
-| 400 | `{ "message": "missing path parameters" }` | Missing event_id or year |
-| 500 | `{ "message": "Internal server error" }` | Database failure |
+
+| Status | Response                                   | Description              |
+| ------ | ------------------------------------------ | ------------------------ |
+| 400    | `{ "message": "missing path parameters" }` | Missing event_id or year |
+| 500    | `{ "message": "Internal server error" }`   | Database failure         |
 
 ---
 
@@ -186,15 +207,18 @@ Path: /quests/event/{event_id}/{year}
 Retrieve all users' quest progress for a specific event. This endpoint is useful for event organizers to view aggregated quest data.
 
 ### Authentication
+
 Required: JWT token with email claim (admin access recommended)
 
 ### Path Parameters
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| event_id | string | Yes | Event identifier |
-| year | number | Yes | Event year |
+
+| Parameter | Type   | Required | Description      |
+| --------- | ------ | -------- | ---------------- |
+| event_id  | string | Yes      | Event identifier |
+| year      | number | Yes      | Event year       |
 
 ### Successful Response
+
 ```json
 {
   "quests": [
@@ -227,16 +251,18 @@ Required: JWT token with email claim (admin access recommended)
 ```
 
 ### Error Responses
-| Status | Response | Description |
-|--------|----------|-------------|
-| 400 | `{ "message": "missing path parameters" }` | Missing event_id or year |
-| 500 | `{ "message": "Internal server error" }` | Database failure |
+
+| Status | Response                                   | Description              |
+| ------ | ------------------------------------------ | ------------------------ |
+| 400    | `{ "message": "missing path parameters" }` | Missing event_id or year |
+| 500    | `{ "message": "Internal server error" }`   | Database failure         |
 
 ---
 
 ## Quest Progress Data Model
 
 ### Progress Object Structure
+
 ```json
 {
   "progress": number,         // Current progress count
@@ -249,6 +275,7 @@ Required: JWT token with email claim (admin access recommended)
 ```
 
 ### Database Storage
+
 ```json
 {
   "id": "user@example.com",       // User email (partition key)

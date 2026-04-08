@@ -24,7 +24,7 @@ The app reads event settings from this document.
 
 ## Subcollections
 
-### `events/{EVENT_ID}/judges`
+### events/{EVENT_ID}/judges
 
 - Purpose: judge and admin identity + assignment data
 - Common fields:
@@ -34,7 +34,7 @@ The app reads event settings from this document.
   - `assignedTeamIds`
   - `capacity`
 
-### `events/{EVENT_ID}/teams`
+### events/{EVENT_ID}/teams
 
 - Purpose: team profile + submission content
 - Common fields:
@@ -47,7 +47,7 @@ The app reads event settings from this document.
   - `imageUrls`
   - `teamCode`
 
-### `events/{EVENT_ID}/reviews`
+### events/{EVENT_ID}/reviews
 
 - Purpose: scoring and written feedback
 - Common fields:
@@ -61,7 +61,7 @@ The app reads event settings from this document.
   - `round` (`prelim` or `finals`)
   - `createdAt`
 
-### `events/{EVENT_ID}/rubric/default`
+### events/{EVENT_ID}/rubric/default
 
 - Purpose: scoring rubric config
 - Common fields:
@@ -69,7 +69,7 @@ The app reads event settings from this document.
   - `scaleMax`
   - `criteria[]`
 
-### `events/{EVENT_ID}/links`
+### events/{EVENT_ID}/links
 
 - Purpose: extra team links managed by admins
 - Common fields:

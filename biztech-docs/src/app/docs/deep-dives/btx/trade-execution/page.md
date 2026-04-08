@@ -44,7 +44,7 @@ In **offline/dev mode**, individual operations are used instead (DynamoDB Local 
 
 ## Frontend Components
 
-### Main Page (`btx.tsx`)
+### Main Page (btx.tsx)
 
 The BTX page is a full stock exchange interface with:
 

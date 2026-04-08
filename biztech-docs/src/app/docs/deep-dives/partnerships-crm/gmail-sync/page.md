@@ -104,7 +104,7 @@ Notes:
 
 ## What To Check If It Stops Working
 
-### `Last Sync` never changes
+### Last Sync never changes
 
 - Apps Script -> **Executions** -> open latest run
 - confirm there are no runtime errors

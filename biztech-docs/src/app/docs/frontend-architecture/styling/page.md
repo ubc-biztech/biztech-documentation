@@ -48,7 +48,7 @@ npx shadcn-ui@latest add [component-name]
 
 ## Key Directories Explained
 
-### `src/components/` (~180 files)
+### src/components/ (~180 files)
 
 Organized by feature area:
 
@@ -68,7 +68,7 @@ Organized by feature area:
 | `QrScanner/`         | QR code scanning UI                                          |
 | `NFCWrite/`          | NFC tag writing for admin                                    |
 
-### `src/features/`
+### src/features/
 
 Event-specific feature modules that are loaded dynamically per event:
 
@@ -79,7 +79,7 @@ Event-specific feature modules that are loaded dynamically per event:
 | `kickstart/2025/` | Kickstart 2025 (BTX exchange, teams, overview)              |
 | `productX/2025/`  | ProductX 2025 companion                                     |
 
-### `src/constants/`
+### src/constants/
 
 Application-wide configuration:
 
@@ -91,7 +91,7 @@ Application-wide configuration:
 | `breakpoints.ts`   | Responsive breakpoints                          |
 | `companion.ts`     | Companion styles and localStorage keys          |
 
-### `src/lib/`
+### src/lib/
 
 Core business logic:
 

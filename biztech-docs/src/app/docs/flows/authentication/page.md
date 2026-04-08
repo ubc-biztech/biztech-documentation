@@ -27,7 +27,7 @@ How authentication works from login through backend authorization, covering Cogn
 
 The first request hits the Next.js middleware. Middleware calls `fetchBackendFromServer()` to check if the user has a valid Cognito session.
 
-### 2. No session → redirect to `/login`
+### 2. No session → redirect to /login
 
 If no valid session exists, the middleware redirects to `/login`. The only paths that skip this check are in the `allowedPrefixes` array in `src/middleware.ts`:
 

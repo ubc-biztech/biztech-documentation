@@ -7,9 +7,13 @@ nextjs:
     url: https://github.com/ubc-biztech/serverless-biztechapp/blob/master/services/qr/handler.js
 ---
 
-The `QR` API service allows admin to create QR codes for many purposes.
+The QR service manages event QR codes for the gamification system. Admins create QR codes worth specific points, and attendees scan them at events to accumulate points on their registration.
 
-[Code found here](https://github.com/ubc-biztech/serverless-biztechapp/blob/master/services/qr/handler.js)
+## DynamoDB Table
+
+Table: `biztechQR` (constant `QR_TABLE`). PK: `id` (QR code ID), SK: `eventID;year`.
+
+Handler: `services/qr/handler.js`
 
 ---
 

@@ -14,7 +14,7 @@ This page covers the database schema and API surface for BTX.
 
 BTX uses **6 DynamoDB tables**:
 
-### `bizBtxProjects{ENV}`
+### bizBtxProjects{ENV}
 
 Stores each tradeable project.
 
@@ -34,7 +34,7 @@ Stores each tradeable project.
 
 **GSI**: `byEvent` lets you query all projects for an event.
 
-### `bizBtxAccounts{ENV}`
+### bizBtxAccounts{ENV}
 
 Virtual cash balances for each trader.
 
@@ -44,7 +44,7 @@ Virtual cash balances for each trader.
 | `cashBalance`    | Number | Current cash (starts at $2,500)       |
 | `initialBalance` | Number | Starting amount (for P&L calculation) |
 
-### `bizBtxHoldings{ENV}`
+### bizBtxHoldings{ENV}
 
 Current share holdings per user per project.
 
@@ -57,7 +57,7 @@ Current share holdings per user per project.
 
 **GSI**: `byProject` lets you query all holders of a project.
 
-### `bizBtxTrades{ENV}`
+### bizBtxTrades{ENV}
 
 Trade history log.
 
@@ -71,7 +71,7 @@ Trade history log.
 | `price`          | Number | Execution price                 |
 | `cashDelta`      | Number | Cash change (negative for buys) |
 
-### `bizBtxPrices{ENV}`
+### bizBtxPrices{ENV}
 
 Price history for charts.
 
@@ -82,7 +82,7 @@ Price history for charts.
 | `price`          | Number | Price at this moment                                                                              |
 | `source`         | String | What caused the change: `"TRADE"`, `"DRIFT"`, `"SEED_UPDATE"`, `"PHASE_BUMP"`, `"PROJECT_CREATE"` |
 
-### `bizBtxSockets{ENV}`
+### bizBtxSockets{ENV}
 
 Active WebSocket connections (same pattern as the Live Wall).
 

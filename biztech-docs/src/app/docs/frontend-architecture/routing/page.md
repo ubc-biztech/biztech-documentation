@@ -39,7 +39,7 @@ How pages are routed, how data flows between the frontend and backend, and how s
 | `/companion/[eventId]/[year]/[page]` | Companion sub-pages (quests, connections, etc.)                  |
 | `/btx`                               | BizTech Exchange stock trading simulation                        |
 
-### Admin Pages (require `@ubcbiztech.com` email)
+### Admin Pages (require @ubcbiztech.com email)
 
 | Route                                      | Description                                       |
 | ------------------------------------------ | ------------------------------------------------- |
@@ -62,7 +62,7 @@ How pages are routed, how data flows between the frontend and backend, and how s
 
 We use three data fetching approaches depending on the situation:
 
-### 1. Server-Side Rendering (SSR) with `getServerSideProps`
+### 1. Server-Side Rendering (SSR) with getServerSideProps
 
 Used for pages that need fresh data on every request and benefit from SEO or fast initial load.
 
@@ -96,13 +96,13 @@ export function useEvents() {
 
 React Query handles caching, background refetching, and loading/error states automatically.
 
-### 3. Static Generation (SSG) with `getStaticProps`
+### 3. Static Generation (SSG) with getStaticProps
 
 Used rarely, only for pages where the content doesn't change per-user (like the event browsing page).
 
 ---
 
-## API Client (`src/lib/db.ts`)
+## API Client (src/lib/db.ts)
 
 All API calls go through two functions:
 
@@ -121,7 +121,7 @@ production  → https://api.ubcbiztech.com
 
 ---
 
-## Middleware (`src/middleware.ts`)
+## Middleware (src/middleware.ts)
 
 The middleware runs on **every request** and enforces auth rules:
 
@@ -165,7 +165,7 @@ Everything else (form state, UI toggles, filters, sorting) lives in local `useSt
 
 ---
 
-## Type System (`src/types.ts`)
+## Type System (src/types.ts)
 
 Core types that appear everywhere:
 

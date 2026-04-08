@@ -27,7 +27,7 @@ Manage events: create, read, update, delete, image upload, and built-in feedback
 | `POST`   | `/events/{eventId}/{year}/feedback/{formType}`             | 🌐   | Submit attendee/partner feedback            |
 | `GET`    | `/events/{eventId}/{year}/feedback/{formType}/submissions` | 🔑   | Admin: list feedback submissions            |
 
-### `POST /events`: Create Event
+### POST /events: Create Event
 
 **Request Body:**
 
@@ -51,7 +51,7 @@ Manage events: create, read, update, delete, image upload, and built-in feedback
 | `attendeeFeedbackQuestions` | array   |          | Attendee feedback question config       |
 | `partnerFeedbackQuestions`  | array   |          | Partner feedback question config        |
 
-### `GET /events/{eventId}/{year}`
+### GET /events/{eventId}/{year}
 
 Supports optional query parameters:
 
@@ -60,7 +60,7 @@ Supports optional query parameters:
 
 **Response:** Full event object with all fields above, plus `isCompleted` flag.
 
-### `GET /events/getActiveEvent`
+### GET /events/getActiveEvent
 
 Returns the single event with the closest future `startDate`. No auth required, used for landing pages and the frontend home dashboard.
 
@@ -80,7 +80,7 @@ Handle event registration, check-in, waitlisting, and bulk operations.
 | `GET`    | `/registrations/leaderboard`     | 🔓   | Event leaderboard (points)             |
 | `PUT`    | `/registrations/massUpdate`      | 🔑   | Bulk update registrations (admin only) |
 
-### `POST /registrations`: Register
+### POST /registrations: Register
 
 **Request Body:**
 
@@ -116,7 +116,7 @@ Handle event registration, check-in, waitlisting, and bulk operations.
 | `acceptedComplete` | Accepted and paid                               |
 | `rejected`         | Application rejected                            |
 
-### `GET /registrations`: Query Filters
+### GET /registrations: Query Filters
 
 | Query Param    | Description                   |
 | -------------- | ----------------------------- |

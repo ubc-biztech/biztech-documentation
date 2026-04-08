@@ -8,17 +8,26 @@ nextjs:
 
 # Teams API Documentation
 
-This document describes the **Teams API** endpoints defined in the provided `serverless.yml` configuration, including example requests and responses.
+This service manages teams for **Kickstart** — BizTech's startup-pitch competition. It handles team creation, scoring, judging feedback, round management, and leaderboards.
+
+## DynamoDB Tables
+
+- `biztechTeams` (constant `TEAMS_TABLE`) — PK: `id` (teamID), SK: `eventID;year`
+- `biztechTeamJudgeFeedback` (constant `TEAM_JUDGE_FEEDBACK_TABLE`) — judging submissions
+
+Handler: `services/teams/handler.js`
 
 ---
 
 ## Endpoints
 
 ### 1. Update Team Points
+
 - **Method**: `PUT`
 - **Path**: `/team/points`
 
 #### Request
+
 ```json
 {
   "teamID": "team123",
@@ -27,6 +36,7 @@ This document describes the **Teams API** endpoints defined in the provided `ser
 ```
 
 #### Response
+
 ```json
 {
   "success": true,
@@ -39,10 +49,12 @@ This document describes the **Teams API** endpoints defined in the provided `ser
 ---
 
 ### 2. Add Multiple QR Scans
+
 - **Method**: `PUT`
 - **Path**: `/team/addQuestions`
 
 #### Request
+
 ```json
 {
   "teamID": "team123",
@@ -51,6 +63,7 @@ This document describes the **Teams API** endpoints defined in the provided `ser
 ```
 
 #### Response
+
 ```json
 {
   "success": true,
@@ -63,10 +76,12 @@ This document describes the **Teams API** endpoints defined in the provided `ser
 ---
 
 ### 3. Make Team
+
 - **Method**: `POST`
 - **Path**: `/team/make`
 
 #### Request
+
 ```json
 {
   "eventID": "hackathon2025",
@@ -77,6 +92,7 @@ This document describes the **Teams API** endpoints defined in the provided `ser
 ```
 
 #### Response
+
 ```json
 {
   "success": true,
@@ -94,10 +110,12 @@ This document describes the **Teams API** endpoints defined in the provided `ser
 ---
 
 ### 4. Get Team From User ID
+
 - **Method**: `POST`
 - **Path**: `/team/getTeamFromUserID`
 
 #### Request
+
 ```json
 {
   "userID": "user1"
@@ -105,6 +123,7 @@ This document describes the **Teams API** endpoints defined in the provided `ser
 ```
 
 #### Response
+
 ```json
 {
   "success": true,
@@ -120,15 +139,18 @@ This document describes the **Teams API** endpoints defined in the provided `ser
 ---
 
 ### 5. Get All Teams for Event/Year
+
 - **Method**: `GET`
 - **Path**: `/team/{eventID}/{year}`
 
 #### Example Request
+
 ```
 GET /team/hackathon2025/2025
 ```
 
 #### Response
+
 ```json
 {
   "success": true,
@@ -150,10 +172,12 @@ GET /team/hackathon2025/2025
 ---
 
 ### 6. Change Team Name
+
 - **Method**: `POST`
 - **Path**: `/team/changeTeamName`
 
 #### Request
+
 ```json
 {
   "teamID": "team123",
@@ -162,6 +186,7 @@ GET /team/hackathon2025/2025
 ```
 
 #### Response
+
 ```json
 {
   "success": true,
@@ -174,10 +199,12 @@ GET /team/hackathon2025/2025
 ---
 
 ### 7. Get Normalized Round Scores
+
 - **Method**: `GET`
 - **Path**: `/team/scores-all`
 
 #### Response
+
 ```json
 {
   "success": true,
@@ -197,15 +224,18 @@ GET /team/hackathon2025/2025
 ---
 
 ### 8. Get Team Feedback Score
+
 - **Method**: `GET`
 - **Path**: `/team/feedback/{teamID}`
 
 #### Example Request
+
 ```
 GET /team/feedback/team123
 ```
 
 #### Response
+
 ```json
 {
   "success": true,
@@ -217,15 +247,18 @@ GET /team/feedback/team123
 ---
 
 ### 9. Get Judge Current Team
+
 - **Method**: `GET`
 - **Path**: `/team/judge/currentTeamID/{judgeID}`
 
 #### Example Request
+
 ```
 GET /team/judge/currentTeamID/judge42
 ```
 
 #### Response
+
 ```json
 {
   "success": true,
@@ -237,15 +270,18 @@ GET /team/judge/currentTeamID/judge42
 ---
 
 ### 10. Get Judge Submissions
+
 - **Method**: `GET`
 - **Path**: `/team/judge/feedback/{judgeID}`
 
 #### Example Request
+
 ```
 GET /team/judge/feedback/judge42
 ```
 
 #### Response
+
 ```json
 {
   "success": true,
@@ -263,10 +299,12 @@ GET /team/judge/feedback/judge42
 ---
 
 ### 11. Create Judge Submission
+
 - **Method**: `POST`
 - **Path**: `/team/judge/feedback`
 
 #### Request
+
 ```json
 {
   "judgeID": "judge42",
@@ -277,6 +315,7 @@ GET /team/judge/feedback/judge42
 ```
 
 #### Response
+
 ```json
 {
   "success": true,
@@ -287,10 +326,12 @@ GET /team/judge/feedback/judge42
 ---
 
 ### 12. Update Judge Submission
+
 - **Method**: `PUT`
 - **Path**: `/team/judge/feedback`
 
 #### Request
+
 ```json
 {
   "judgeID": "judge42",
@@ -301,6 +342,7 @@ GET /team/judge/feedback/judge42
 ```
 
 #### Response
+
 ```json
 {
   "success": true,
@@ -311,15 +353,18 @@ GET /team/judge/feedback/judge42
 ---
 
 ### 13. Update Current Team for Judge
+
 - **Method**: `PUT`
 - **Path**: `/team/judge/currentTeam/{teamID}`
 
 #### Example Request
+
 ```
 PUT /team/judge/currentTeam/team123
 ```
 
 #### Request Body
+
 ```json
 {
   "judgeID": "judge42"
@@ -327,6 +372,7 @@ PUT /team/judge/currentTeam/team123
 ```
 
 #### Response
+
 ```json
 {
   "success": true,
@@ -339,10 +385,12 @@ PUT /team/judge/currentTeam/team123
 ---
 
 ### 14. Get Current Round
+
 - **Method**: `GET`
 - **Path**: `/team/round`
 
 #### Response
+
 ```json
 {
   "success": true,
@@ -353,15 +401,18 @@ PUT /team/judge/currentTeam/team123
 ---
 
 ### 15. Set Current Round
+
 - **Method**: `PUT`
 - **Path**: `/team/round/{round}`
 
 #### Example Request
+
 ```
 PUT /team/round/3
 ```
 
 #### Response
+
 ```json
 {
   "success": true,
@@ -373,10 +424,12 @@ PUT /team/round/3
 ---
 
 ### 16. Join a Team
+
 - **Method**: `POST`
 - **Path**: `/team/join`
 
 #### Request
+
 ```json
 {
   "eventID": "kickstart",
@@ -387,6 +440,7 @@ PUT /team/round/3
 ```
 
 #### Response
+
 ```json
 {
   "message": "Successfully joined team.",
@@ -404,10 +458,12 @@ PUT /team/round/3
 ---
 
 ### 17. Leave a Team
+
 - **Method**: `POST`
 - **Path**: `/team/leave`
 
 #### Request
+
 ```json
 {
   "eventID": "kickstart",
@@ -417,6 +473,7 @@ PUT /team/round/3
 ```
 
 #### Response
+
 ```json
 {
   "message": "Successfully left team.",
@@ -427,5 +484,3 @@ PUT /team/round/3
   }
 }
 ```
-
-

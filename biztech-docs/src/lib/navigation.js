@@ -63,6 +63,44 @@ export const navigation = [
     links: [
       { title: 'Overview', href: '/docs/authentication' },
       { title: 'Implementation', href: '/docs/authentication/implementation' },
+      {
+        title: 'Admin Detection',
+        href: '/docs/authentication/admin-detection',
+      },
+    ],
+  },
+  {
+    title: 'Identity & Members',
+    links: [
+      {
+        title: 'User, Member & Profile Relationships',
+        href: '/docs/identity/relationships',
+      },
+      { title: 'Users Service', href: '/docs/users' },
+      { title: 'Members Service', href: '/docs/members' },
+      { title: 'Profiles Service', href: '/docs/profiles' },
+    ],
+  },
+  {
+    title: 'Events',
+    links: [
+      { title: 'Events Overview', href: '/docs/events' },
+      { title: 'Data Model', href: '/docs/events/data-model' },
+      { title: 'Creation Flow', href: '/docs/events/creation-flow' },
+      { title: 'Active Event Detection', href: '/docs/events/active-event' },
+      { title: 'Image Upload', href: '/docs/events/image-upload' },
+      {
+        title: 'Events & Registrations',
+        href: '/docs/events/registrations',
+      },
+      {
+        title: 'Pricing & Payments',
+        href: '/docs/events/pricing-payments',
+      },
+      {
+        title: 'Frontend Implementation',
+        href: '/docs/events/frontend',
+      },
     ],
   },
   {
@@ -72,6 +110,10 @@ export const navigation = [
       {
         title: 'Schemas & Access Patterns',
         href: '/docs/database/schemas',
+      },
+      {
+        title: 'Table Ownership Map',
+        href: '/docs/database/table-ownership',
       },
     ],
   },
@@ -103,6 +145,44 @@ export const navigation = [
         title: 'Endpoint Registry',
         href: '/docs/systems/endpoint-registry',
       },
+      {
+        title: 'Admin Event Management',
+        href: '/docs/systems/admin-events',
+      },
+    ],
+  },
+  {
+    title: 'Flows',
+    links: [
+      {
+        title: 'Account Creation',
+        href: '/docs/flows/account-creation',
+      },
+      {
+        title: 'Membership',
+        href: '/docs/flows/membership',
+      },
+      {
+        title: 'Event Check-In',
+        href: '/docs/flows/check-in',
+      },
+      {
+        title: 'Profile Sync',
+        href: '/docs/flows/profile-sync',
+      },
+    ],
+  },
+  {
+    title: 'Services',
+    links: [
+      {
+        title: 'Events Service',
+        href: '/docs/services/events',
+      },
+      {
+        title: 'Registrations Service',
+        href: '/docs/services/registrations',
+      },
     ],
   },
   {
@@ -127,8 +207,14 @@ export const navigation = [
         title: 'Adding a Feature',
         href: '/docs/guides/adding-a-feature',
       },
+      {
+        title: 'Adding an API Endpoint',
+        href: '/docs/guides/adding-an-endpoint',
+      },
       { title: 'Environment & Config', href: '/docs/guides/environment' },
+      { title: 'Local Dev & Debugging', href: '/docs/guides/debugging' },
       { title: 'Deployment', href: '/docs/deployment' },
+      { title: 'Testing', href: '/docs/guides/testing' },
     ],
   },
   {
@@ -285,6 +371,20 @@ export const navigation = [
     ],
   },
   {
+    title: 'Discord & Slack Bots',
+    links: [{ title: 'Overview', href: '/docs/deep-dives/bots' }],
+  },
+  {
+    title: 'Email Service',
+    links: [{ title: 'Overview', href: '/docs/deep-dives/emails' }],
+  },
+  {
+    title: 'Prizes & Transactions',
+    links: [
+      { title: 'Overview', href: '/docs/deep-dives/prizes-transactions' },
+    ],
+  },
+  {
     title: 'Reference',
     links: [
       {
@@ -301,12 +401,11 @@ export const navigation = [
     title: 'Legacy API Docs',
     links: [
       { title: 'Connections', href: '/docs/connections' },
-      { title: 'Members', href: '/docs/members' },
-      { title: 'Profiles', href: '/docs/profiles' },
       { title: 'Teams', href: '/docs/teams' },
       { title: 'Investments', href: '/docs/investments' },
       { title: 'Quizzes', href: '/docs/quizzes' },
       { title: 'Quests', href: '/docs/quests' },
+      { title: 'QR Codes', href: '/docs/qr' },
     ],
   },
   {

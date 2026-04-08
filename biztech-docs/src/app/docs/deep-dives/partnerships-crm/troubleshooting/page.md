@@ -10,7 +10,7 @@ Use this page when CRM behavior looks wrong and you need fast diagnosis.
 
 ---
 
-## 502 On `/partnerships/partners`
+## 502 On /partnerships/partners
 
 Typical backend log:
 
@@ -124,7 +124,7 @@ Checklist:
 
 ---
 
-## Deploy Fails With `functionName` Length Error
+## Deploy Fails With functionName Length Error
 
 Typical CloudFormation error:
 

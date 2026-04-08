@@ -217,7 +217,7 @@ The app will be available at **http://localhost:3000**.
 
 ## Project Scripts Cheat Sheet
 
-### Frontend (`bt-web-v2`)
+### Frontend (bt-web-v2)
 
 | Command            | What it does                      |
 | ------------------ | --------------------------------- |
@@ -226,7 +226,7 @@ The app will be available at **http://localhost:3000**.
 | `npm run lint`     | Run ESLint                        |
 | `npx tsc --noEmit` | Type-check without building       |
 
-### Backend (`serverless-biztechapp-1`)
+### Backend (serverless-biztechapp-1)
 
 | Command                       | What it does                          |
 | ----------------------------- | ------------------------------------- |

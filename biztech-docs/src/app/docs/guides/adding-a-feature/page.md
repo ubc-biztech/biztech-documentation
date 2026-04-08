@@ -113,7 +113,7 @@ If your feature needs new API endpoints, create a new service in `serverless-biz
 mkdir services/my-feature
 ```
 
-### 2. Create `serverless.yml`
+### 2. Create serverless.yml
 
 ```yaml
 service: biztechapp-my-feature
@@ -149,7 +149,7 @@ functions:
 
 For public endpoints (no auth required), omit the `authorizer` block.
 
-### 3. Create `handler.js`
+### 3. Create handler.js
 
 ```javascript
 import helpers from '../../lib/handlerHelpers.js'

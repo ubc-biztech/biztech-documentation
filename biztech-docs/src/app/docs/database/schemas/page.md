@@ -12,7 +12,7 @@ Detailed schemas for the key DynamoDB tables, the GSIs that power secondary quer
 
 ## Key Table Schemas
 
-### `biztechEvents`
+### biztechEvents
 
 **Keys:** PK = `id` (string), SK = `year` (number)
 
@@ -42,7 +42,7 @@ Detailed schemas for the key DynamoDB tables, the GSIs that power secondary quer
 
 ---
 
-### `biztechUsers`
+### biztechUsers
 
 **Keys:** PK = `id` (string = email)
 
@@ -65,7 +65,7 @@ Detailed schemas for the key DynamoDB tables, the GSIs that power secondary quer
 
 ---
 
-### `biztechRegistrations`
+### biztechRegistrations
 
 **Keys:** PK = `id` (string = email), SK = `eventID;year` (string, e.g., `"blueprint;2026"`)
 
@@ -88,7 +88,7 @@ Detailed schemas for the key DynamoDB tables, the GSIs that power secondary quer
 
 ---
 
-### `biztechMembers2026`
+### biztechMembers2026
 
 **Keys:** PK = `id` (string = email)
 **GSI:** `profileIDQueryIndex` on `profileID` field
@@ -116,7 +116,7 @@ The members table is named `biztechMembers2026` because it was created for the 2
 
 ---
 
-### `biztechProfiles`
+### biztechProfiles
 
 **Keys:** PK = `id` (string), SK = `eventID;year` (string)
 
@@ -141,7 +141,7 @@ This table stores both profiles and connections:
 
 ---
 
-### `biztechTeams`
+### biztechTeams
 
 **Keys:** PK = `eventID;year` (string), SK = `id` (string = team ID)
 
@@ -161,7 +161,7 @@ This table stores both profiles and connections:
 
 ---
 
-### `biztechEventFeedback`
+### biztechEventFeedback
 
 **Keys:** PK = `id` (string = UUID)
 **GSIs:** `event-form-query`, `event-year-query`
@@ -186,7 +186,7 @@ This table stores both profiles and connections:
 
 ---
 
-### `biztechInstagramAuth`
+### biztechInstagramAuth
 
 **Keys:** PK = `id` (string)
 

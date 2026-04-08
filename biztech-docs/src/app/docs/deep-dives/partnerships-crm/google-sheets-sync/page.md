@@ -127,17 +127,17 @@ Formatting logic is in `services/partnerships/googleSheets.js`.
 
 ## Common Errors
 
-### `Google Sheets sync is not configured.`
+### Google Sheets sync is not configured.
 
 - missing spreadsheet id and/or credentials
 
-### `...configured but the sheet could not be accessed.`
+### ...configured but the sheet could not be accessed.
 
 - wrong spreadsheet id
 - sheet not shared with service account
 - invalid private key (newline formatting issue)
 
-### Dynamo `ResourceNotFoundException` when checking status
+### Dynamo ResourceNotFoundException when checking status
 
 - local tables were not migrated (including meta table)
 

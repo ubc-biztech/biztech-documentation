@@ -1,6 +1,12 @@
 # Quizzes API
 
-This page documents the quizzes endpoints for uploading quiz results, fetching individual reports, listing all results for an event, generating aggregate stats, and getting MBTI-specific stats.
+This service handles the **Tech Style Quiz** — a personality-style quiz used at Blueprint events. It calculates MBTI-like types from domain/mode/environment/focus scores, stores results, and generates aggregate statistics.
+
+## DynamoDB Table
+
+Table: `biztechQuizzes` (constant `QUIZZES_TABLE`). PK: `id` (user ID), SK: `event` (defaults to `blueprint;2026`).
+
+Handler: `services/quizzes/handler.js`
 
 All endpoints return JSON and support CORS.
 
@@ -13,6 +19,7 @@ All endpoints return JSON and support CORS.
 - **Purpose**: Store a user's quiz results. Calculates domain averages and MBTI, upserts into the database.
 
 ### Request body
+
 ```json
 {
   "id": "user-uuid-or-id",
@@ -22,10 +29,12 @@ All endpoints return JSON and support CORS.
   "focus": { "q1": 5, "q2": 4, "q3": 3 }
 }
 ```
+
 - **id**: string, required
 - **domain/mode/environment/focus**: object of question scores; validated and averaged server-side
 
 ### Successful response
+
 ```json
 {
   "message": "Upload successful"
@@ -33,6 +42,7 @@ All endpoints return JSON and support CORS.
 ```
 
 ### Error responses
+
 - 400 with `{ "message": "Invalid scores" }` when score objects are invalid.
 
 ---
@@ -44,10 +54,11 @@ All endpoints return JSON and support CORS.
 - **Purpose**: Retrieve a single user's computed report (averages and MBTI) for the current event year.
 
 ### Required
+
 - Authorized call, the id will be read from the user's email
 
-
 ### Successful response
+
 ```json
 {
   "message": "Report found",
@@ -57,13 +68,14 @@ All endpoints return JSON and support CORS.
     "domainAvg": 3.67,
     "modeAvg": 3.67,
     "environmentAvg": 2.67,
-    "focusAvg": 4.00,
+    "focusAvg": 4.0,
     "mbti": "INTJ"
   }
 }
 ```
 
 ### Error responses
+
 - 400 with `{ "message": "Quiz report not found" }` when no report exists for the id.
 
 ---
@@ -75,11 +87,14 @@ All endpoints return JSON and support CORS.
 - **Purpose**: Return all quiz reports for a given `eventID;year` composite key.
 
 ### Path parameters
+
 - **event**: string, required (format: `eventID;year`, e.g., `blueprint;2026`).
   - If omitted (via internal defaults), the server uses `blueprint;2026`.
 
 ### Successful response
+
 Returns an array of quiz report items:
+
 ```json
 [
   {
@@ -88,22 +103,23 @@ Returns an array of quiz report items:
     "domainAvg": 3.67,
     "modeAvg": 3.67,
     "environmentAvg": 2.67,
-    "focusAvg": 4.00,
+    "focusAvg": 4.0,
     "mbti": "INTJ"
   },
   {
     "id": "user-456",
     "eventID;year": "blueprint;2026",
-    "domainAvg": 3.10,
-    "modeAvg": 2.90,
-    "environmentAvg": 3.40,
-    "focusAvg": 3.80,
+    "domainAvg": 3.1,
+    "modeAvg": 2.9,
+    "environmentAvg": 3.4,
+    "focusAvg": 3.8,
     "mbti": "ENFP"
   }
 ]
 ```
 
 ### Error responses
+
 - 500 with `{ "message": "Internal Server Error" }` on unexpected failures.
 
 ---
@@ -115,10 +131,12 @@ Returns an array of quiz report items:
 - **Purpose**: Compute average scores across all users and count MBTI distribution for an event.
 
 ### Path parameters
+
 - **event**: string, required (format: `eventID;year`, e.g., `blueprint;2026`).
   - If omitted (via internal defaults), the server uses `blueprint;2026`.
 
 ### Successful response
+
 ```json
 {
   "message": "Aggregate report generated",
@@ -137,7 +155,9 @@ Returns an array of quiz report items:
   }
 }
 ```
+
 If there are no quiz records:
+
 ```json
 {
   "message": "No quiz data found",
@@ -150,6 +170,7 @@ If there are no quiz records:
 ```
 
 ### Error responses
+
 - 500 with `{ "message": "Internal Server Error" }` on unexpected failures.
 
 ---
@@ -161,12 +182,15 @@ If there are no quiz records:
 - **Purpose**: Get counts for a specific MBTI within the current event year.
 
 ### Request body
+
 ```json
 { "mbti": "INTJ" }
 ```
+
 - **mbti**: string, required
 
 ### Successful response
+
 ```json
 {
   "totalResponses": 123,
@@ -175,10 +199,12 @@ If there are no quiz records:
 ```
 
 ### Error responses
+
 - 500 with `{ "message": "Internal Server Error" }` on unexpected failures.
 
 ---
 
 ## Notes
+
 - Default event scope is `blueprint;2026` unless an endpoint explicitly includes an `{event}` path parameter.
 - Averages and MBTI are computed server-side during upload; subsequent reads return stored values.

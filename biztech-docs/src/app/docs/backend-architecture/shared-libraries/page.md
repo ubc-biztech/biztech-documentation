@@ -10,7 +10,7 @@ Deep dive into the shared libraries in `lib/` that every backend service imports
 
 ---
 
-## Database Layer (`lib/db.js`)
+## Database Layer (lib/db.js)
 
 The DB module wraps DynamoDB operations and **automatically appends the environment suffix** to table names:
 
@@ -34,7 +34,7 @@ The `updateDB` method is smart about DynamoDB reserved words. It automatically a
 
 ---
 
-## Handler Helpers (`lib/handlerHelpers.js`)
+## Handler Helpers (lib/handlerHelpers.js)
 
 Standard response builders that every handler uses:
 
@@ -65,7 +65,7 @@ Two email systems:
 
 ---
 
-## Search (`lib/search.js`)
+## Search (lib/search.js)
 
 Wraps Algolia for profile search:
 
@@ -77,6 +77,6 @@ const results = await index.search(query);
 
 ---
 
-## SNS Notifications (`lib/snsHelper.js`)
+## SNS Notifications (lib/snsHelper.js)
 
 Sends messages to SNS topics, primarily used to notify Slack when new registrations come in.

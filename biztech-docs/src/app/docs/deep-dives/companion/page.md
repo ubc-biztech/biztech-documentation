@@ -97,7 +97,7 @@ Wraps all companion pages. Responsibilities:
 - Renders header, nav, and schedule
 - Provides `UserRegistrationContext` to children
 
-### Shared Components (`src/components/Companion/`)
+### Shared Components (src/components/Companion/)
 
 | Component           | Purpose                                          |
 | ------------------- | ------------------------------------------------ |
@@ -130,7 +130,7 @@ These modules render as the `ChildComponent` inside `CompanionLayout` and define
 
 The companion has no dedicated backend service. It relies on:
 
-### Interactions Service (`services/interactions/`)
+### Interactions Service (services/interactions/)
 
 | Method | Path                         | Auth      | Purpose                                                  |
 | ------ | ---------------------------- | --------- | -------------------------------------------------------- |
@@ -142,7 +142,7 @@ The companion has no dedicated backend service. It relies on:
 
 DynamoDB tables: `bizConnections`, `biztechNFCScans`, `biztechProfiles`, `bizLiveConnections`, `bizWallSockets`
 
-### Quests Service (`services/quests/`)
+### Quests Service (services/quests/)
 
 | Method  | Path                                          | Auth    | Purpose                          |
 | ------- | --------------------------------------------- | ------- | -------------------------------- |

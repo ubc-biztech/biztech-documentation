@@ -18,14 +18,14 @@ This section outlines the structure of the BizTix repository. Understanding the 
 - `node_modules/`: Contains all the npm packages and dependencies for the project. These are installed via `npm install` and should not be committed to the version control system.
 - `public/`: Stores static assets such as images and fonts that can be accessed publicly on the web server.
 
-### Key Files and Directories within \`public/\`
+### Key Files and Directories within \public/\
 
 - `fonts/`: Contains custom fonts for the project.
 - `biztechlogo.png`: The logo image file for BizTech.
 - `favicon.ico`: The favicon for the website, displayed in browser tabs.
 - `*.svg`: Various SVG files used throughout the application, like `next.svg`, `thirteen.svg`, `vercel.svg`.
 
-## Source Code (\`src/\`)
+## Source Code (\src/\)
 
 The `src` directory contains the main source code for the project.
 

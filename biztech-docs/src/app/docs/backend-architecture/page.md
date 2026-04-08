@@ -78,7 +78,7 @@ services/events/
 └── helpers.js              # Service-specific business logic (optional)
 ```
 
-### Anatomy of a `serverless.yml`
+### Anatomy of a serverless.yml
 
 ```yaml
 service: biztechapp-events
