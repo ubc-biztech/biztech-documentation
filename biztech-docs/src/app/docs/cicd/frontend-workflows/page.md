@@ -83,8 +83,8 @@ The frontend is deployed on **Vercel** with automatic Git integration. There is 
 
 Set in the Vercel dashboard (Settings → Environment Variables), not in the repository:
 
-| Variable                      | Dev | Production |
-| ----------------------------- | --- | ---------- |
+| Variable                      | Dev                        | Production   |
+| ----------------------------- | -------------------------- | ------------ |
 | `NEXT_PUBLIC_REACT_APP_STAGE` | _(omit or non-production)_ | `production` |
 
 The `NEXT_PUBLIC_REACT_APP_STAGE` variable controls which backend API URL the frontend talks to. When set to `production`, it uses `api.ubcbiztech.com`; otherwise it uses `api-dev.ubcbiztech.com`.
@@ -99,24 +99,24 @@ Every pull request gets a preview URL like `bt-web-v2-abc123.vercel.app`. Use th
 
 ### Custom domains
 
-| Domain                   | Points to               |
-| ------------------------ | ----------------------- |
-| `app.ubcbiztech.com`     | Production (`main`)     |
-| `dev.app.ubcbiztech.com` | Dev branch              |
-| `v2.ubcbiztech.com`      | Production alias        |
+| Domain                   | Points to           |
+| ------------------------ | ------------------- |
+| `app.ubcbiztech.com`     | Production (`main`) |
+| `dev.app.ubcbiztech.com` | Dev branch          |
+| `v2.ubcbiztech.com`      | Production alias    |
 
 ---
 
 ## Frontend vs backend CI comparison
 
-| Aspect | Frontend | Backend |
-| ------ | -------- | ------- |
-| Build check | `next build` | `sls package --stage dev` |
-| Formatter | Prettier (autofix) | ESLint (autofix) |
-| Deploy target | Vercel | AWS Lambda via Serverless |
-| Deploy trigger | Vercel Git integration | GitHub Actions workflow |
-| Test runner | `npm test` (currently no-op) | `npm run utest` / `npm run itest` (local only) |
-| Preview environments | Vercel preview per branch | None (dev stage only) |
+| Aspect               | Frontend                     | Backend                                        |
+| -------------------- | ---------------------------- | ---------------------------------------------- |
+| Build check          | `next build`                 | `sls package --stage dev`                      |
+| Formatter            | Prettier (autofix)           | ESLint (autofix)                               |
+| Deploy target        | Vercel                       | AWS Lambda via Serverless                      |
+| Deploy trigger       | Vercel Git integration       | GitHub Actions workflow                        |
+| Test runner          | `npm test` (currently no-op) | `npm run utest` / `npm run itest` (local only) |
+| Preview environments | Vercel preview per branch    | None (dev stage only)                          |
 
 ---
 
@@ -158,11 +158,11 @@ If this succeeds locally, the CI build should also succeed.
 
 ## Key files
 
-| File | Purpose |
-| ---- | ------- |
-| `.github/workflows/node.js.yml` | Build and test check |
-| `.github/workflows/prettier.yml` | Prettier autofix |
-| `package.json` | Scripts: `dev`, `build`, `start`, `lint` |
+| File                             | Purpose                                  |
+| -------------------------------- | ---------------------------------------- |
+| `.github/workflows/node.js.yml`  | Build and test check                     |
+| `.github/workflows/prettier.yml` | Prettier autofix                         |
+| `package.json`                   | Scripts: `dev`, `build`, `start`, `lint` |
 
 ---
 

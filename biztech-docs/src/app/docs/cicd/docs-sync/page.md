@@ -139,12 +139,12 @@ The dispatch requires a personal access token (`SERVERLESS_REPO_DISPATCH_TOKEN`)
 
 ## Key files
 
-| File | Repo | Purpose |
-| ---- | ---- | ------- |
-| `.github/workflows/trigger-bot-update.yml` | biztech-documentation | Sends dispatch on docs push |
-| `.github/workflows/deploy.yml` | serverless-biztechapp | Receives dispatch, builds index, deploys |
-| `scripts/generateSlackDocsIndex.js` | serverless-biztechapp | Parses docs into searchable chunks |
-| `services/bots/docsIndex.js` | serverless-biztechapp | Generated index file (auto-generated) |
+| File                                       | Repo                  | Purpose                                  |
+| ------------------------------------------ | --------------------- | ---------------------------------------- |
+| `.github/workflows/trigger-bot-update.yml` | biztech-documentation | Sends dispatch on docs push              |
+| `.github/workflows/deploy.yml`             | serverless-biztechapp | Receives dispatch, builds index, deploys |
+| `scripts/generateSlackDocsIndex.js`        | serverless-biztechapp | Parses docs into searchable chunks       |
+| `services/bots/docsIndex.js`               | serverless-biztechapp | Generated index file (auto-generated)    |
 
 ---
 

@@ -191,10 +191,10 @@ done
 
 ### Deployment stages
 
-| Stage  | Config file         | ENVIRONMENT var | DynamoDB suffix |
-| ------ | ------------------- | --------------- | --------------- |
-| `dev`  | `config.dev.json`   | `""`            | None            |
-| `prod` | `config.prod.json`  | `"PROD"`        | `PROD`          |
+| Stage  | Config file        | ENVIRONMENT var | DynamoDB suffix |
+| ------ | ------------------ | --------------- | --------------- |
+| `dev`  | `config.dev.json`  | `""`            | None            |
+| `prod` | `config.prod.json` | `"PROD"`        | `PROD`          |
 
 ### Custom domains
 
@@ -246,15 +246,15 @@ npx sls package --stage dev
 
 ## Key files
 
-| File | Purpose |
-| ---- | ------- |
-| `.github/workflows/deploy.yml` | Deploy on merge to dev/master + docs dispatch |
-| `.github/workflows/deploy-prod.yml` | Deploy on GitHub Release |
-| `.github/workflows/test.yml` | Packaging check on PRs |
-| `.github/workflows/lint.yml` | ESLint autofix |
-| `serverless.common.yml` | Shared provider config, custom domains, plugins |
-| `services/hello/serverless.yml` | Root service — creates shared API Gateway |
-| `config.dev.json` / `config.prod.json` | Stage-specific configuration |
+| File                                   | Purpose                                         |
+| -------------------------------------- | ----------------------------------------------- |
+| `.github/workflows/deploy.yml`         | Deploy on merge to dev/master + docs dispatch   |
+| `.github/workflows/deploy-prod.yml`    | Deploy on GitHub Release                        |
+| `.github/workflows/test.yml`           | Packaging check on PRs                          |
+| `.github/workflows/lint.yml`           | ESLint autofix                                  |
+| `serverless.common.yml`                | Shared provider config, custom domains, plugins |
+| `services/hello/serverless.yml`        | Root service — creates shared API Gateway       |
+| `config.dev.json` / `config.prod.json` | Stage-specific configuration                    |
 
 ---
 

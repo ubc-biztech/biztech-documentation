@@ -12,11 +12,11 @@ How code gets from a pull request to production across the frontend, backend, an
 
 ## Environments
 
-| Environment    | Frontend URL                     | Backend URL                          | Purpose                |
-| -------------- | -------------------------------- | ------------------------------------ | ---------------------- |
-| **Local**      | `http://localhost:3000`          | `http://localhost:4000`              | Development            |
-| **Dev**        | `https://dev.app.ubcbiztech.com` | `https://api-dev.ubcbiztech.com`     | Testing new features   |
-| **Production** | `https://app.ubcbiztech.com`     | `https://api.ubcbiztech.com`         | Live for all users     |
+| Environment    | Frontend URL                     | Backend URL                      | Purpose              |
+| -------------- | -------------------------------- | -------------------------------- | -------------------- |
+| **Local**      | `http://localhost:3000`          | `http://localhost:4000`          | Development          |
+| **Dev**        | `https://dev.app.ubcbiztech.com` | `https://api-dev.ubcbiztech.com` | Testing new features |
+| **Production** | `https://app.ubcbiztech.com`     | `https://api.ubcbiztech.com`     | Live for all users   |
 
 {% callout type="note" title="Dev and prod are separate" %}
 Dev uses empty table suffixes. Production uses `"PROD"` suffixes. They share nothing — different DynamoDB tables, different Stripe keys, different Cognito pools. See [Environment & Config](/docs/guides/environment) for details.
@@ -90,24 +90,24 @@ Developer pushes code
 
 ### Backend — serverless-biztechapp
 
-| File | Name | Triggers |
-| ---- | ---- | -------- |
-| `.github/workflows/deploy.yml` | Deploy on merge | Push to `dev`/`master`, `repository_dispatch` |
-| `.github/workflows/deploy-prod.yml` | Deploy Prod | GitHub Release published |
-| `.github/workflows/test.yml` | CI Test | Pull requests, push to `dev`/`master` |
-| `.github/workflows/lint.yml` | autofix.ci | Pull requests, push to `dev`/`master` |
+| File                                | Name            | Triggers                                      |
+| ----------------------------------- | --------------- | --------------------------------------------- |
+| `.github/workflows/deploy.yml`      | Deploy on merge | Push to `dev`/`master`, `repository_dispatch` |
+| `.github/workflows/deploy-prod.yml` | Deploy Prod     | GitHub Release published                      |
+| `.github/workflows/test.yml`        | CI Test         | Pull requests, push to `dev`/`master`         |
+| `.github/workflows/lint.yml`        | autofix.ci      | Pull requests, push to `dev`/`master`         |
 
 ### Frontend — bt-web-v2
 
-| File | Name | Triggers |
-| ---- | ---- | -------- |
-| `.github/workflows/node.js.yml` | Node.js CI | Push to `main`/`dev`, PRs targeting `main` |
-| `.github/workflows/prettier.yml` | autofix.ci | Pull requests, push to `main`/`dev` |
+| File                             | Name       | Triggers                                   |
+| -------------------------------- | ---------- | ------------------------------------------ |
+| `.github/workflows/node.js.yml`  | Node.js CI | Push to `main`/`dev`, PRs targeting `main` |
+| `.github/workflows/prettier.yml` | autofix.ci | Pull requests, push to `main`/`dev`        |
 
 ### Documentation — biztech-documentation
 
-| File | Name | Triggers |
-| ---- | ---- | -------- |
+| File                                       | Name               | Triggers                        |
+| ------------------------------------------ | ------------------ | ------------------------------- |
 | `.github/workflows/trigger-bot-update.yml` | Trigger Bot Update | Push to `main`, manual dispatch |
 
 ---
