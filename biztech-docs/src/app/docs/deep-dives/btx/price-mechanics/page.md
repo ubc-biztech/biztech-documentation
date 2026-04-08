@@ -6,7 +6,6 @@ nextjs:
     description: 'How prices work in the BTX Stock Exchange: base price, supply & demand, drift, phase bumps, and more.'
 ---
 
-
 Understanding how prices work is key to understanding BTX. There are several forces that affect a project's price.
 
 ---
@@ -32,6 +31,7 @@ currentPrice = basePrice + netShares × PRICE_SENSITIVITY_PER_SHARE
 ```
 
 Where:
+
 - `netShares` = total bought minus total sold (can be negative)
 - `PRICE_SENSITIVITY_PER_SHARE` = 0.02 (each net share moves the price by $0.02)
 
@@ -61,16 +61,20 @@ Every trade has a 2% fee (`TRANSACTION_FEE_BPS = 200` basis points):
 To make the charts look realistic (not just flat lines), BTX applies a random walk with mean reversion:
 
 ```javascript
-// Random noise
-const randomMove = price * (randomFactor * DRIFT_MAX_PCT_PER_TICK);
+// Scale noise by elapsed time (more time = more drift)
+const maxPct = DRIFT_MAX_PCT_PER_TICK * Math.sqrt(elapsedSeconds)
+const rnd = (Math.random() * 2 - 1) * maxPct
+const randomMove = price * rnd
 
 // Pull toward equilibrium (prevents runaway prices)
-const meanReversionMove = -distance × DRIFT_MEAN_REVERSION;
+const meanReversionMove = -distance * meanReversionFactor
 
-newPrice = price + randomMove + meanReversionMove;
+newPrice = clampPrice(price + meanReversionMove + randomMove)
 ```
 
 The "equilibrium price" is based on both the base price and net shares, so prices naturally settle around a fair value but still fluctuate.
+
+The equilibrium price uses `EQUILIBRIUM_SENSITIVITY_FACTOR` (0.7) to dampen the demand component — prices revert toward 70% of the full demand-adjusted price rather than 100%.
 
 {% callout title="Why drift?" %}
 Without drift, the chart would only move when someone trades. Drift makes the experience feel more like a real stock market, with constant small price movements. It also means the market snapshot endpoint triggers price updates whenever it's called.
@@ -82,16 +86,16 @@ Without drift, the chart would only move when someone trades. Drift makes the ex
 
 Admins can trigger **phase bumps** that instantly move a project's price. These simulate real-world events during Kickstart:
 
-| Bump Type | Price Change |
-|-----------|-------------|
-| `KICKOFF_HYPE` | +15% |
-| `VALIDATION_GOOD` | +10% |
-| `VALIDATION_BAD` | -5% |
-| `MVP_SHIPPED` | +30% |
-| `USER_FEEDBACK_GOOD` | +10% |
-| `USER_FEEDBACK_BAD` | -10% |
-| `DEMO_QUALIFIER` | +50% |
-| `DEMO_WINNER` | +100% |
+| Bump Type            | Price Change |
+| -------------------- | ------------ |
+| `KICKOFF_HYPE`       | +15%         |
+| `VALIDATION_GOOD`    | +10%         |
+| `VALIDATION_BAD`     | -5%          |
+| `MVP_SHIPPED`        | +30%         |
+| `USER_FEEDBACK_GOOD` | +10%         |
+| `USER_FEEDBACK_BAD`  | -10%         |
+| `DEMO_QUALIFIER`     | +50%         |
+| `DEMO_WINNER`        | +100%        |
 
 Admins can also apply custom multipliers (`MULTIPLY`) or flat additions (`ADD`).
 

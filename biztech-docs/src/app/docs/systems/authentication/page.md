@@ -228,6 +228,6 @@ export function useUser() {
 
 ## Related Pages
 
-- [Authentication Flow](/docs/flows/authentication) — step-by-step narrative walkthrough
-- [Auth Implementation](/docs/authentication/implementation) — frontend auth code details
+- [Authentication Overview](/docs/authentication) — auth architecture, Cognito config, login flows
+- [Auth Implementation](/docs/authentication/implementation) — frontend auth code details, troubleshooting
 - [Frontend–Backend Integration](/docs/systems/frontend-backend-integration) — how auth tokens flow through the fetch layer

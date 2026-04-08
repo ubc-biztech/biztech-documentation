@@ -144,9 +144,22 @@ At the event, admins check attendees in via QR scanner or the dashboard. Check-i
 
 ---
 
+## Key Files
+
+| File                                                                | What It Does                                                    |
+| ------------------------------------------------------------------- | --------------------------------------------------------------- |
+| `bt-web-v2/src/pages/event/[eventId]/[year]/register/index.tsx`     | Registration page                                               |
+| `bt-web-v2/src/components/Events/AttendeeEventRegistrationForm.tsx` | Registration form component — dynamic questions, Zod validation |
+| `bt-web-v2/src/lib/registrationStrategy/`                           | Free vs paid registration strategy                              |
+| `serverless-biztechapp-1/services/registrations/handler.js`         | Backend registration handlers                                   |
+| `serverless-biztechapp-1/services/registrations/helpers.js`         | `getEventCounts()`, `sendDynamicQR()`, `sendCalendarInvite()`   |
+| `serverless-biztechapp-1/services/payments/handler.js`              | Stripe checkout session creation and webhook handling           |
+
+---
+
 ## Related Pages
 
-- [Registration Flow](/docs/flows/registration) — step-by-step narrative walkthrough
 - [Event Lifecycle](/docs/flows/event-lifecycle) — registration in the context of the full event lifecycle
+- [Payment Flow](/docs/systems/payment-flow) — Stripe checkout session creation, webhook handling, and paid registration
 - [Endpoint Registry](/docs/systems/endpoint-registry) — all registration endpoints
 - [Database Guide](/docs/database) — `biztechRegistrations` table details

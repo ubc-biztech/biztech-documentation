@@ -45,22 +45,22 @@ We use **AWS Amplify Gen 2** with **Amazon Cognito** for authentication. Cognito
 
 ### Cognito Configuration
 
-| Setting | Value |
-| --- | --- |
-| **Region** | `us-west-2` |
-| **User Pool ID** | `us-west-2_w0R176hhp` |
-| **Login methods** | Email/password, Google OAuth |
-| **Password policy** | Min 8 chars, requires: number, lowercase, uppercase, symbol |
-| **MFA** | None (disabled) |
-| **Email verification** | Required |
+| Setting                | Value                                                       |
+| ---------------------- | ----------------------------------------------------------- |
+| **Region**             | `us-west-2`                                                 |
+| **User Pool ID**       | `us-west-2_w0R176hhp`                                       |
+| **Login methods**      | Email/password, Google OAuth                                |
+| **Password policy**    | Min 8 chars, requires: number, lowercase, uppercase, symbol |
+| **MFA**                | None (disabled)                                             |
+| **Email verification** | Required                                                    |
 
 ### OAuth Callback URLs
 
-| Environment | URL |
-| --- | --- |
-| Local | `http://localhost:3000/` |
-| Dev | `https://dev.app.ubcbiztech.com/` |
-| Production | `https://app.ubcbiztech.com/` |
+| Environment | URL                               |
+| ----------- | --------------------------------- |
+| Local       | `http://localhost:3000/`          |
+| Dev         | `https://dev.app.ubcbiztech.com/` |
+| Production  | `https://app.ubcbiztech.com/`     |
 
 The Amplify configuration lives in `amplify/auth/resource.ts` and the generated output in `amplify_outputs.json`.
 
@@ -95,17 +95,47 @@ The Amplify configuration lives in `amplify/auth/resource.ts` and the generated 
 
 ---
 
+## Token Lifecycle
+
+Cognito returns three tokens on login:
+
+| Token             | Lifetime | Purpose                                                                         |
+| ----------------- | -------- | ------------------------------------------------------------------------------- |
+| **ID token**      | 1 hour   | Contains user claims (email, sub). Sent as `Authorization` header on API calls. |
+| **Access token**  | 1 hour   | Used internally by Amplify for Cognito user pool operations.                    |
+| **Refresh token** | 7 days   | Silently renews expired ID/access tokens without user interaction.              |
+
+Amplify stores all three in browser cookies (configured in `src/util/amplifyServerUtils.ts`). When the ID or access token expires, Amplify uses the refresh token to get new ones automatically. If the refresh token expires (7 days of inactivity), the user must log in again.
+
+---
+
 ## Role Summary
 
-| Role | How It's Determined | What They Can Do |
-| --- | --- | --- |
-| **Unauthenticated** | No Cognito session | View public profiles, landing page |
-| **Authenticated (non-member)** | Has Cognito session, `isMember = false` | Access `/membership` page only |
-| **Member** | `isMember = true` | All non-admin pages, register for events, companion |
-| **Admin** | Email contains `@ubcbiztech.com` | All pages including `/admin/*`, manage events/members/emails |
+| Role                           | How It's Determined                     | What They Can Do                                             |
+| ------------------------------ | --------------------------------------- | ------------------------------------------------------------ |
+| **Unauthenticated**            | No Cognito session                      | View public profiles, landing page                           |
+| **Authenticated (non-member)** | Has Cognito session, `isMember = false` | Access `/membership` page only                               |
+| **Member**                     | `isMember = true`                       | All non-admin pages, register for events, companion          |
+| **Admin**                      | Email contains `@ubcbiztech.com`        | All pages including `/admin/*`, manage events/members/emails |
+
+There are no database role columns, no Cognito groups, and no RBAC tables. The admin check is purely email-based and runs independently in the frontend middleware, frontend components, and backend handlers.
+
+---
+
+## Key Files
+
+| File                                                    | Role                                                                 |
+| ------------------------------------------------------- | -------------------------------------------------------------------- |
+| `bt-web-v2/src/middleware.ts`                           | Route protection and session validation                              |
+| `bt-web-v2/src/lib/db.ts`                               | `fetchBackend` / `fetchBackendFromServer` with auth header injection |
+| `bt-web-v2/src/util/amplifyServerUtils.ts`              | Cookie configuration for Amplify                                     |
+| `bt-web-v2/amplify/auth/resource.ts`                    | Amplify Gen 2 auth config                                            |
+| `bt-web-v2/src/queries/user.ts`                         | User session query hook with admin detection                         |
+| `serverless-biztechapp-1/services/hello/serverless.yml` | API Gateway + Cognito Authorizer CloudFormation                      |
+| `serverless-biztechapp-1/serverless.common.yml`         | Shared authorizer reference for all services                         |
 
 ---
 
 ## Next Steps
 
-- [Auth Implementation](/docs/authentication/implementation): How auth is implemented in the frontend and backend, middleware details, admin detection, and common issues
+- [Auth Implementation](/docs/authentication/implementation): Frontend auth code, middleware details, admin detection, and common issues

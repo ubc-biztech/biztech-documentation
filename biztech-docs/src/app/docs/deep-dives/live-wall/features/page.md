@@ -6,7 +6,6 @@ nextjs:
     description: 'All 14 features of the Live Connection Wall, including WebSocket, spotlight, leaderboard, search, clusters, heatmap, and more.'
 ---
 
-
 The Live Wall is packed with interactive features. This page covers all 14 of them in detail.
 
 ---
@@ -16,29 +15,31 @@ The Live Wall is packed with interactive features. This page covers all 14 of th
 The wall opens a WebSocket connection on mount and subscribes to events:
 
 ```typescript
-const ws = new WebSocket(`${WS_URL}?v=1`);
+const ws = new WebSocket(`${WS_URL}?v=1`)
 
 ws.onopen = () => {
-  ws.send(JSON.stringify({
-    action: "subscribe",
-    eventId: selectedEventId
-  }));
-};
+  ws.send(
+    JSON.stringify({
+      action: 'subscribe',
+      eventId: selectedEventId,
+    }),
+  )
+}
 
 ws.onmessage = (ev) => {
-  const msg = JSON.parse(ev.data);
+  const msg = JSON.parse(ev.data)
 
-  if (msg.type === "snapshot") {
+  if (msg.type === 'snapshot') {
     // Initial batch of nodes + links
   }
 
-  if (msg.type === "connection" || msg.type === "edge") {
+  if (msg.type === 'connection' || msg.type === 'edge') {
     // A new connection just happened!
     // 1. Create/find the two nodes
     // 2. Add the link between them
     // 3. Trigger animations
   }
-};
+}
 ```
 
 If the WebSocket disconnects, it automatically reconnects after 1.5 seconds.
@@ -62,14 +63,11 @@ This returns all connections from the last 5 minutes (300 seconds). The wall use
 When a new node appears, it doesn't just pop in. Instead, it animates with an **easeOutBack** curve (a springy overshoot effect):
 
 ```typescript
-const easeOutBack = (t: number): number => {
-  const c1 = 1.70158;
-  const c3 = c1 + 1;
-  return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
-};
+const easeOutBack = (t: number, s = 1.10158) =>
+  1 + s * Math.pow(t - 1, 3) + s * Math.pow(t - 1, 2)
 ```
 
-New nodes are spawned near the node they're connecting to, and they have a `__born` timestamp that drives the intro animation over `INTRO_MS` (800ms).
+New nodes are spawned near the node they're connecting to, and they have a `__born` timestamp that drives the intro animation over `INTRO_MS` (1200ms).
 
 ---
 
@@ -114,31 +112,37 @@ Press **S** to open the search bar. It fuzzy-matches against node names and lets
 The wall uses BFS (Breadth-First Search) to detect **clusters**, which are groups of people who are all connected to each other but not to other groups:
 
 ```typescript
-function computeClusters(neighborsMap) {
-  const visited = new Set();
-  const clusters = [];
-
-  for (const [nodeId] of neighborsMap) {
-    if (visited.has(nodeId)) continue;
-    // BFS from this node to find all reachable nodes
-    const cluster = [];
-    const queue = [nodeId];
-    while (queue.length > 0) {
-      const current = queue.shift();
-      if (visited.has(current)) continue;
-      visited.add(current);
-      cluster.push(current);
-      for (const neighbor of neighborsMap.get(current)) {
-        if (!visited.has(neighbor)) queue.push(neighbor);
+function computeClusters(
+  nodes: WallNode[],
+  neighbors: Map<string, Set<string>>,
+): Map<string, number> {
+  const clusterMap = new Map<string, number>()
+  const visited = new Set<string>()
+  let clusterId = 0
+  for (const node of nodes) {
+    if (visited.has(node.id)) continue
+    const queue = [node.id]
+    visited.add(node.id)
+    while (queue.length) {
+      const cur = queue.shift()!
+      clusterMap.set(cur, clusterId)
+      const nbrs = neighbors.get(cur)
+      if (nbrs) {
+        Array.from(nbrs).forEach((nb) => {
+          if (!visited.has(nb)) {
+            visited.add(nb)
+            queue.push(nb)
+          }
+        })
       }
     }
-    clusters.push(cluster);
+    clusterId++
   }
-  return clusters;
+  return clusterMap
 }
 ```
 
-When cluster mode is enabled, each cluster gets its own color.
+The function takes the full `nodes` array and the `neighbors` adjacency map, and returns a `Map<string, number>` mapping each node ID to its cluster ID. When cluster mode is enabled, each cluster gets its own color.
 
 ---
 
@@ -148,23 +152,23 @@ Click the route icon, then click two nodes to find the **shortest path** between
 
 ```typescript
 function bfsShortestPath(startId, endId, neighborsMap) {
-  const queue = [[startId]];
-  const visited = new Set([startId]);
+  const queue = [[startId]]
+  const visited = new Set([startId])
 
   while (queue.length > 0) {
-    const path = queue.shift();
-    const current = path[path.length - 1];
+    const path = queue.shift()
+    const current = path[path.length - 1]
 
-    if (current === endId) return path;
+    if (current === endId) return path
 
     for (const neighbor of neighborsMap.get(current) || []) {
       if (!visited.has(neighbor)) {
-        visited.add(neighbor);
-        queue.push([...path, neighbor]);
+        visited.add(neighbor)
+        queue.push([...path, neighbor])
       }
     }
   }
-  return null; // No path found
+  return null // No path found
 }
 ```
 
@@ -187,6 +191,7 @@ You can also enable **kiosk mode** via URL parameter: `?kiosk=1`
 ## 13. Event Switching
 
 The dropdown in the header lets you switch between events. When you switch:
+
 1. The graph clears completely
 2. A new WebSocket subscription is sent
 3. A fresh snapshot is fetched

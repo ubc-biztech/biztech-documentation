@@ -6,7 +6,6 @@ nextjs:
     description: 'In-depth guide to the BizTech Stock Exchange, a simulated stock market for Kickstart projects.'
 ---
 
-
 **BTX** (BizTech Exchange) is a simulated stock market where event attendees trade virtual shares of Kickstart startup projects. Think of it like a mini stock exchange where each project is a "stock" with a ticker symbol, and attendees start with virtual cash to buy and sell shares.
 
 Prices move based on supply and demand (how many people buy vs. sell), and there's even random "drift" to make the charts look realistic. It's a fun, gamified way to get attendees engaged with Kickstart projects.
@@ -32,20 +31,22 @@ Admin creates projects → Attendees trade → Prices move → WebSocket broadca
 
 ### Backend (`services/btx/`)
 
-| File | What it does |
-|------|-------------|
-| `handler.js` | All HTTP + WebSocket endpoint handlers |
-| `helpers.js` | Core business logic: trade execution, price calculation, drift, broadcasting |
-| `constants.js` | Configuration: initial cash, price sensitivity, phase bumps, drift settings |
-| `serverless.yml` | API routes, DynamoDB table definitions, IAM permissions |
+| File             | What it does                                                                 |
+| ---------------- | ---------------------------------------------------------------------------- |
+| `handler.js`     | All HTTP + WebSocket endpoint handlers                                       |
+| `helpers.js`     | Core business logic: trade execution, price calculation, drift, broadcasting |
+| `constants.js`   | Configuration: initial cash, price sensitivity, phase bumps, drift settings  |
+| `serverless.yml` | API routes, DynamoDB table definitions, IAM permissions                      |
 
 ### Frontend
 
-| File | What it does |
-|------|-------------|
-| `src/pages/btx.tsx` | Main exchange page (~2900 lines) with market view, trading UI, charts, portfolio |
-| `src/features/kickstart/2025/btx/BtxStockChart.tsx` | Reusable price chart component using Recharts |
-| `src/hooks/useBtxExchange.ts` | Custom hook for market data, WebSocket connection, trading actions |
+| File                              | What it does                                                                                   |
+| --------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `src/pages/btx.tsx`               | Main exchange page (~2900 lines) with market view, trading UI, charts, portfolio               |
+| `src/components/ui/btx-chart.tsx` | ShadCN-style Recharts wrapper (`ChartContainer`, `ChartTooltip`) used by the main page         |
+| `src/pages/admin/btx.tsx`         | Admin panel for creating projects, applying phase bumps, seed updates                          |
+| `src/lib/db-btx.ts`               | Frontend API client — all BTX fetch functions (`btxFetchMarketSnapshot`, `btxBuyShares`, etc.) |
+| `src/hooks/useBtxExchange.ts`     | Custom hook for market data, WebSocket connection, trading actions                             |
 
 ---
 

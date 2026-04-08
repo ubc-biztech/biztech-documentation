@@ -1,91 +1,27 @@
 export const navigation = [
   {
-    title: 'Introduction',
-    links: [
-      { title: 'Introduction', href: '/' },
-      {
-        title: 'System Overview',
-        href: '/docs/system-overview',
-      },
-      {
-        title: 'Request Lifecycle',
-        href: '/docs/system-overview/request-lifecycle',
-      },
-    ],
-  },
-  {
     title: 'Getting Started',
     links: [
-      {
-        title: 'Setup & Installation',
-        href: '/docs/getting-started',
-      },
-      {
-        title: 'Adding a Docs Page',
-        href: '/docs/documentation-guide/adding-a-page',
-      },
-      {
-        title: 'Markdown Guide',
-        href: '/docs/documentation-guide/markdown-guide',
-      },
-    ],
-  },
-  {
-    title: 'Systems',
-    links: [
-      {
-        title: 'Overview',
-        href: '/docs/systems',
-      },
-      {
-        title: 'Frontend–Backend Integration',
-        href: '/docs/systems/frontend-backend-integration',
-      },
-      {
-        title: 'Request Execution Path',
-        href: '/docs/systems/request-execution-path',
-      },
-      {
-        title: 'Tracing a Feature',
-        href: '/docs/systems/tracing-features',
-      },
-      {
-        title: 'Registration System',
-        href: '/docs/systems/registration',
-      },
-      {
-        title: 'Authentication System',
-        href: '/docs/systems/authentication',
-      },
-      {
-        title: 'Endpoint Registry',
-        href: '/docs/systems/endpoint-registry',
-      },
+      { title: 'Introduction', href: '/' },
+      { title: 'System Overview', href: '/docs/system-overview' },
+      { title: 'Setup & Installation', href: '/docs/getting-started' },
+      { title: 'Project Structure', href: '/docs/project-structure' },
     ],
   },
   {
     title: 'Frontend',
     links: [
+      { title: 'Architecture Overview', href: '/docs/frontend-architecture' },
+      { title: 'Routing & Pages', href: '/docs/frontend-architecture/routing' },
       {
-        title: 'Architecture Overview',
-        href: '/docs/frontend-architecture',
-      },
-      {
-        title: 'Routing & Data Fetching',
-        href: '/docs/frontend-architecture/routing',
-      },
-      {
-        title: 'Data Fetching Deep Dive',
+        title: 'Data Fetching',
         href: '/docs/frontend-architecture/data-fetching',
       },
       {
         title: 'Styling & Configuration',
         href: '/docs/frontend-architecture/styling',
       },
-      {
-        title: 'Component Library',
-        href: '/docs/frontend-components',
-      },
+      { title: 'Component Library', href: '/docs/frontend-components' },
       {
         title: 'Feature Components',
         href: '/docs/frontend-components/feature-components',
@@ -99,10 +35,7 @@ export const navigation = [
   {
     title: 'Backend',
     links: [
-      {
-        title: 'Architecture Overview',
-        href: '/docs/backend-architecture',
-      },
+      { title: 'Architecture Overview', href: '/docs/backend-architecture' },
       {
         title: 'Handler Pattern',
         href: '/docs/backend-architecture/handler-pattern',
@@ -126,16 +59,57 @@ export const navigation = [
     ],
   },
   {
-    title: 'API Reference',
+    title: 'Authentication',
+    links: [
+      { title: 'Overview', href: '/docs/authentication' },
+      { title: 'Implementation', href: '/docs/authentication/implementation' },
+    ],
+  },
+  {
+    title: 'Database',
+    links: [
+      { title: 'Overview & Tables', href: '/docs/database' },
+      {
+        title: 'Schemas & Access Patterns',
+        href: '/docs/database/schemas',
+      },
+    ],
+  },
+  {
+    title: 'Systems',
     links: [
       {
-        title: 'Overview',
-        href: '/docs/api-reference',
+        title: 'Frontend–Backend Integration',
+        href: '/docs/systems/frontend-backend-integration',
       },
       {
-        title: 'Core APIs',
-        href: '/docs/api-reference/core',
+        title: 'Request Lifecycle',
+        href: '/docs/systems/request-execution-path',
       },
+      { title: 'Event Lifecycle', href: '/docs/flows/event-lifecycle' },
+      {
+        title: 'Registration',
+        href: '/docs/systems/registration',
+      },
+      {
+        title: 'Tracing a Feature',
+        href: '/docs/systems/tracing-features',
+      },
+      {
+        title: 'Payment Flow',
+        href: '/docs/systems/payment-flow',
+      },
+      {
+        title: 'Endpoint Registry',
+        href: '/docs/systems/endpoint-registry',
+      },
+    ],
+  },
+  {
+    title: 'API Reference',
+    links: [
+      { title: 'Overview', href: '/docs/api-reference' },
+      { title: 'Core APIs', href: '/docs/api-reference/core' },
       {
         title: 'Profile & Social APIs',
         href: '/docs/api-reference/social',
@@ -147,80 +121,24 @@ export const navigation = [
     ],
   },
   {
-    title: 'Database',
-    links: [
-      {
-        title: 'Overview & Tables',
-        href: '/docs/database',
-      },
-      {
-        title: 'Schemas & Access Patterns',
-        href: '/docs/database/schemas',
-      },
-    ],
-  },
-  {
-    title: 'Infrastructure',
-    links: [
-      {
-        title: 'Auth Overview',
-        href: '/docs/authentication',
-      },
-      {
-        title: 'Auth Implementation',
-        href: '/docs/authentication/implementation',
-      },
-      {
-        title: 'Deployment',
-        href: '/docs/deployment',
-      },
-    ],
-  },
-  {
-    title: 'Flows',
-    links: [
-      {
-        title: 'Overview',
-        href: '/docs/flows',
-      },
-      {
-        title: 'Event Lifecycle',
-        href: '/docs/flows/event-lifecycle',
-      },
-      {
-        title: 'Registration Flow',
-        href: '/docs/flows/registration',
-      },
-      {
-        title: 'Authentication Flow',
-        href: '/docs/flows/authentication',
-      },
-    ],
-  },
-  {
     title: 'Guides',
     links: [
-      {
-        title: 'Overview',
-        href: '/docs/guides',
-      },
       {
         title: 'Adding a Feature',
         href: '/docs/guides/adding-a-feature',
       },
-      {
-        title: 'Environment & Config',
-        href: '/docs/guides/environment',
-      },
+      { title: 'Environment & Config', href: '/docs/guides/environment' },
+      { title: 'Deployment', href: '/docs/deployment' },
     ],
+  },
+  {
+    title: 'Companion App',
+    links: [{ title: 'Overview', href: '/docs/deep-dives/companion' }],
   },
   {
     title: 'Live Wall',
     links: [
-      {
-        title: 'Overview',
-        href: '/docs/deep-dives/live-wall',
-      },
+      { title: 'Overview', href: '/docs/deep-dives/live-wall' },
       {
         title: 'Frontend Architecture',
         href: '/docs/deep-dives/live-wall/frontend',
@@ -242,18 +160,12 @@ export const navigation = [
   {
     title: 'BTX Exchange',
     links: [
-      {
-        title: 'Overview',
-        href: '/docs/deep-dives/btx',
-      },
+      { title: 'Overview', href: '/docs/deep-dives/btx' },
       {
         title: 'Price Mechanics',
         href: '/docs/deep-dives/btx/price-mechanics',
       },
-      {
-        title: 'Database & API',
-        href: '/docs/deep-dives/btx/database-api',
-      },
+      { title: 'Database & API', href: '/docs/deep-dives/btx/database-api' },
       {
         title: 'Trade Execution & Frontend',
         href: '/docs/deep-dives/btx/trade-execution',
@@ -267,10 +179,7 @@ export const navigation = [
   {
     title: 'NFC & QR',
     links: [
-      {
-        title: 'Overview',
-        href: '/docs/deep-dives/nfc-cards',
-      },
+      { title: 'Overview', href: '/docs/deep-dives/nfc-cards' },
       {
         title: 'QR Code Check-In',
         href: '/docs/deep-dives/nfc-cards/qr-checkin',
@@ -280,7 +189,7 @@ export const navigation = [
         href: '/docs/deep-dives/nfc-cards/nfc-writing',
       },
       {
-        title: 'Connections, Errors & Testing',
+        title: 'Connections & Testing',
         href: '/docs/deep-dives/nfc-cards/connections',
       },
     ],
@@ -288,10 +197,7 @@ export const navigation = [
   {
     title: 'Event Feedback',
     links: [
-      {
-        title: 'Overview',
-        href: '/docs/deep-dives/event-feedback',
-      },
+      { title: 'Overview', href: '/docs/deep-dives/event-feedback' },
       {
         title: 'Admin Form Builder',
         href: '/docs/deep-dives/event-feedback/admin-builder',
@@ -309,10 +215,7 @@ export const navigation = [
   {
     title: 'Instagram Analytics',
     links: [
-      {
-        title: 'Overview',
-        href: '/docs/deep-dives/instagram-analytics',
-      },
+      { title: 'Overview', href: '/docs/deep-dives/instagram-analytics' },
       {
         title: 'Dashboard Guide',
         href: '/docs/deep-dives/instagram-analytics/dashboard',
@@ -330,10 +233,7 @@ export const navigation = [
   {
     title: 'Partnerships CRM',
     links: [
-      {
-        title: 'Overview',
-        href: '/docs/deep-dives/partnerships-crm',
-      },
+      { title: 'Overview', href: '/docs/deep-dives/partnerships-crm' },
       {
         title: 'Architecture & File Map',
         href: '/docs/deep-dives/partnerships-crm/architecture',
@@ -385,57 +285,37 @@ export const navigation = [
     ],
   },
   {
-    title: 'API Docs (Legacy)',
+    title: 'Reference',
     links: [
       {
-        title: 'Connections API',
-        href: '/docs/connections',
+        title: 'Adding a Docs Page',
+        href: '/docs/documentation-guide/adding-a-page',
       },
       {
-        title: 'Members API',
-        href: '/docs/members',
-      },
-      {
-        title: 'Profiles API',
-        href: '/docs/profiles',
-      },
-      {
-        title: 'Teams API',
-        href: '/docs/teams',
-      },
-      {
-        title: 'Investments API',
-        href: '/docs/investments',
-      },
-      {
-        title: 'Quizzes API',
-        href: '/docs/quizzes',
-      },
-      {
-        title: 'Quests API',
-        href: '/docs/quests',
+        title: 'Markdown Guide',
+        href: '/docs/documentation-guide/markdown-guide',
       },
     ],
   },
   {
-    title: 'BizTech Judging Portal',
+    title: 'Legacy API Docs',
     links: [
-      {
-        title: 'Overview',
-        href: '/docs/judging-portal',
-      },
-      {
-        title: 'Setup',
-        href: '/docs/judging-portal/setup',
-      },
-      {
-        title: 'Data Model (In Progress)',
-        href: '/docs/judging-portal/data-model',
-      },
-      {
-        title: 'Routes',
-        href: '/docs/judging-portal/routes',
-      },
+      { title: 'Connections', href: '/docs/connections' },
+      { title: 'Members', href: '/docs/members' },
+      { title: 'Profiles', href: '/docs/profiles' },
+      { title: 'Teams', href: '/docs/teams' },
+      { title: 'Investments', href: '/docs/investments' },
+      { title: 'Quizzes', href: '/docs/quizzes' },
+      { title: 'Quests', href: '/docs/quests' },
+    ],
+  },
+  {
+    title: 'Judging Portal',
+    links: [
+      { title: 'Overview', href: '/docs/judging-portal' },
+      { title: 'Setup', href: '/docs/judging-portal/setup' },
+      { title: 'Data Model', href: '/docs/judging-portal/data-model' },
+      { title: 'Routes', href: '/docs/judging-portal/routes' },
     ],
   },
 ]

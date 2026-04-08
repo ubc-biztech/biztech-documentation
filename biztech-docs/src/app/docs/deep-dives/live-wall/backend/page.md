@@ -6,7 +6,6 @@ nextjs:
     description: 'Interactions service, database tables, connection flow, and WebSocket protocol for the Live Connection Wall.'
 ---
 
-
 This page covers the backend that powers the Live Wall, including the interactions service, database tables, connection flow, and WebSocket protocol.
 
 ---
@@ -23,11 +22,11 @@ The backend lives in `services/interactions/` and handles:
 
 ## Database Tables
 
-| Table | Key | Purpose |
-|-------|-----|---------|
-| `bizProfiles{ENV}` | `compositeID` (PK), `type` (SK) | Stores connection records between profiles |
-| `bizLiveConnections{ENV}` | `eventId` (PK), `sk` (SK) | Live log for wall replay/hydration |
-| `bizWallSockets{ENV}` | `connectionId` (PK) | Active WebSocket connections |
+| Table                     | Key                             | Purpose                                    |
+| ------------------------- | ------------------------------- | ------------------------------------------ |
+| `biztechProfiles{ENV}`    | `compositeID` (PK), `type` (SK) | Stores connection records between profiles |
+| `bizLiveConnections{ENV}` | `eventId` (PK), `sk` (SK)       | Live log for wall replay/hydration         |
+| `bizWallSockets{ENV}`     | `connectionId` (PK)             | Active WebSocket connections               |
 
 ---
 
@@ -45,6 +44,7 @@ When `POST /interactions` is called:
 ```
 
 The connection is **bidirectional**. If Alice connects with Bob, two records are created:
+
 - `PROFILE#alice → CONNECTION#bob`
 - `PROFILE#bob → CONNECTION#alice`
 
@@ -54,11 +54,11 @@ The connection is **bidirectional**. If Alice connects with Bob, two records are
 
 The WebSocket uses AWS API Gateway WebSocket APIs:
 
-| Route | Handler | Description |
-|-------|---------|-------------|
-| `$connect` | `wsConnect` | Saves connection ID to DynamoDB |
+| Route         | Handler        | Description                         |
+| ------------- | -------------- | ----------------------------------- |
+| `$connect`    | `wsConnect`    | Saves connection ID to DynamoDB     |
 | `$disconnect` | `wsDisconnect` | Removes connection ID from DynamoDB |
-| `subscribe` | `wsSubscribe` | Updates the connection's event ID |
+| `subscribe`   | `wsSubscribe`  | Updates the connection's event ID   |
 
 ### Messages from Server to Client
 
@@ -78,8 +78,18 @@ The WebSocket uses AWS API Gateway WebSocket APIs:
 {
   "type": "connection",
   "createdAt": 1234567890,
-  "from": { "id": "...", "name": "Elijah Zhou", "avatar": "...", "major": "CS" },
-  "to": { "id": "...", "name": "Aurora Cheng", "avatar": "...", "major": "BUCS" }
+  "from": {
+    "id": "...",
+    "name": "Elijah Zhou",
+    "avatar": "...",
+    "major": "CS"
+  },
+  "to": {
+    "id": "...",
+    "name": "Aurora Cheng",
+    "avatar": "...",
+    "major": "BUCS"
+  }
 }
 ```
 
@@ -95,7 +105,7 @@ The WebSocket uses AWS API Gateway WebSocket APIs:
 │  │  Profile Page    │  │  ConnectionWall.tsx       │ │
 │  │  (NFC tap opens) │  │  ┌───────────────────┐  │ │
 │  │                  │  │  │ react-force-graph  │  │ │
-│  │  POST /interact  │  │  │ (D3 force layout)  │  │ │
+│  │ POST /interactions/ │  │  │ (D3 force layout)  │  │ │
 │  │  ───────────────→│  │  └───────────────────┘  │ │
 │  └─────────────────┘  │  ↑ WebSocket messages    │ │
 │                        └──┼──────────────────────┘ │

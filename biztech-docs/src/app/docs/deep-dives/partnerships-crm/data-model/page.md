@@ -12,14 +12,14 @@ This page documents how CRM data is stored and how records connect.
 
 ## Dynamo Tables
 
-| Table | Purpose |
-| --- | --- |
-| `biztechPartners{ENV}` | Partner profile records |
-| `biztechPartnershipEvents{ENV}` | Partnerships-only event records |
-| `biztechPartnerEventLinks{ENV}` | Partner-event involvement records |
-| `biztechPartnerDocuments{ENV}` | Link-based document records |
-| `biztechPartnerCommunications{ENV}` | Communication timeline entries |
-| `biztechPartnershipsMeta{ENV}` | Integration status rows and email templates |
+| Table                               | Purpose                                     |
+| ----------------------------------- | ------------------------------------------- |
+| `biztechPartners{ENV}`              | Partner profile records                     |
+| `biztechPartnershipEvents{ENV}`     | Partnerships-only event records             |
+| `biztechPartnerEventLinks{ENV}`     | Partner-event involvement records           |
+| `biztechPartnerDocuments{ENV}`      | Link-based document records                 |
+| `biztechPartnerCommunications{ENV}` | Communication timeline entries              |
+| `biztechPartnershipsMeta{ENV}`      | Integration status rows and email templates |
 
 All resources are defined in `services/partnerships/serverless.yml`.
 
@@ -27,12 +27,12 @@ All resources are defined in `services/partnerships/serverless.yml`.
 
 ## Indexes
 
-| Table | Index | Access pattern |
-| --- | --- | --- |
-| `biztechPartnerEventLinks` | `partner-query` | fetch all involvements for one partner |
-| `biztechPartnerEventLinks` | `event-query` | fetch all involvements for one event-year |
-| `biztechPartnerDocuments` | `partner-query` | fetch docs for one partner |
-| `biztechPartnerCommunications` | `partner-query` | fetch comm timeline for one partner |
+| Table                          | Index           | Access pattern                            |
+| ------------------------------ | --------------- | ----------------------------------------- |
+| `biztechPartnerEventLinks`     | `partner-query` | fetch all involvements for one partner    |
+| `biztechPartnerEventLinks`     | `event-query`   | fetch all involvements for one event-year |
+| `biztechPartnerDocuments`      | `partner-query` | fetch docs for one partner                |
+| `biztechPartnerCommunications` | `partner-query` | fetch comm timeline for one partner       |
 
 ---
 
@@ -97,7 +97,7 @@ Core fields:
 - `partnerId`
 - `eventId`
 - `eventYear`
-- `eventIdYear` = `"{eventId};{eventYear}"`
+- `eventIdYear` = `"{eventId}#{eventYear}"`
 - `status`
 - `packageTier`
 - `role`

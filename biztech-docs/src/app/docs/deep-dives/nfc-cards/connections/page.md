@@ -6,7 +6,6 @@ nextjs:
     description: 'How NFC cards create connections, component hierarchy, database records, error handling, and local testing guide.'
 ---
 
-
 This page covers how NFC cards create connections on the Live Wall, the component hierarchy, database records, error handling, and how to test everything locally.
 
 ---
@@ -23,6 +22,11 @@ After someone gets their NFC card, here's what happens when they tap it with ano
    POST /interactions
    { eventType: "CONNECTION", eventParam: "PERSON_B_PROFILE_ID" }
    ```
+
+{% callout type="warning" title="Authentication required" %}
+The `POST /interactions` endpoint requires Cognito authentication. The scanning user must be logged in for NFC connections to work. The user's email is extracted from the JWT claims.
+{% /callout %}
+
 5. The backend:
    - Looks up both users' profiles
    - Creates bidirectional connection records
@@ -38,9 +42,9 @@ EventsDashboard (admin page)
   └── QrCheckIn
        ├── QrReader (camera component from react-qr-reader)
        └── NfcPopup (shown after successful check-in)
-            ├── NfcPopupContent (normal flow - shows "Write to Card" button)
-            │    └── NFCWriter (opened when button is tapped)
-            └── DeviceNotSupported (fallback - shows URL to copy)
+            ├── NFCWriter (when showWriter=true)
+            ├── DeviceNotSupported (when !isNFCSupported)
+            └── NfcPopupContent (when isNFCSupported && !showWriter)
 ```
 
 ---
@@ -67,8 +71,8 @@ When a card is written, `cardCount` is incremented via `PATCH /members/{email}`.
 Connections are stored in the profiles table with composite keys:
 
 ```
-PK: PROFILE#<userProfileID>
-SK: CONNECTION#<otherProfileID>
+compositeID: PROFILE#<userProfileID>
+type: CONNECTION#<otherProfileID>
 ```
 
 Each record includes the connected person's name, major, year, company, pronouns, and the timestamp.
@@ -79,18 +83,18 @@ Each record includes the connected person's name, major, year, company, pronouns
 
 The system handles many edge cases:
 
-| Scenario | Handling |
-|----------|---------|
-| Device doesn't support NFC | Shows URL with copy button |
-| NFC tag not detected within 10s | Shows timeout error with retry button |
-| NFC write fails | Shows error with retry button |
-| User not a member | Shows "non_member" state |
-| User already has a card | Shows "completed" state (can still write if needed) |
-| Wrong event QR code | Shows error with specific message |
-| Already checked in | Shows "already checked in" error |
-| Registration cancelled | Shows cancellation error |
-| Waitlisted user | Shows waitlist error |
-| Network error during check-in | Shows internal server error |
+| Scenario                        | Handling                                            |
+| ------------------------------- | --------------------------------------------------- |
+| Device doesn't support NFC      | Shows URL with copy button                          |
+| NFC tag not detected within 10s | Shows timeout error with retry button               |
+| NFC write fails                 | Shows error with retry button                       |
+| User not a member               | Shows "non_member" state                            |
+| User already has a card         | Shows "completed" state (can still write if needed) |
+| Wrong event QR code             | Shows error with specific message                   |
+| Already checked in              | Shows "already checked in" error                    |
+| Registration cancelled          | Shows cancellation error                            |
+| Waitlisted user                 | Shows waitlist error                                |
+| Network error during check-in   | Shows internal server error                         |
 
 ---
 
@@ -155,6 +159,7 @@ testemail@test.com;your-event-id;2025;TestName
 ```
 
 Make sure:
+
 - The event ID and year match what's in your local events
 - The email exists in your registrations data
 - The registration status is not "checkedIn"

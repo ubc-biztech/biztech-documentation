@@ -6,7 +6,6 @@ nextjs:
     description: 'In-depth guide to the real-time network visualization feature that powers BizTech events.'
 ---
 
-
 The **Live Connection Wall** is a real-time, interactive network graph that visualizes connections being made at BizTech events. When two people tap their NFC cards together, a new edge appears on the wall instantly. It's one of the most technically impressive features in the codebase.
 
 ---
@@ -32,14 +31,14 @@ There are two wall components: a **2D version** (`ConnectionWall.tsx`, ~2800 lin
 
 ## Key Files
 
-| File | What it does |
-|------|-------------|
-| `src/components/LiveWall/ConnectionWall.tsx` | Main 2D wall component (the big one) |
-| `src/components/LiveWall/3DConnectionWall.tsx` | 3D variant using Three.js |
-| `src/components/LiveWall/ForceGraph2DClient.tsx` | Thin wrapper around `react-force-graph-2d` |
-| `services/interactions/handler.js` | Backend HTTP + WebSocket handlers |
-| `services/interactions/helpers.js` | Connection logic, WebSocket broadcasting, DynamoDB persistence |
-| `services/interactions/constants.js` | Current event ID, company lists for quests |
+| File                                             | What it does                                                                                                                                     |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `src/components/LiveWall/ConnectionWall.tsx`     | Main 2D wall component (the big one)                                                                                                             |
+| `src/components/LiveWall/3DConnectionWall.tsx`   | 3D variant using Three.js                                                                                                                        |
+| `src/components/LiveWall/ForceGraph2DClient.tsx` | Thin wrapper around `react-force-graph-2d` (exists but unused — `ConnectionWall.tsx` imports `react-force-graph-2d` directly via `next/dynamic`) |
+| `services/interactions/handler.js`               | Backend HTTP + WebSocket handlers                                                                                                                |
+| `services/interactions/helpers.js`               | Connection logic, WebSocket broadcasting, DynamoDB persistence                                                                                   |
+| `services/interactions/constants.js`             | Current event ID, company lists for quests                                                                                                       |
 
 ---
 

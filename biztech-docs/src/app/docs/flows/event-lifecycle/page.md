@@ -50,7 +50,7 @@ Admins create events at `/admin/event/create` (frontend: `src/pages/admin/event/
 
 Once `isPublished` is true, the event appears on the events page. Users can register at `/event/{eventId}/{year}/register`.
 
-See [Registration Flow](/docs/flows/registration) for the detailed step-by-step breakdown covering:
+See [Registration](/docs/systems/registration) for the detailed step-by-step breakdown covering:
 
 - Dynamic form generation from `registrationQuestions`
 - Free vs paid registration paths (Stripe checkout)
@@ -92,7 +92,7 @@ The companion provides:
 - **Connections** — NFC-based networking, stored in `bizConnections`, visualized on the Live Wall
 - **Partner directory** — browse sponsors and partner companies
 
-See [Companion System](/docs/companion) for the companion architecture.
+See [Companion System](/docs/deep-dives/companion) for the companion architecture.
 
 ---
 
@@ -167,6 +167,6 @@ An event record in `biztechEvents` looks like:
 
 ## Related Pages
 
-- [Registration Flow](/docs/flows/registration) — detailed registration walkthrough
+- [Registration System](/docs/systems/registration) — detailed registration walkthrough
 - [Events API](/docs/api-reference/core) — all event endpoint details
 - [Database Guide](/docs/database) — `biztechEvents` and `biztechRegistrations` table schemas

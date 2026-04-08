@@ -12,14 +12,15 @@ This page covers the Instagram service implementation, API contract, and token l
 
 ## Service Endpoints
 
-| Method | Path | Auth | Purpose |
-| --- | --- | --- | --- |
-| `GET` | `/instagram/analytics` | 🔓 | Return computed analytics payload |
-| `POST` | `/instagram/token/refresh` | 🔓 | Manual long-lived token refresh |
-| `GET` | `/instagram/token/status` | 🔓 | Token source + expiry status |
-| `schedule` | `rate(1 day)` | Internal | Automatic refresh check |
+| Method     | Path                       | Auth     | Purpose                           |
+| ---------- | -------------------------- | -------- | --------------------------------- |
+| `GET`      | `/instagram/analytics`     | 🔓       | Return computed analytics payload |
+| `POST`     | `/instagram/token/refresh` | 🔓       | Manual long-lived token refresh   |
+| `GET`      | `/instagram/token/status`  | 🔓       | Token source + expiry status      |
+| `schedule` | `rate(1 day)`              | Internal | Automatic refresh check           |
 
 `/instagram/analytics` supports optional query params:
+
 - `since` (`YYYY-MM-DD`)
 - `until` (`YYYY-MM-DD`)
 
@@ -27,12 +28,14 @@ This page covers the Instagram service implementation, API contract, and token l
 
 ## Environment Variables
 
-| Variable | Default | Description |
-| --- | --- | --- |
-| `IG_ACCESS_TOKEN` | `""` | Primary fallback token source |
-| `IG_DEFAULT_START_DATE` | `2025-08-01` | Default `since` when omitted |
-| `IG_REFRESH_LEAD_DAYS` | `10` | Days-before-expiry threshold for scheduled refresh |
-| `INSTAGRAM_GRAPH_BASE` | `https://graph.instagram.com/v25.0` | Graph API base override |
+| Variable                | Default                             | Description                                        |
+| ----------------------- | ----------------------------------- | -------------------------------------------------- |
+| `IG_ACCESS_TOKEN`       | `""`                                | Primary fallback token source                      |
+| `IG_DEFAULT_START_DATE` | `2025-08-01`                        | Default `since` when omitted                       |
+| `IG_REFRESH_LEAD_DAYS`  | `10`                                | Days-before-expiry threshold for scheduled refresh |
+| `INSTAGRAM_GRAPH_BASE`  | `https://graph.instagram.com/v25.0` | Graph API base override                            |
+
+> **Note:** `INSTAGRAM_GRAPH_BASE` is not configured in `serverless.yml` by default — the handler falls back to `https://graph.instagram.com/v25.0` if this variable is not set.
 
 ---
 
@@ -63,6 +66,7 @@ Manual refresh endpoint follows the same refresh+store path.
 ## Analytics Payload (High Level)
 
 `GET /instagram/analytics` returns:
+
 - account metadata
 - selected `since` / `until`
 - `totals` object (posts, likes, views, rates, averages)
@@ -73,6 +77,7 @@ Manual refresh endpoint follows the same refresh+store path.
 - full `posts` list with raw + derived metrics
 
 In-memory cache:
+
 - TTL: 5 minutes
 - keyed by `since:until`
 
@@ -83,10 +88,10 @@ In-memory cache:
 Table: `biztechInstagramAuth{ENVIRONMENT}`
 
 Stored token record fields:
+
 - `id` (`primary`)
 - `accessToken`
 - `expiresIn`
 - `expiresAt`
 - `refreshedAt`
 - `source`
-
