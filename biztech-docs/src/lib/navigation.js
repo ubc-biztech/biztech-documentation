@@ -232,6 +232,25 @@ export const navigation = [
     ],
   },
   {
+    title: 'CI/CD & Deployment',
+    links: [
+      { title: 'Overview', href: '/docs/cicd' },
+      {
+        title: 'Frontend Workflows',
+        href: '/docs/cicd/frontend-workflows',
+      },
+      {
+        title: 'Backend Workflows',
+        href: '/docs/cicd/backend-workflows',
+      },
+
+      {
+        title: 'Docs & Bot Sync',
+        href: '/docs/cicd/docs-sync',
+      },
+    ],
+  },
+  {
     title: 'Companion App',
     links: [{ title: 'Overview', href: '/docs/deep-dives/companion' }],
   },

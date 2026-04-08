@@ -168,3 +168,4 @@ For detailed endpoint documentation, see the [API Reference](/docs/api-reference
 
 - [Shared Libraries](/docs/backend-architecture/shared-libraries): Database layer, handler helpers, email, search, and SNS modules
 - [Services & Patterns](/docs/backend-architecture/services): Environment config, API Gateway, local dev, testing, code patterns, and how to add a new service
+- [Backend Workflows](/docs/cicd/backend-workflows): How services are deployed via CI/CD

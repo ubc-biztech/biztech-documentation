@@ -169,5 +169,6 @@ The Slack bot doesn't use any DynamoDB tables — it reads from a static TF-IDF 
 
 ## Related Pages
 
+- [Docs & Bot Sync](/docs/cicd/docs-sync) — how the docs index is rebuilt and deployed
 - [Membership Flow](/docs/flows/membership) — Discord verification requires membership
 - [Companion System](/docs/deep-dives/companion) — another user-facing feature that integrates with profiles

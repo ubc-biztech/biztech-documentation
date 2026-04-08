@@ -201,3 +201,4 @@ Services without tests: payments, partnerships, btx, bots, emails, instagram, in
 - [Local Dev & Debugging](/docs/guides/debugging) — running the backend locally
 - [Adding an API Endpoint](/docs/guides/adding-an-endpoint) — includes notes on adding tests
 - [Backend Architecture](/docs/backend-architecture) — service structure
+- [Backend Workflows](/docs/cicd/backend-workflows) — CI packaging checks (tests are not run in CI)

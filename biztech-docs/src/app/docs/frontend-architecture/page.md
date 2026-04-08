@@ -107,3 +107,4 @@ The standard layout includes:
 
 - [Routing & Data Fetching](/docs/frontend-architecture/routing): Full routing map, data fetching patterns, API client, middleware, and state management
 - [Styling & Configuration](/docs/frontend-architecture/styling): Tailwind setup, brand colors, breakpoints, key directories, the companion system, and environment config
+- [Frontend Workflows](/docs/cicd/frontend-workflows): How the frontend is built and deployed via CI/CD and Vercel
