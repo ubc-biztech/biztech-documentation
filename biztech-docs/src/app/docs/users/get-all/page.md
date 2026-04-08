@@ -15,7 +15,7 @@ The `getAll` API endpoint allows you to retrieve a list of all users in the syst
 The `getAll` API endpoint is used to retrieve all users.
 
 ```
-GET /getAll
+GET /users/
 ```
 
 ## HTTP Method

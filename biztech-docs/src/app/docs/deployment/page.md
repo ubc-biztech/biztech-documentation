@@ -12,12 +12,12 @@ How to deploy changes to dev, staging, and production for both the frontend (Ver
 
 ## Environment Overview
 
-| Environment | Frontend URL | Backend URL | Purpose |
-| --- | --- | --- | --- |
-| **Local** | `http://localhost:3000` | `http://localhost:4000` | Development |
-| **Dev** | `https://dev.app.ubcbiztech.com` | `https://api-dev.ubcbiztech.com` | Testing new features |
-| **Staging** | `https://dev.v2.ubcbiztech.com` | `https://api-staging.ubcbiztech.com` | Pre-production testing |
-| **Production** | `https://app.ubcbiztech.com` | `https://api.ubcbiztech.com` | Live for all users |
+| Environment    | Frontend URL                     | Backend URL                          | Purpose                |
+| -------------- | -------------------------------- | ------------------------------------ | ---------------------- |
+| **Local**      | `http://localhost:3000`          | `http://localhost:4000`              | Development            |
+| **Dev**        | `https://dev.app.ubcbiztech.com` | `https://api-dev.ubcbiztech.com`     | Testing new features   |
+| **Staging**    | `https://dev.v2.ubcbiztech.com`  | `https://api-staging.ubcbiztech.com` | Pre-production testing |
+| **Production** | `https://app.ubcbiztech.com`     | `https://api.ubcbiztech.com`         | Live for all users     |
 
 ---
 
@@ -34,21 +34,21 @@ The frontend (`bt-web-v2`) is deployed on **Vercel** with automatic deployments 
 
 ### Vercel Configuration
 
-| Setting | Value |
-| --- | --- |
-| Framework | Next.js |
-| Build Command | `npm run build` |
-| Output Directory | `.next` |
-| Node.js Version | 20.x |
-| Root Directory | `/` |
+| Setting          | Value           |
+| ---------------- | --------------- |
+| Framework        | Next.js         |
+| Build Command    | `npm run build` |
+| Output Directory | `.next`         |
+| Node.js Version  | 20.x            |
+| Root Directory   | `/`             |
 
 ### Environment Variables on Vercel
 
 These are set in the Vercel dashboard (Settings → Environment Variables):
 
-| Variable | Dev | Production |
-| --- | --- | --- |
-| `NEXT_PUBLIC_STAGE` | `dev` | `prod` |
+| Variable                      | Dev                                           | Production   |
+| ----------------------------- | --------------------------------------------- | ------------ |
+| `NEXT_PUBLIC_REACT_APP_STAGE` | _(omit or set to any non-`production` value)_ | `production` |
 
 {% callout type="warning" title="Don't Commit .env Files" %}
 Environment variables for Vercel are set in the Vercel dashboard, not in the repository. Never commit `.env` or `.env.local` files.
@@ -60,11 +60,11 @@ Every pull request gets its own preview URL (e.g., `bt-web-v2-abc123.vercel.app`
 
 ### Custom Domains
 
-| Domain | Points To |
-| --- | --- |
-| `app.ubcbiztech.com` | Production deployment |
+| Domain                   | Points To             |
+| ------------------------ | --------------------- |
+| `app.ubcbiztech.com`     | Production deployment |
 | `dev.app.ubcbiztech.com` | Dev branch deployment |
-| `v2.ubcbiztech.com` | Production alias |
+| `v2.ubcbiztech.com`      | Production alias      |
 
 ---
 
@@ -104,11 +104,11 @@ The `hello` service must be deployed **first** because it creates the shared API
 
 ### Deployment Stages
 
-| Stage | Config File | ENVIRONMENT | Table Suffix |
-| --- | --- | --- | --- |
-| `dev` | `config.dev.json` | `""` | None |
-| `staging` | `config.staging.json` | `""` | None |
-| `prod` | `config.prod.json` | `"PROD"` | `PROD` |
+| Stage     | Config File           | ENVIRONMENT | Table Suffix |
+| --------- | --------------------- | ----------- | ------------ |
+| `dev`     | `config.dev.json`     | `""`        | None         |
+| `staging` | `config.staging.json` | `""`        | None         |
+| `prod`    | `config.prod.json`    | `"PROD"`    | `PROD`       |
 
 ### Custom Domains (Serverless Domain Manager)
 
@@ -118,7 +118,7 @@ Backend custom domains are managed by the `serverless-domain-manager` plugin:
 # In serverless.common.yml
 customDomain:
   domainName: api-${sls:stage}.ubcbiztech.com
-  basePath: ""
+  basePath: ''
   stage: ${sls:stage}
 ```
 
@@ -163,15 +163,15 @@ customDomain:
 
 ### Useful AWS Console Links
 
-| Service | What to Check |
-| --- | --- |
-| Lambda | Function invocations, errors, duration |
-| API Gateway | Request count, 4xx/5xx errors |
-| DynamoDB | Table size, read/write capacity, throttles |
-| CloudWatch | Logs, alarms, metrics |
-| Cognito | User pool size, sign-in activity |
-| S3 | Storage usage for images |
-| SES | Email sending stats, bounces |
+| Service     | What to Check                              |
+| ----------- | ------------------------------------------ |
+| Lambda      | Function invocations, errors, duration     |
+| API Gateway | Request count, 4xx/5xx errors              |
+| DynamoDB    | Table size, read/write capacity, throttles |
+| CloudWatch  | Logs, alarms, metrics                      |
+| Cognito     | User pool size, sign-in activity           |
+| S3          | Storage usage for images                   |
+| SES         | Email sending stats, bounces               |
 
 ---
 
@@ -190,6 +190,7 @@ Vercel keeps all previous deployments. To rollback:
 Serverless Framework doesn't have built-in rollback, but you can:
 
 1. **Revert the Git commit** and redeploy:
+
    ```bash
    git revert HEAD
    npx sls deploy --stage prod
@@ -203,23 +204,23 @@ Serverless Framework doesn't have built-in rollback, but you can:
 
 ### Frontend Infrastructure
 
-| What | Managed By | Where |
-| --- | --- | --- |
-| Hosting | Vercel | Vercel dashboard |
+| What           | Managed By    | Where                |
+| -------------- | ------------- | -------------------- |
+| Hosting        | Vercel        | Vercel dashboard     |
 | Auth (Cognito) | Amplify Gen 2 | `amplify/` directory |
-| Domain (DNS) | - | DNS provider |
+| Domain (DNS)   | -             | DNS provider         |
 
 ### Backend Infrastructure
 
-| What | Managed By | Where |
-| --- | --- | --- |
-| Lambda functions | Serverless Framework | `services/*/serverless.yml` |
-| API Gateway | Serverless Framework | Created by `hello` service |
-| DynamoDB tables | Manual / Scripts | AWS Console (not in IaC) |
-| S3 buckets | Manual | AWS Console |
-| Cognito | Amplify Gen 2 | `amplify/auth/resource.ts` |
-| SES | Manual | AWS Console |
-| Custom domains | Serverless Domain Manager | `serverless.common.yml` |
+| What             | Managed By                | Where                       |
+| ---------------- | ------------------------- | --------------------------- |
+| Lambda functions | Serverless Framework      | `services/*/serverless.yml` |
+| API Gateway      | Serverless Framework      | Created by `hello` service  |
+| DynamoDB tables  | Manual / Scripts          | AWS Console (not in IaC)    |
+| S3 buckets       | Manual                    | AWS Console                 |
+| Cognito          | Amplify Gen 2             | `amplify/auth/resource.ts`  |
+| SES              | Manual                    | AWS Console                 |
+| Custom domains   | Serverless Domain Manager | `serverless.common.yml`     |
 
 {% callout type="warning" title="DynamoDB Tables Are Not in IaC" %}
 DynamoDB tables are currently created manually in the AWS Console, not through CloudFormation or Serverless. Be very careful when modifying table schemas because there is no automated way to rollback table changes.
@@ -246,6 +247,6 @@ provider:
 ```
 
 Then set the value:
+
 - **Locally:** Add to your `.env` file
 - **Deployed:** Set in your CI/CD pipeline or as an SSM parameter
-

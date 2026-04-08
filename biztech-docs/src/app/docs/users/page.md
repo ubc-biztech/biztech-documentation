@@ -1,119 +1,126 @@
 ---
-title: Users Service Overview
+title: Users Service
 nextjs:
   metadata:
-    title: Users Service Overview
-    description: Overview of the Users service API endpoints.
+    title: Users Service
+    description: API endpoints for the Users service in serverless-biztechapp-1, covering user CRUD, membership checks, favorites, and the GET /users/self pattern.
 ---
 
-The Users service handles all user-related operations, including creating, updating, retrieving, and deleting user data. This overview provides a summary of the available API endpoints, their purposes, and usage. {% .lead %}
+The Users service manages user accounts in the `biztechUsers` DynamoDB table. Handlers live in `services/users/handler.js`. {% .lead %}
 
 ---
 
-## API Endpoints
+## Endpoints
 
-The Users service provides several API endpoints to manage user data. Below is a summary of each endpoint:
+| Method   | Path                             | Auth       | Description                                    |
+| -------- | -------------------------------- | ---------- | ---------------------------------------------- |
+| `POST`   | `/users`                         | 🌐         | Create a user                                  |
+| `GET`    | `/users/check/{email}`           | 🌐         | Check whether a user record exists             |
+| `GET`    | `/users/checkMembership/{email}` | 🌐         | Check whether a user's `isMember` flag is true |
+| `GET`    | `/users/{email}`                 | 🔓         | Get a user record (see behavior note below)    |
+| `GET`    | `/users`                         | 🔓 (admin) | List all users                                 |
+| `PATCH`  | `/users/{email}`                 | 🔓         | Update a user                                  |
+| `PATCH`  | `/users/favEvent/{email}`        | 🔓         | Toggle a favorite event                        |
+| `DELETE` | `/users/{email}`                 | 🔓         | Delete a user                                  |
 
-### 1. Create User
+---
 
-**Endpoint:** `POST /create`
+## `GET /users/{email}` — Self vs. Admin Lookup
 
-This endpoint creates a new user in the system. It validates the input data, checks for duplicates, and stores the user information in the database.
+This endpoint has a special behavior: **non-admin callers always get their own record**, regardless of the `{email}` path param.
 
-### 2. Check User Existence
+The handler reads the caller's email from the Cognito JWT claims:
 
-**Endpoint:** `GET /checkUser/{email}`
+```javascript
+let email = event.requestContext.authorizer.claims.email.toLowerCase()
+// Only admins can override the email from path params:
+if (
+  email.endsWith('@ubcbiztech.com') &&
+  isValidEmail(event.pathParameters.email)
+) {
+  email = event.pathParameters.email
+}
+```
 
-This endpoint checks if a user exists in the database based on the provided email address.
+**This is why the frontend and middleware call `GET /users/self`.** The string `"self"` is not a real path segment — it's a placeholder that gets ignored. The handler resolves identity from the Cognito token, so any value in `{email}` works for non-admins. Admins can pass a real email to fetch any user.
 
-### 3. Check User Membership
+---
 
-**Endpoint:** `GET /checkUserMembership/{email}`
+## User Object Shape
 
-This endpoint checks if a user is a member based on their email address.
+| Field                | Type          | Description                                                                 |
+| -------------------- | ------------- | --------------------------------------------------------------------------- |
+| `id`                 | string        | User's email (primary key)                                                  |
+| `fname`              | string        | First name                                                                  |
+| `lname`              | string        | Last name                                                                   |
+| `email`              | string        | Redundant email field (same as `id`)                                        |
+| `education`          | string        | Education status                                                            |
+| `studentId`          | number        | UBC student number                                                          |
+| `faculty`            | string        | Faculty                                                                     |
+| `major`              | string        | Major/program                                                               |
+| `year`               | number        | Year of study                                                               |
+| `gender`             | string        | Pronouns/gender                                                             |
+| `diet`               | string        | Dietary restrictions                                                        |
+| `isMember`           | boolean       | Whether the user has paid membership                                        |
+| `admin`              | boolean       | Whether the user is a BizTech admin (auto-set for `@ubcbiztech.com` emails) |
+| `favedEventsID;year` | Set\<string\> | Favorite event IDs in `"eventId;year"` format                               |
+| `createdAt`          | number        | Unix timestamp (ms)                                                         |
+| `updatedAt`          | number        | Unix timestamp (ms)                                                         |
 
-### 4. Retrieve User
+### Immutable Fields
 
-**Endpoint:** `GET /get/{email}`
+The `admin` field cannot be changed via `PATCH /users/{email}`. It is set on creation and treated as immutable. See `constants/tables.js` → `IMMUTABLE_USER_PROPS`.
 
-This endpoint retrieves detailed information about a user based on their email address.
+---
 
-### 5. Update User
+## `POST /users`: Create User
 
-**Endpoint:** `PUT /update/{email}`
-
-This endpoint updates an existing user's information. It ensures that certain immutable properties cannot be changed.
-
-### 6. Retrieve All Users
-
-**Endpoint:** `GET /getAll`
-
-This endpoint retrieves information about all users in the system.
-
-### 7. Favourite Event
-
-**Endpoint:** `POST /favouriteEvent/{email}`
-
-This endpoint allows a user to favourite or unfavourite an event. It validates the input data and updates the user's favourite events list.
-
-### 8. Delete User
-
-**Endpoint:** `DELETE /delete/{email}`
-
-This endpoint deletes a user from the system based on their email address.
-
-## Common Request and Response Structure
-
-### Request Structure
-
-All endpoints accept requests in JSON format. Below is an example of a request to create a new user:
+**Request body:**
 
 ```json
 {
-  "email": "user@example.com",
+  "email": "student@example.com",
+  "fname": "Alice",
+  "lname": "Wong",
   "education": "Bachelor's",
-  "studentId": 123456,
-  "fname": "John",
-  "lname": "Doe",
-  "faculty": "Engineering",
-  "major": "Computer Science",
+  "studentId": 12345678,
+  "faculty": "Commerce",
+  "major": "Accounting",
   "year": 3,
-  "gender": "Male",
-  "diet": "Vegetarian",
-  "isMember": true,
-  "favedEventsArray": ["event1;2021", "event2;2022"]
+  "gender": "She/Her",
+  "diet": "None",
+  "isMember": false
 }
 ```
 
-### Response Structure
+**Behavior:**
 
-Responses are also in JSON format and typically include a status code and a message or data payload. Below is an example of a successful response for creating a user:
+- Email is validated and lowercased.
+- If the email domain is `ubcbiztech.com`, `admin` is set to `true` automatically.
+- Returns `409` if a user with this email already exists.
+- Returns `201` with the created user params on success.
 
-```json
-{
-  "statusCode": 201,
-  "body": {
-    "message": "Created!",
-    "params": {
-      "Item": {
-        "id": "user@example.com",
-        "education": "Bachelor's",
-        "studentId": 123456,
-        "fname": "John",
-        "lname": "Doe",
-        "faculty": "Engineering",
-        "major": "Computer Science",
-        "year": 3,
-        "gender": "Male",
-        "diet": "Vegetarian",
-        "isMember": true,
-        "createdAt": 1625140800000,
-        "updatedAt": 1625140800000,
-        "admin": false,
-        "favedEventsID;year": ["event1;2021", "event2;2022"]
-      },
-      "TableName": "USERS_TABLE"
-    }
-  }
-}
-```
+---
+
+## `GET /users/check/{email}`
+
+Returns `true` if a user record exists, `false` otherwise. Used before registration to check if an account needs to be created. No auth required.
+
+---
+
+## `GET /users/checkMembership/{email}`
+
+Returns `true` if the user exists and has `isMember: true`. Used by the membership signup flow to skip the payment step if the user is already a member. No auth required.
+
+---
+
+## Related Pages
+
+- [Create User](/docs/users/create) — detailed create endpoint docs
+- [Get User](/docs/users/get-user) — detailed get endpoint docs
+- [Update User](/docs/users/update-user) — detailed update endpoint docs
+- [Check User](/docs/users/check-user) — check existence
+- [Check Membership](/docs/users/check-user-membership) — check membership flag
+- [Favourite Event](/docs/users/favourite-event) — toggle favorite events
+- [Delete User](/docs/users/delete-user) — delete user
+- [Authentication](/docs/authentication) — how users authenticate and how the JWT claims work

@@ -15,12 +15,12 @@ The `favouriteEvent` API endpoint allows you to mark an event as a favourite or 
 The `favouriteEvent` API endpoint is used to manage a user's favourite events.
 
 ```
-POST /favouriteEvent/{email}
+PATCH /users/favEvent/{email}
 ```
 
 ## HTTP Method
 
-The API uses the `POST` method to send data to the server.
+The API uses the `PATCH` method to send data to the server.
 
 ## Request Parameters
 
@@ -47,7 +47,7 @@ The API performs several validations on the input data:
 Here is an example of a valid request to the `favouriteEvent` API:
 
 ```
-POST /favouriteEvent/user@example.com
+PATCH /users/favEvent/user@example.com
 ```
 
 ```json

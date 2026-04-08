@@ -15,7 +15,7 @@ The `get` API endpoint allows you to retrieve detailed information about a user 
 The `get` API endpoint is used to retrieve a user's information.
 
 ```
-GET /get/{email}
+GET /users/{email}
 ```
 
 ## HTTP Method
@@ -39,7 +39,7 @@ The API performs the following validation on the input data:
 Here is an example of a valid request to the `get` API:
 
 ```
-GET /get/user@example.com
+GET /users/user@example.com
 ```
 
 ## Response Example

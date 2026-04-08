@@ -15,7 +15,7 @@ The `del` API endpoint allows you to delete a user based on their email address.
 The `del` API endpoint is used to delete a user.
 
 ```
-DELETE /del/{email}
+DELETE /users/{email}
 ```
 
 ## HTTP Method
@@ -40,7 +40,7 @@ The API performs several validations on the input data:
 Here is an example of a valid request to the `del` API:
 
 ```
-DELETE /del/user@example.com
+DELETE /users/user@example.com
 ```
 
 ## Response Example

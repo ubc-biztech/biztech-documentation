@@ -10,7 +10,7 @@ Welcome to the BizTech documentation site; your central resource for understandi
 
 {% quick-link title="Architecture Guide" icon="presets" href="/docs/frontend-architecture/" description="Understand how our frontend and backend systems are structured." /%}
 
-{% quick-link title="API Reference" icon="plugins" href="/docs/api-reference/" description="Explore every endpoint across our 19 microservices." /%}
+{% quick-link title="API Reference" icon="plugins" href="/docs/api-reference/" description="Explore endpoints across all BizTech microservices." /%}
 
 {% quick-link title="Page Builder" icon="theming" href="/builder" description="Create new documentation pages visually and submit them as pull requests." /%}
 
@@ -20,7 +20,7 @@ Welcome to the BizTech documentation site; your central resource for understandi
 
 ## Overview
 
-This documentation site serves as the hub for all technical information related to BizTech development  projects. Whether you're a new contributor, an organizer, or a returning developer, this site aims to make working with BizTech's code easy, efficient, and collaborative.
+This documentation site serves as the hub for all technical information related to BizTech development projects. Whether you're a new contributor, an organizer, or a returning developer, this site aims to make working with BizTech's code easy, efficient, and collaborative.
 
 Here, you'll find guides, architecture breakdowns, API references, and more - covering everything from our internal tooling and infrastructure to event-specific apps and open-source initiatives.
 

@@ -12,19 +12,19 @@ A high-level overview of how the BizTech frontend is structured and the key arch
 
 ## Tech Stack Overview
 
-| Layer | Technology | Why We Use It |
-| --- | --- | --- |
-| **Framework** | Next.js 14 (Pages Router) | Server-side rendering, file-based routing, API routes |
-| **Language** | TypeScript 5.5 | Type safety across the codebase |
-| **Styling** | Tailwind CSS 3.4 | Utility-first CSS, fast prototyping, consistent design |
-| **UI Components** | shadcn/ui + Radix UI | Accessible, composable primitives (dialog, select, tabs, etc.) |
-| **Auth** | AWS Amplify Gen 2 (Cognito) | User authentication with email/password and Google OAuth |
-| **State Management** | TanStack React Query v5 | Server state caching, automatic refetching, optimistic updates |
-| **Forms** | react-hook-form + Zod | Performant forms with schema validation |
-| **Charts** | Recharts | Responsive SVG charts for dashboards |
-| **Animation** | Framer Motion | Page transitions, layout animations |
-| **Icons** | Lucide React | Consistent icon set |
-| **Hosting** | Vercel | Automatic deployments from Git |
+| Layer                | Technology                  | Why We Use It                                                  |
+| -------------------- | --------------------------- | -------------------------------------------------------------- |
+| **Framework**        | Next.js 14 (Pages Router)   | Server-side rendering, file-based routing, API routes          |
+| **Language**         | TypeScript 5.5              | Type safety across the codebase                                |
+| **Styling**          | Tailwind CSS 3.4            | Utility-first CSS, fast prototyping, consistent design         |
+| **UI Components**    | shadcn/ui + Radix UI        | Accessible, composable primitives (dialog, select, tabs, etc.) |
+| **Auth**             | AWS Amplify Gen 2 (Cognito) | User authentication with email/password and Google OAuth       |
+| **State Management** | TanStack React Query v5     | Server state caching, automatic refetching, optimistic updates |
+| **Forms**            | react-hook-form + Zod       | Performant forms with schema validation                        |
+| **Charts**           | Recharts                    | Responsive SVG charts for dashboards                           |
+| **Animation**        | Framer Motion               | Page transitions, layout animations                            |
+| **Icons**            | Lucide React                | Consistent icon set                                            |
+| **Hosting**          | Vercel                      | Automatic deployments from Git                                 |
 
 ---
 
@@ -78,20 +78,25 @@ The layout is defined in `src/pages/layout.tsx` and applied conditionally in `_a
 ### Three Layout Modes
 
 **1. No Layout** (full-screen pages with no sidebar):
-- `/login`, `/signup`, `/membership`, `/verify`, `/forgot-password`
+
+- `/login`, `/signup`, `/account-creation`, `/membership`, `/register`, `/verify`, `/forgot-password`
+- `/investments`, `/year-in-review`
 - `/btx` (full trading UI)
-- Landing page
+- `/admin/live-wall` (full-screen force graph)
 
 **2. Companion Layout** (dark theme, event-specific branding):
+
 - `/companion/*` pages
 - Uses event-specific fonts and colors from the companion config
 
 **3. Standard Layout** (sidebar navigation + content area):
+
 - Everything else (home, events, admin, profile, connections)
 - Desktop: 250px sidebar on the left, content with responsive padding
 - Mobile: Sidebar becomes a hamburger drawer
 
 The standard layout includes:
+
 - `ConfigureAmplify` which initializes AWS Amplify on the client
 - `NavBar` with sidebar, user avatar, navigation tabs, logout
 - Responsive padding: `pt-24` on mobile (for mobile header), `md:pl-[250px]` for sidebar offset

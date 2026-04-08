@@ -1,7 +1,17 @@
 export const navigation = [
   {
     title: 'Introduction',
-    links: [{ title: 'Introduction', href: '/' }],
+    links: [
+      { title: 'Introduction', href: '/' },
+      {
+        title: 'System Overview',
+        href: '/docs/system-overview',
+      },
+      {
+        title: 'Request Lifecycle',
+        href: '/docs/system-overview/request-lifecycle',
+      },
+    ],
   },
   {
     title: 'Getting Started',
@@ -21,6 +31,39 @@ export const navigation = [
     ],
   },
   {
+    title: 'Systems',
+    links: [
+      {
+        title: 'Overview',
+        href: '/docs/systems',
+      },
+      {
+        title: 'Frontend–Backend Integration',
+        href: '/docs/systems/frontend-backend-integration',
+      },
+      {
+        title: 'Request Execution Path',
+        href: '/docs/systems/request-execution-path',
+      },
+      {
+        title: 'Tracing a Feature',
+        href: '/docs/systems/tracing-features',
+      },
+      {
+        title: 'Registration System',
+        href: '/docs/systems/registration',
+      },
+      {
+        title: 'Authentication System',
+        href: '/docs/systems/authentication',
+      },
+      {
+        title: 'Endpoint Registry',
+        href: '/docs/systems/endpoint-registry',
+      },
+    ],
+  },
+  {
     title: 'Frontend',
     links: [
       {
@@ -30,6 +73,10 @@ export const navigation = [
       {
         title: 'Routing & Data Fetching',
         href: '/docs/frontend-architecture/routing',
+      },
+      {
+        title: 'Data Fetching Deep Dive',
+        href: '/docs/frontend-architecture/data-fetching',
       },
       {
         title: 'Styling & Configuration',
@@ -55,6 +102,18 @@ export const navigation = [
       {
         title: 'Architecture Overview',
         href: '/docs/backend-architecture',
+      },
+      {
+        title: 'Handler Pattern',
+        href: '/docs/backend-architecture/handler-pattern',
+      },
+      {
+        title: 'API Gateway & Authorizer',
+        href: '/docs/backend-architecture/api-gateway',
+      },
+      {
+        title: 'DynamoDB Access Layer',
+        href: '/docs/backend-architecture/dynamodb',
       },
       {
         title: 'Shared Libraries',
@@ -114,6 +173,44 @@ export const navigation = [
       {
         title: 'Deployment',
         href: '/docs/deployment',
+      },
+    ],
+  },
+  {
+    title: 'Flows',
+    links: [
+      {
+        title: 'Overview',
+        href: '/docs/flows',
+      },
+      {
+        title: 'Event Lifecycle',
+        href: '/docs/flows/event-lifecycle',
+      },
+      {
+        title: 'Registration Flow',
+        href: '/docs/flows/registration',
+      },
+      {
+        title: 'Authentication Flow',
+        href: '/docs/flows/authentication',
+      },
+    ],
+  },
+  {
+    title: 'Guides',
+    links: [
+      {
+        title: 'Overview',
+        href: '/docs/guides',
+      },
+      {
+        title: 'Adding a Feature',
+        href: '/docs/guides/adding-a-feature',
+      },
+      {
+        title: 'Environment & Config',
+        href: '/docs/guides/environment',
       },
     ],
   },

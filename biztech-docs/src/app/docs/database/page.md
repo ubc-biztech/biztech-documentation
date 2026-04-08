@@ -24,11 +24,11 @@ DynamoDB is fundamentally different from relational databases (PostgreSQL, MySQL
 
 All table names automatically get the `ENVIRONMENT` variable appended at runtime. This is handled by `lib/db.js`, so you never need to add the suffix manually.
 
-| Environment | Suffix | Example Table Name |
-| --- | --- | --- |
-| Dev | `""` (empty) | `biztechEvents` |
-| Staging | `""` (empty) | `biztechEvents` |
-| Production | `"PROD"` | `biztechEventsPROD` |
+| Environment | Suffix       | Example Table Name  |
+| ----------- | ------------ | ------------------- |
+| Dev         | `""` (empty) | `biztechEvents`     |
+| Staging     | `""` (empty) | `biztechEvents`     |
+| Production  | `"PROD"`     | `biztechEventsPROD` |
 
 {% callout type="warning" title="Dev and Staging Share Tables" %}
 Because both dev and staging have an empty suffix, they read from the same tables. Be careful with destructive operations in staging since they affect dev too.
@@ -40,46 +40,47 @@ Because both dev and staging have an empty suffix, they read from the same table
 
 ### Core Tables
 
-| Table | Primary Key (PK) | Sort Key (SK) | Description |
-| --- | --- | --- | --- |
-| `biztechEvents` | `id` (string) | `year` (number) | All events |
-| `biztechUsers` | `id` (string = email) | - | User accounts |
-| `biztechRegistrations` | `id` (string = email) | `eventID;year` (string) | Event registrations |
-| `biztechMembers2026` | `id` (string = email) | - | Club members |
-| `biztechProfiles` | `id` (string) | `eventID;year` (string) | Profiles + connections |
-| `biztechTeams` | `eventID;year` (string) | `id` (string) | Teams per event |
-| `biztechQRs` | `eventID;year` (string) | `id` (string) | QR codes per event |
-| `biztechQuests` | `id` (string = email) | `eventID;year` (string) | Quest progress |
-| `biztechQuizzes` | `id` (string) | `eventID;year` (string) | Quiz results |
-| `biztechPrizes` | `id` (string) | - | Prize catalog |
-| `biztechTransactions` | `id` (string = UUID) | - | Point transactions |
-| `biztechInvestments` | `id` (string = UUID) | `eventID;year` (string) | Kickstart investments |
-| `biztechEventFeedback` | `id` (string = UUID) | - | Event attendee/partner feedback submissions |
-| `biztechInstagramAuth` | `id` (string) | - | Stored Instagram access token state |
+| Table                  | Primary Key (PK)        | Sort Key (SK)           | Description                                 |
+| ---------------------- | ----------------------- | ----------------------- | ------------------------------------------- |
+| `biztechEvents`        | `id` (string)           | `year` (number)         | All events                                  |
+| `biztechUsers`         | `id` (string = email)   | -                       | User accounts                               |
+| `biztechRegistrations` | `id` (string = email)   | `eventID;year` (string) | Event registrations                         |
+| `biztechMembers2026`   | `id` (string = email)   | -                       | Club members                                |
+| `biztechProfiles`      | `id` (string)           | `eventID;year` (string) | Profiles + connections                      |
+| `biztechTeams`         | `eventID;year` (string) | `id` (string)           | Teams per event                             |
+| `biztechQRs`           | `eventID;year` (string) | `id` (string)           | QR codes per event                          |
+| `biztechQuests`        | `id` (string = email)   | `eventID;year` (string) | Quest progress                              |
+| `biztechQuizzes`       | `id` (string)           | `eventID;year` (string) | Quiz results                                |
+| `biztechPrizes`        | `id` (string)           | -                       | Prize catalog                               |
+| `biztechTransactions`  | `id` (string = UUID)    | -                       | Point transactions                          |
+| `biztechInvestments`   | `id` (string = UUID)    | `eventID;year` (string) | Kickstart investments                       |
+| `biztechEventFeedback` | `id` (string = UUID)    | -                       | Event attendee/partner feedback submissions |
+| `biztechInstagramAuth` | `id` (string)           | -                       | Stored Instagram access token state         |
 
 ### Connection & Real-Time Tables
 
-| Table | Description |
-| --- | --- |
-| `bizConnections` | Connection records between profiles |
-| `bizWallSockets` | WebSocket connections for the live connection wall |
-| `bizLiveConnections` | Recent connections for wall animation (with TTL) |
-| `bizSockets` | WebSocket connections for the sticker/voting system |
-| `bizStickers` | Sticker votes |
-| `bizScores` | Scoring data |
-| `bizFeedback` | Judge feedback |
-| `bizJudge` | Judge assignment tracking |
+| Table                | Description                                            |
+| -------------------- | ------------------------------------------------------ |
+| `bizConnections`     | Connection records between profiles                    |
+| `biztechNFCScans`    | NFC tap scan events (used by the interactions service) |
+| `bizWallSockets`     | WebSocket connections for the live connection wall     |
+| `bizLiveConnections` | Recent connections for wall animation (with TTL)       |
+| `bizSockets`         | WebSocket connections for the sticker/voting system    |
+| `bizStickers`        | Sticker votes                                          |
+| `bizScores`          | Scoring data                                           |
+| `bizFeedback`        | Judge feedback                                         |
+| `bizJudge`           | Judge assignment tracking                              |
 
 ### BTX (Stock Exchange) Tables
 
-| Table | Description |
-| --- | --- |
-| `bizBtxProjects` | Projects/companies in the exchange |
+| Table            | Description                                      |
+| ---------------- | ------------------------------------------------ |
+| `bizBtxProjects` | Projects/companies in the exchange               |
 | `bizBtxAccounts` | User trading accounts (balance, portfolio value) |
-| `bizBtxHoldings` | User share holdings |
-| `bizBtxTrades` | Trade history |
-| `bizBtxSockets` | WebSocket connections for real-time prices |
-| `bizBtxPrices` | Price history snapshots |
+| `bizBtxHoldings` | User share holdings                              |
+| `bizBtxTrades`   | Trade history                                    |
+| `bizBtxSockets`  | WebSocket connections for real-time prices       |
+| `bizBtxPrices`   | Price history snapshots                          |
 
 ---
 

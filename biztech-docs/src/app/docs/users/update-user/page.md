@@ -15,12 +15,12 @@ The `update` API endpoint allows you to update the information of an existing us
 The `update` API endpoint is used to update a user's information.
 
 ```
-PUT /update/{email}
+PATCH /users/{email}
 ```
 
 ## HTTP Method
 
-The API uses the `PUT` method to send updated data to the server.
+The API uses the `PATCH` method to send updated data to the server.
 
 ## Request Parameters
 
@@ -44,7 +44,7 @@ The API performs several validations on the input data:
 Here is an example of a valid request to the `update` API:
 
 ```
-PUT /update/user@example.com
+PATCH /users/user@example.com
 ```
 
 ```json

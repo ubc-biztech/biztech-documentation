@@ -15,7 +15,7 @@ The `checkUser` API endpoint allows you to check if a user exists in the system 
 The `checkUser` API endpoint is used to check if a user exists.
 
 ```
-GET /checkUser/{email}
+GET /users/check/{email}
 ```
 
 ## HTTP Method
@@ -39,7 +39,7 @@ The API performs the following validation on the input data:
 Here is an example of a valid request to the `checkUser` API:
 
 ```
-GET /checkUser/user@example.com
+GET /users/check/user@example.com
 ```
 
 ## Response Example

@@ -14,11 +14,11 @@ How the backend environment works, how services share an API Gateway, how local 
 
 ### Three Environments
 
-| Environment | API Domain | Config File | ENVIRONMENT var |
-| --- | --- | --- | --- |
-| **Dev** | `api-dev.ubcbiztech.com` | `config.dev.json` | `""` (empty) |
-| **Staging** | `api-staging.ubcbiztech.com` | `config.staging.json` | `""` (empty) |
-| **Production** | `api.ubcbiztech.com` | `config.prod.json` | `"PROD"` |
+| Environment    | API Domain                   | Config File           | ENVIRONMENT var |
+| -------------- | ---------------------------- | --------------------- | --------------- |
+| **Dev**        | `api-dev.ubcbiztech.com`     | `config.dev.json`     | `""` (empty)    |
+| **Staging**    | `api-staging.ubcbiztech.com` | `config.staging.json` | `""` (empty)    |
+| **Production** | `api.ubcbiztech.com`         | `config.prod.json`    | `"PROD"`        |
 
 ### Key Difference
 
@@ -46,31 +46,25 @@ All other services
   └── Import the shared Gateway + Authorizer via CloudFormation references
 ```
 
-This means all 19 services share a single API Gateway and Cognito authorizer, appearing as one unified API.
+This means all services share a single API Gateway and Cognito authorizer, appearing as one unified API.
 
 ### Authorization
 
 Most endpoints require a Cognito JWT token. Some endpoints are public (no auth):
 
-| Public Endpoints | Service | Why |
-| --- | --- | --- |
-| `GET /hello` | hello | Health check |
-| `GET /users/check/{email}` | users | Pre-login check |
-| `GET /users/isMember/{email}` | users | Membership check |
-| `GET /profiles/profile/{profileID}` | profiles | Public profile view |
-| `POST /payments/webhook` | payments | Stripe webhook |
-| `POST /discord/*` | bots | Discord webhook |
-| `GET /events/nearest` | events | Upcoming event |
-| `GET /quests/kiosk/*` | quests | Kiosk display |
+| Public Endpoints                     | Service       | Why                       |
+| ------------------------------------ | ------------- | ------------------------- |
+| `GET /hello`                         | hello         | Health check              |
+| `GET /users/check/{email}`           | users         | Pre-login existence check |
+| `GET /users/checkMembership/{email}` | users         | Membership flag check     |
+| `GET /profiles/profile/{profileID}`  | profiles      | Public profile view       |
+| `POST /payments/webhook`             | payments      | Stripe webhook (signed)   |
+| `GET /events`                        | events        | Event listing             |
+| `GET /events/{id}/{year}`            | events        | Single event              |
+| `GET /events/getActiveEvent`         | events        | Next upcoming event       |
+| `POST /registrations`                | registrations | Register for event        |
 
-Admin-only endpoints additionally check the email domain:
-
-```javascript
-const email = event.headers.authorization; // Decoded from Cognito JWT
-if (!email.includes("@ubcbiztech.com")) {
-  return helpers.createResponse(403, "Unauthorized - admin access required");
-}
-```
+Admin-only endpoints additionally check the email domain in handler code:
 
 ---
 
@@ -80,13 +74,15 @@ if (!email.includes("@ubcbiztech.com")) {
 
 When you run `npm start`, the entry point (`index.js`) does the following:
 
-1. Starts DynamoDB Local on port 8000
-2. Spawns each service with `serverless offline` on ports 4001–4019
-3. Runs a lightweight HTTP proxy on port 4000 that:
-   - Receives all requests
-   - Matches the URL path to the correct service
-   - Forwards the request to the service's port
-   - Returns the response
+1. Reads `sls-multi-gateways.yml` to get the service list and base port (4001)
+2. Spawns each service with `sls offline` starting at port 4001, incrementing by one per service
+3. Runs a lightweight Express proxy on port 4000 that matches URL path prefixes to the correct service port
+
+Each service's path prefix comes from the `srvPath` field in `sls-multi-gateways.yml`. For example, the events service has `srvPath: events`, so `/events/*` requests are routed to it.
+
+{% callout title="DynamoDB Local" %}
+DynamoDB Local starts automatically when `sls offline` starts for any service that has the `serverless-dynamodb` plugin configured. It runs on port 8000. Most services configure it via their `serverless.yml` with `noStart: true` (they reuse the same instance).
+{% /callout %}
 
 This simulates the production API Gateway routing behavior locally.
 
@@ -117,26 +113,26 @@ Every handler follows this structure:
 export const myHandler = async (event) => {
   try {
     // 1. Parse input
-    const body = JSON.parse(event.body || "{}");
-    const { id } = event.pathParameters || {};
+    const body = JSON.parse(event.body || '{}')
+    const { id } = event.pathParameters || {}
 
     // 2. Validate
     const error = helpers.checkPayloadProps(body, {
-      name: "string",
-      year: "number",
-    });
-    if (error) return helpers.inputError(error);
+      name: 'string',
+      year: 'number',
+    })
+    if (error) return helpers.inputError(error)
 
     // 3. Business logic
-    const result = await db.create({ id, ...body }, TABLE_NAME);
+    const result = await db.create({ id, ...body }, TABLE_NAME)
 
     // 4. Return success
-    return helpers.createResponse(201, result);
+    return helpers.createResponse(201, result)
   } catch (err) {
-    console.error(err);
-    return helpers.createResponse(err.statusCode || 502, err.message);
+    console.error(err)
+    return helpers.createResponse(err.statusCode || 502, err.message)
   }
-};
+}
 ```
 
 ### Error Handling
@@ -145,10 +141,10 @@ Use the helper response functions for consistent error responses. Don't throw ra
 
 ```javascript
 // ✅ Good
-if (!user) return helpers.notFoundResponse("User");
+if (!user) return helpers.notFoundResponse('User')
 
 // ❌ Bad
-if (!user) throw new Error("User not found");
+if (!user) throw new Error('User not found')
 ```
 
 ### Module System
@@ -171,12 +167,12 @@ With ES Modules, you must include `.js` in import paths: `import db from "../../
 
 ### Admin Checks
 
-Services that need admin access check the email from the Cognito JWT:
+Services that need admin access check the email from the Cognito JWT. With REST API Gateway (which is what this backend uses), claims are accessed via `authorizer.claims`:
 
 ```javascript
-const email = event.requestContext?.authorizer?.jwt?.claims?.email;
-if (!email || !email.includes("@ubcbiztech.com")) {
-  return helpers.createResponse(403, "Admin access required");
+const email = event.requestContext?.authorizer?.claims?.email
+if (!email || !email.includes('@ubcbiztech.com')) {
+  return helpers.createResponse(403, 'Admin access required')
 }
 ```
 
@@ -194,7 +190,7 @@ mkdir services/my-service
 
 ```yaml
 service: biztechapp-my-service
-frameworkVersion: "3"
+frameworkVersion: '3'
 
 custom: ${file(../../serverless.common.yml):custom}
 provider: ${file(../../serverless.common.yml):provider}
@@ -204,30 +200,37 @@ functions:
   myServiceGet:
     handler: handler.get
     events:
-      - httpApi:
+      - http:
           path: /my-service
           method: get
+          cors: true
           authorizer:
-            name: cognitoAuthorizer
+            type: COGNITO_USER_POOLS
 ```
 
 3. **Create `handler.js`:**
 
 ```javascript
-import helpers from "../../lib/handlerHelpers.js";
-import db from "../../lib/db.js";
+import helpers from '../../lib/handlerHelpers.js'
+import db from '../../lib/db.js'
 
 export const get = async (event) => {
   try {
     // Your logic here
-    return helpers.createResponse(200, { message: "Success" });
+    return helpers.createResponse(200, { message: 'Success' })
   } catch (err) {
-    console.error(err);
-    return helpers.createResponse(502, err.message);
+    console.error(err)
+    return helpers.createResponse(502, err.message)
   }
-};
+}
 ```
 
-4. **Add to `sls-multi-gateways.yml`** so it deploys with everything else.
+4. **Add to `sls-multi-gateways.yml`** so it runs locally and deploys with everything else:
 
-5. **Add to `index.js`** for local development (assign a port).
+```yaml
+- srvName: my-service
+  srvPath: my-service
+  srvSource: services/my-service
+```
+
+The proxy automatically assigns the next available port starting from the base port in the config. No manual port assignment is needed.

@@ -15,7 +15,7 @@ The `create` API endpoint allows you to create a new user. This endpoint validat
 The `create` API endpoint is used to create a new user.
 
 ```
-POST /create
+POST /users/
 
 ```
 

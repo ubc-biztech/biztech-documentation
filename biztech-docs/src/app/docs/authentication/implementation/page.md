@@ -17,10 +17,10 @@ The nuts and bolts of how auth works in both the frontend and backend: token man
 The `ConfigureAmplify` component initializes the Amplify library client-side:
 
 ```typescript
-import { Amplify } from "aws-amplify";
-import outputs from "@/amplifyconfiguration.json";
+import { Amplify } from 'aws-amplify'
+import outputs from '@/amplifyconfiguration.json'
 
-Amplify.configure(outputs);
+Amplify.configure(outputs)
 ```
 
 This is rendered in the layout so it runs on every page.
@@ -30,10 +30,10 @@ This is rendered in the layout so it runs on every page.
 **Client-side** (in React components and hooks):
 
 ```typescript
-import { fetchAuthSession } from "aws-amplify/auth";
+import { fetchAuthSession } from 'aws-amplify/auth'
 
-const session = await fetchAuthSession();
-const token = session.tokens?.idToken?.toString();
+const session = await fetchAuthSession()
+const token = session.tokens?.idToken?.toString()
 ```
 
 This token is automatically included in API calls via `fetchBackend()` in `src/lib/db.ts`.
@@ -41,27 +41,27 @@ This token is automatically included in API calls via `fetchBackend()` in `src/l
 **Server-side** (in `getServerSideProps` and middleware):
 
 ```typescript
-import { createServerRunner } from "@aws-amplify/adapter-nextjs";
+import { createServerRunner } from '@aws-amplify/adapter-nextjs'
 
-const { runWithAmplifyServerContext } = createServerRunner({ config: outputs });
+const { runWithAmplifyServerContext } = createServerRunner({ config: outputs })
 
 // Inside getServerSideProps:
 const session = await runWithAmplifyServerContext({
   nextServerContext: { request, response },
   operation: (context) => fetchAuthSession(context),
-});
+})
 ```
 
 ### Cookie Configuration (`src/util/amplifyServerUtils.ts`)
 
 Auth tokens are stored in cookies with these settings:
 
-| Setting | Production | Dev/Local |
-| --- | --- | --- |
-| Domain | `.ubcbiztech.com` | `localhost` |
-| Max Age | 7 days | 7 days |
-| Secure | Yes | No |
-| SameSite | Lax | Lax |
+| Setting  | Production        | Dev/Local   |
+| -------- | ----------------- | ----------- |
+| Domain   | `.ubcbiztech.com` | `localhost` |
+| Max Age  | 7 days            | 7 days      |
+| Secure   | Yes               | No          |
+| SameSite | Lax               | Lax         |
 
 ---
 
@@ -71,19 +71,25 @@ The middleware runs on **every request** (matched by the broad `/((?!api).*)` pa
 
 ### 1. Allow-listed paths skip auth entirely
 
-These paths don't require any authentication:
+These paths don't require any authentication (from `src/middleware.ts`):
 
 ```
-/login, /signup, /verify, /forgot-password
-/membership, /landing, /btx
-/companion/*/redirect, /companion/*/qr
-/profile/* (public profiles)
+/companion, /companions
+/btx
+/events, /event
+/become-a-member, /membership
+/login
+/profile
+/register
+/forgot-password, /verify
+/investments
 /assets, /favicon, /_next, /static, /fonts, /videos
+*.woff, *.woff2, *.ttf, *.otf (web fonts)
 ```
 
 ### 2. Fetch the current user
 
-For all other paths, the middleware calls `GET /users/{email}` using the auth token from cookies.
+For all other paths, the middleware calls `GET /users/self` using the auth token from cookies. The `self` value in the path is a placeholder — the users handler ignores the path param for non-admins and resolves identity from the Cognito JWT claims instead.
 
 ### 3. Membership check
 
@@ -114,11 +120,9 @@ The `hello` service creates a Cognito Authorizer on the API Gateway. When a Lamb
 
 ```javascript
 export const handler = async (event) => {
-  // The email comes from the verified Cognito JWT
-  const email = event.requestContext?.authorizer?.jwt?.claims?.email;
-  // Or from the Authorization header directly
-  const email = event.headers?.authorization;
-};
+  // The email comes from the verified Cognito JWT (REST API Gateway)
+  const email = event.requestContext?.authorizer?.claims?.email
+}
 ```
 
 ### Public Endpoints (No Auth)
@@ -130,9 +134,10 @@ functions:
   publicEndpoint:
     handler: handler.public
     events:
-      - httpApi:
+      - http:
           path: /my-public-route
           method: get
+          cors: true
           # No authorizer specified = public
 ```
 
@@ -146,25 +151,27 @@ Admin status is determined by one simple rule:
 **A user is an admin if their email contains `@ubcbiztech.com`.**
 
 This check happens in three places:
+
 1. Frontend middleware (`src/middleware.ts`)
 2. Frontend query hook (`src/queries/useUser.ts`)
 3. Backend handlers (services that need admin-only access)
+
 {% /callout %}
 
 ### Frontend Admin Check
 
 ```typescript
 // src/queries/useUser.ts
-const isAdmin = user.email?.includes("@ubcbiztech.com") || false;
+const isAdmin = user.email?.includes('@ubcbiztech.com') || false
 ```
 
 ### Backend Admin Check
 
 ```javascript
 // In service handlers
-const email = event.requestContext?.authorizer?.jwt?.claims?.email;
-if (!email?.includes("@ubcbiztech.com")) {
-  return helpers.createResponse(403, "Admin access required");
+const email = event.requestContext?.authorizer?.claims?.email
+if (!email?.includes('@ubcbiztech.com')) {
+  return helpers.createResponse(403, 'Admin access required')
 }
 ```
 
@@ -177,12 +184,12 @@ Admin-only services: `emails`, `prizes` (CRUD), `members` (list all, grant), `us
 Logout is handled client-side:
 
 ```typescript
-import { signOut } from "aws-amplify/auth";
-import { clearAuthCookies } from "@/lib/registrations";
+import { signOut } from 'aws-amplify/auth'
+import { clearAuthCookies } from '@/lib/registrations'
 
-await signOut();
-clearAuthCookies();  // Removes auth cookies from browser
-window.location.href = "/login";
+await signOut()
+clearAuthCookies() // Removes auth cookies from browser
+window.location.href = '/login'
 ```
 
 The `clearAuthCookies()` function iterates over all cookies with the Cognito prefix and removes them.

@@ -15,7 +15,7 @@ The `checkUserMembership` API endpoint allows you to check if a user is a member
 The `checkUserMembership` API endpoint is used to check if a user is a member.
 
 ```
-GET /checkUserMembership/{email}
+GET /users/checkMembership/{email}
 ```
 
 ## HTTP Method
@@ -39,7 +39,7 @@ The API performs the following validation on the input data:
 Here is an example of a valid request to the `checkUserMembership` API:
 
 ```
-GET /checkUserMembership/user@example.com
+GET /users/checkMembership/user@example.com
 
 ```
 
