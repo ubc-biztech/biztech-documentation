@@ -2,7 +2,7 @@
 title: QR API
 nextjs:
   metadata:
-    title: QR Serivce Documentation
+    title: QR Service Documentation
     description: Detailed documentation for the QR service
     url: https://github.com/ubc-biztech/serverless-biztechapp/blob/master/services/qr/handler.js
 ---

@@ -6,8 +6,6 @@ nextjs:
     description: Explanation of teams API used for
 ---
 
-# Teams API Documentation
-
 This service manages teams for **Kickstart** — BizTech's startup-pitch competition. It handles team creation, scoring, judging feedback, round management, and leaderboards.
 
 ## DynamoDB Tables

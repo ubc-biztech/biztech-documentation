@@ -48,8 +48,8 @@ The same `id` can be reused across years — `blueprint` + `2025` and `blueprint
 
 ## Pricing
 
-| Field     | Type   | Example                               | Description                      |
-| --------- | ------ | ------------------------------------- | -------------------------------- |
+| Field     | Type   | Example                             | Description                        |
+| --------- | ------ | ----------------------------------- | ---------------------------------- |
 | `pricing` | Object | `{ "members": 0, "nonMembers": 5 }` | Price in dollars. `0` = free event |
 
 The payments service reads `pricing.members` or `pricing.nonMembers` based on the user's `isMember` status to set the Stripe checkout session amount.

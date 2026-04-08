@@ -9,10 +9,26 @@ export const navigation = [
     ],
   },
   {
+    title: 'Writing Documentation',
+    links: [
+      {
+        title: 'Adding a Docs Page',
+        href: '/docs/documentation-guide/adding-a-page',
+      },
+      {
+        title: 'Markdown Guide',
+        href: '/docs/documentation-guide/markdown-guide',
+      },
+    ],
+  },
+  {
     title: 'Frontend',
     links: [
       { title: 'Architecture Overview', href: '/docs/frontend-architecture' },
-      { title: 'Routing & Pages', href: '/docs/frontend-architecture/routing' },
+      {
+        title: 'Routing & Pages',
+        href: '/docs/frontend-architecture/routing',
+      },
       {
         title: 'Data Fetching',
         href: '/docs/frontend-architecture/data-fetching',
@@ -90,7 +106,7 @@ export const navigation = [
       { title: 'Active Event Detection', href: '/docs/events/active-event' },
       { title: 'Image Upload', href: '/docs/events/image-upload' },
       {
-        title: 'Events & Registrations',
+        title: 'Registrations',
         href: '/docs/events/registrations',
       },
       {
@@ -100,6 +116,18 @@ export const navigation = [
       {
         title: 'Frontend Implementation',
         href: '/docs/events/frontend',
+      },
+      {
+        title: 'Events Service API',
+        href: '/docs/services/events',
+      },
+      {
+        title: 'Registrations Service API',
+        href: '/docs/services/registrations',
+      },
+      {
+        title: 'Admin Dashboard',
+        href: '/docs/systems/admin-events',
       },
     ],
   },
@@ -125,29 +153,12 @@ export const navigation = [
         href: '/docs/systems/frontend-backend-integration',
       },
       {
-        title: 'Request Lifecycle',
+        title: 'Request Execution Path',
         href: '/docs/systems/request-execution-path',
-      },
-      { title: 'Event Lifecycle', href: '/docs/flows/event-lifecycle' },
-      {
-        title: 'Registration',
-        href: '/docs/systems/registration',
-      },
-      {
-        title: 'Tracing a Feature',
-        href: '/docs/systems/tracing-features',
-      },
-      {
-        title: 'Payment Flow',
-        href: '/docs/systems/payment-flow',
       },
       {
         title: 'Endpoint Registry',
         href: '/docs/systems/endpoint-registry',
-      },
-      {
-        title: 'Admin Event Management',
-        href: '/docs/systems/admin-events',
       },
     ],
   },
@@ -163,25 +174,24 @@ export const navigation = [
         href: '/docs/flows/membership',
       },
       {
+        title: 'Event Lifecycle',
+        href: '/docs/flows/event-lifecycle',
+      },
+      {
+        title: 'Registration',
+        href: '/docs/systems/registration',
+      },
+      {
+        title: 'Payment Flow',
+        href: '/docs/systems/payment-flow',
+      },
+      {
         title: 'Event Check-In',
         href: '/docs/flows/check-in',
       },
       {
         title: 'Profile Sync',
         href: '/docs/flows/profile-sync',
-      },
-    ],
-  },
-  {
-    title: 'Services',
-    links: [
-      {
-        title: 'Events Service',
-        href: '/docs/services/events',
-      },
-      {
-        title: 'Registrations Service',
-        href: '/docs/services/registrations',
       },
     ],
   },
@@ -210,6 +220,10 @@ export const navigation = [
       {
         title: 'Adding an API Endpoint',
         href: '/docs/guides/adding-an-endpoint',
+      },
+      {
+        title: 'Tracing a Feature',
+        href: '/docs/systems/tracing-features',
       },
       { title: 'Environment & Config', href: '/docs/guides/environment' },
       { title: 'Local Dev & Debugging', href: '/docs/guides/debugging' },
@@ -384,19 +398,7 @@ export const navigation = [
       { title: 'Overview', href: '/docs/deep-dives/prizes-transactions' },
     ],
   },
-  {
-    title: 'Reference',
-    links: [
-      {
-        title: 'Adding a Docs Page',
-        href: '/docs/documentation-guide/adding-a-page',
-      },
-      {
-        title: 'Markdown Guide',
-        href: '/docs/documentation-guide/markdown-guide',
-      },
-    ],
-  },
+
   {
     title: 'Legacy API Docs',
     links: [

@@ -36,20 +36,20 @@ Admins create events at `/admin/event/new`.
 
 **What gets configured:**
 
-| Field                          | Purpose                                                        |
-| ------------------------------ | -------------------------------------------------------------- |
-| `id` (slug), `year`            | Composite primary key (e.g. `"blueprint"` + `2026`)            |
-| `ename`, `description`         | Display name and description                                   |
-| `startDate`, `endDate`         | ISO 8601 timestamps — used for active event detection          |
-| `capac`                        | Maximum registration capacity — enforced by `updateHelper()`   |
+| Field                          | Purpose                                                      |
+| ------------------------------ | ------------------------------------------------------------ |
+| `id` (slug), `year`            | Composite primary key (e.g. `"blueprint"` + `2026`)          |
+| `ename`, `description`         | Display name and description                                 |
+| `startDate`, `endDate`         | ISO 8601 timestamps — used for active event detection        |
+| `capac`                        | Maximum registration capacity — enforced by `updateHelper()` |
 | `pricing`                      | `{ members: 0, nonMembers: 5 }` — price in dollars per group |
-| `imageUrl`                     | Event thumbnail uploaded to S3 via presigned URL               |
-| `registrationQuestions`        | Dynamic form questions for attendees                           |
-| `partnerRegistrationQuestions` | Dynamic form questions for partners                            |
-| `attendeeFeedbackQuestions`    | Post-event feedback form config                                |
-| `partnerFeedbackQuestions`     | Post-event feedback form config                                |
-| `isApplicationBased`           | Enables accept/reject flow instead of direct registration      |
-| `nonBizTechAllowed`            | Whether non-members can register                               |
+| `imageUrl`                     | Event thumbnail uploaded to S3 via presigned URL             |
+| `registrationQuestions`        | Dynamic form questions for attendees                         |
+| `partnerRegistrationQuestions` | Dynamic form questions for partners                          |
+| `attendeeFeedbackQuestions`    | Post-event feedback form config                              |
+| `partnerFeedbackQuestions`     | Post-event feedback form config                              |
+| `isApplicationBased`           | Enables accept/reject flow instead of direct registration    |
+| `nonBizTechAllowed`            | Whether non-members can register                             |
 
 **Backend:** `POST /events/` — validates feedback questions, normalizes question arrays via `feedbackHelpers.js`, assigns UUIDs to registration questions, checks for duplicates, and writes to `biztechEvents`.
 

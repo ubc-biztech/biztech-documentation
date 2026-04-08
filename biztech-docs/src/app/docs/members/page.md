@@ -30,11 +30,11 @@ All endpoints require Cognito authentication + `@ubcbiztech.com` email.
 
 The members service operates on multiple tables:
 
-| Table                | Role                                          |
-| -------------------- | --------------------------------------------- |
-| `biztechUsers`       | Updated during grant (`isMember` flag) |
-| `biztechMembers2026` | Primary member records                        |
-| `biztechProfiles`    | Created during grant if no profile exists     |
+| Table                | Role                                      |
+| -------------------- | ----------------------------------------- |
+| `biztechUsers`       | Updated during grant (`isMember` flag)    |
+| `biztechMembers2026` | Primary member records                    |
+| `biztechProfiles`    | Created during grant if no profile exists |
 
 {% callout type="note" title="Year-Suffixed Table" %}
 The table name `biztechMembers2026` includes the membership year. The constant `MEMBERS2026_TABLE` in `constants/tables.js` controls which year is active. When the year rolls over, this constant and the corresponding DynamoDB table must be updated.
@@ -228,22 +228,22 @@ Grant membership for a user. This endpoint creates or updates user, member, and 
 
 The body must contain the full set of member fields (the handler reads all of them):
 
-| Body Property         | Type     | Description                                 |
-| --------------------- | -------- | ------------------------------------------- |
-| email                 | String   | User email (required)                       |
-| firstName             | String   | First name                                  |
-| lastName              | String   | Last name                                   |
-| education             | String   | University or institution                   |
-| studentNumber         | String   | Student number                              |
-| pronouns              | String   | Pronouns                                    |
-| levelOfStudy / year   | String   | Year of study (handler checks both fields)  |
-| faculty               | String   | Faculty                                     |
-| major                 | String   | Major                                       |
-| internationalStudent  | Boolean  | International student flag                  |
-| previousMember        | Boolean  | Was a member in a previous year             |
-| dietaryRestrictions   | String   | Dietary restrictions                        |
-| referral              | String   | How they heard about BizTech                |
-| topics                | String[] | Topics of interest                          |
+| Body Property        | Type     | Description                                |
+| -------------------- | -------- | ------------------------------------------ |
+| email                | String   | User email (required)                      |
+| firstName            | String   | First name                                 |
+| lastName             | String   | Last name                                  |
+| education            | String   | University or institution                  |
+| studentNumber        | String   | Student number                             |
+| pronouns             | String   | Pronouns                                   |
+| levelOfStudy / year  | String   | Year of study (handler checks both fields) |
+| faculty              | String   | Faculty                                    |
+| major                | String   | Major                                      |
+| internationalStudent | Boolean  | International student flag                 |
+| previousMember       | Boolean  | Was a member in a previous year            |
+| dietaryRestrictions  | String   | Dietary restrictions                       |
+| referral             | String   | How they heard about BizTech               |
+| topics               | String[] | Topics of interest                         |
 
 **Example Request**
 

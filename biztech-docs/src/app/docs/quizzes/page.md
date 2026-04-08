@@ -1,4 +1,10 @@
-# Quizzes API
+---
+title: Quizzes API
+nextjs:
+  metadata:
+    title: Quizzes API
+    description: The Quizzes service handles the Tech Style Quiz, calculating MBTI-like types from personality scores and generating aggregate statistics.
+---
 
 This service handles the **Tech Style Quiz** — a personality-style quiz used at Blueprint events. It calculates MBTI-like types from domain/mode/environment/focus scores, stores results, and generates aggregate statistics.
 

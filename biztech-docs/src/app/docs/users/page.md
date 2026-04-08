@@ -12,16 +12,16 @@ The Users service manages user accounts in the `biztechUsers` DynamoDB table. Ha
 
 ## Endpoints
 
-| Method   | Path                             | Auth          | Handler               | Description                        |
-| -------- | -------------------------------- | ------------- | --------------------- | ---------------------------------- |
-| `POST`   | `/users`                         | Public        | `create`              | Create a user                      |
-| `GET`    | `/users/check/{email}`           | Public        | `checkUser`           | Check whether a user record exists |
-| `GET`    | `/users/checkMembership/{email}` | Public        | `checkUserMembership` | Check `isMember` flag              |
-| `GET`    | `/users/{email}`                 | Cognito       | `get`                 | Get user record (see self pattern) |
-| `GET`    | `/users`                         | Cognito       | `getAll`              | List all users (no handler-level admin check) |
-| `PATCH`  | `/users/{email}`                 | Cognito       | `update`              | Update a user                      |
-| `PATCH`  | `/users/favEvent/{email}`        | Cognito       | `favouriteEvent`      | Toggle a favorite event            |
-| `DELETE` | `/users/{email}`                 | Cognito       | `del`                 | Delete a user                      |
+| Method   | Path                             | Auth    | Handler               | Description                                   |
+| -------- | -------------------------------- | ------- | --------------------- | --------------------------------------------- |
+| `POST`   | `/users`                         | Public  | `create`              | Create a user                                 |
+| `GET`    | `/users/check/{email}`           | Public  | `checkUser`           | Check whether a user record exists            |
+| `GET`    | `/users/checkMembership/{email}` | Public  | `checkUserMembership` | Check `isMember` flag                         |
+| `GET`    | `/users/{email}`                 | Cognito | `get`                 | Get user record (see self pattern)            |
+| `GET`    | `/users`                         | Cognito | `getAll`              | List all users (no handler-level admin check) |
+| `PATCH`  | `/users/{email}`                 | Cognito | `update`              | Update a user                                 |
+| `PATCH`  | `/users/favEvent/{email}`        | Cognito | `favouriteEvent`      | Toggle a favorite event                       |
+| `DELETE` | `/users/{email}`                 | Cognito | `del`                 | Delete a user                                 |
 
 ---
 

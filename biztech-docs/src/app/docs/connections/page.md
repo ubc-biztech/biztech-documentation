@@ -81,7 +81,7 @@ You may optionally filter connections by **event** and/or **year** using query s
 | eventId   | string | Filters connections associated with a specific event |
 | year      | string | Filters connections by event year                    |
 
-## Example request
+### Example request
 
 `GET /interactions/journal`
 
@@ -91,7 +91,7 @@ You may optionally filter connections by **event** and/or **year** using query s
 
 _All connections will include the fields in the following response. Note that by default, all connections will be sorted from most to least recent in the response_
 
-## Example response
+### Example response
 
 ```javascript
 {
@@ -144,7 +144,11 @@ Some behaviour to note is that this endpoint will return false if a user checks 
 
 - 400 means that the user has attempted to check if they have a connection with themselves
 
-## GET /interactions/quests 🚧
+## GET /interactions/quests
+
+{% callout type="warning" title="Under construction" %}
+This endpoint is not yet fully implemented.
+{% /callout %}
 
 {% callout type="warning" title="Deprecated" %}
 _currently deprecated... more infrastructure of new profiles needs to be built to support quests and badges at the moment_
