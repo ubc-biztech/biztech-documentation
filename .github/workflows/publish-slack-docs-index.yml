@@ -1,0 +1,107 @@
+name: Publish Slack Docs Index
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: publish-slack-docs-index-${{ github.ref }}
+      cancel-in-progress: true
+    env:
+      DOCS_INDEX_BUCKET: ${{ vars.DOCS_INDEX_BUCKET || vars.DOCS_INDEX_S3_BUCKET }}
+      DOCS_INDEX_KEY: ${{ vars.DOCS_INDEX_KEY || vars.DOCS_INDEX_S3_KEY || 'slack-docs-index/latest.json' }}
+      DOCS_INDEX_VERSION_PREFIX: ${{ vars.DOCS_INDEX_VERSION_PREFIX || 'slack-docs-index/versions' }}
+      DOCS_INDEX_REGION: ${{ vars.DOCS_INDEX_AWS_REGION || vars.DOCS_INDEX_S3_REGION || 'us-west-2' }}
+      SERVERLESS_REPO_REF: ${{ vars.SERVERLESS_REPO_REF || 'master' }}
+    steps:
+      - name: Checkout docs repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Validate publish configuration
+        env:
+          AWS_DOCS_INDEX_ROLE_ARN: ${{ secrets.AWS_DOCS_INDEX_ROLE_ARN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "$DOCS_INDEX_BUCKET" ]; then
+            echo "Missing repository variable DOCS_INDEX_BUCKET (or DOCS_INDEX_S3_BUCKET)."
+            exit 1
+          fi
+
+          if [ -z "$DOCS_INDEX_KEY" ]; then
+            echo "Missing docs index key."
+            exit 1
+          fi
+
+          if [ -z "$AWS_DOCS_INDEX_ROLE_ARN" ] && { [ -z "$AWS_ACCESS_KEY_ID" ] || [ -z "$AWS_SECRET_ACCESS_KEY" ]; }; then
+            echo "Configure either AWS_DOCS_INDEX_ROLE_ARN or AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY secrets."
+            exit 1
+          fi
+
+      - name: Checkout docs index generator
+        uses: actions/checkout@v4
+        with:
+          repository: ubc-biztech/serverless-biztechapp
+          ref: ${{ env.SERVERLESS_REPO_REF }}
+          token: ${{ secrets.SERVERLESS_REPO_READ_TOKEN || github.token }}
+          path: serverless-biztechapp
+
+      - name: Build Slack docs index JSON
+        run: |
+          node ./serverless-biztechapp/scripts/generateSlackDocsIndex.js \
+            --docs-root ./biztech-docs/src/app \
+            --out /tmp/slack-docs-index.js \
+            --json-out /tmp/slack-docs-index.json
+          test -s /tmp/slack-docs-index.json
+
+      - name: Validate generated docs index
+        run: |
+          node -e "const fs=require('fs'); const data=JSON.parse(fs.readFileSync('/tmp/slack-docs-index.json','utf8')); if(!Array.isArray(data.docsChunks) || data.docsChunks.length===0){throw new Error('docsChunks is empty');} console.log('docsChunkCount',data.docsChunkCount,'generatedAt',data.docsIndexGeneratedAt);"
+
+      - name: Configure AWS credentials (OIDC)
+        if: ${{ secrets.AWS_DOCS_INDEX_ROLE_ARN != '' }}
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DOCS_INDEX_ROLE_ARN }}
+          aws-region: ${{ env.DOCS_INDEX_REGION }}
+
+      - name: Configure AWS credentials (static fallback)
+        if: ${{ secrets.AWS_DOCS_INDEX_ROLE_ARN == '' }}
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.DOCS_INDEX_REGION }}
+
+      - name: Upload docs index to S3
+        run: |
+          set -euo pipefail
+
+          VERSIONED_KEY="${DOCS_INDEX_VERSION_PREFIX}/${GITHUB_SHA}.json"
+
+          aws s3 cp /tmp/slack-docs-index.json "s3://${DOCS_INDEX_BUCKET}/${VERSIONED_KEY}" \
+            --content-type application/json \
+            --cache-control no-store
+
+          aws s3 cp /tmp/slack-docs-index.json "s3://${DOCS_INDEX_BUCKET}/${DOCS_INDEX_KEY}" \
+            --content-type application/json \
+            --cache-control no-store
+
+          echo "Published:"
+          echo "  s3://${DOCS_INDEX_BUCKET}/${VERSIONED_KEY}"
+          echo "  s3://${DOCS_INDEX_BUCKET}/${DOCS_INDEX_KEY}"
