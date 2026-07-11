@@ -3,207 +3,213 @@ title: User, Member & Profile Relationships
 nextjs:
   metadata:
     title: User, Member & Profile Relationships
-    description: How biztechUsers, biztechMembers2026, and biztechProfiles relate to each other and when each record is created.
+    description: How biztechUsers, biztechMembers2027, and biztechProfiles relate to each other and when each record is created.
 ---
 
-How the three identity tables — `biztechUsers`, `biztechMembers2026`, and `biztechProfiles` — relate to each other and when each record is created. {% .lead %}
+How the three identity tables - `biztechUsers`, `biztechMembers2027`, and `biztechProfiles` - relate to each other and when each record is created. {% .lead %}
+
+---
+
+## Ownership Rules
+
+| Area | Source of truth | Notes |
+| ---- | --------------- | ----- |
+| Account identity | `biztechUsers` | Stable user row keyed by lowercase email. This is the source of truth for `profileID`. |
+| Yearly membership | `biztechMembers2027` | Year-specific membership form data. This table should no longer own profile identity. |
+| Networking profile | `biztechProfiles` | Public/private profile data plus connection rows keyed by profile ID. |
+
+Important rule for docs and implementation:
+
+- User owns profile identity.
+- Membership owns yearly membership data.
+- Profile owns networking and public profile data.
 
 ---
 
 ## The Three Records
 
-Every fully-registered BizTech member has a record in three tables:
+Every fully-registered BizTech member has records across three tables:
 
 ```
-biztechUsers          biztechMembers2026        biztechProfiles
-┌──────────────┐      ┌──────────────────┐      ┌──────────────────────┐
-│ id (email)   │◄────►│ id (email)       │      │ compositeID          │
-│ fname        │      │ firstName        │      │   PROFILE#<profileID>│
-│ lname        │      │ lastName         │      │ type: PROFILE        │
-│ admin        │      │ cardNumber       │      │ firstName            │
-│ isMember     │      │ cardCount        │      │ lastName             │
-│ faculty      │      │ profileID ───────│─────►│ profileType          │
-│ year         │      │ faculty          │      │ viewableMap          │
-│ diet         │      │ year             │      │ hobby1, hobby2       │
-│ ...          │      │ ...              │      │ linkedIn, ...        │
-└──────────────┘      └──────────────────┘      └──────────────────────┘
+biztechUsers          biztechMembers2027        biztechProfiles
+---------------       ------------------        ----------------------
+| id (email)  | <---> | id (email)      |        | compositeID        |
+| profileID --|-------------------------------> | PROFILE#<profileID>|
+| fname       |       | firstName       |        | type: PROFILE      |
+| lname       |       | lastName        |        | profileID          |
+| admin       |       | profileType     |        | profileType        |
+| isMember    |       | cardCount       |        | fname, lname       |
+| faculty     |       | pronouns        |        | pronouns           |
+| year        |       | major, year     |        | major, year        |
+| diet        |       | yearly answers  |        | viewableMap        |
+| ...         |       | ...             |        | linkedIn, ...      |
+---------------       ------------------        ----------------------
      PK: id (email)        PK: id (email)        PK: compositeID
-                           GSI: profile-query     SK: type
-                             on profileID
+     GSI: profileID-index                         SK: type
 ```
 
 ### Key Relationships
 
-- **User → Member**: Linked by `id` (email). A user may or may not have a member record. `isMember` on the user record tracks this.
-- **Member → Profile**: The `profileID` field on the member record links to the profile's `compositeID` (as `PROFILE#<profileID>`). The `profile-query` GSI on `biztechMembers2026` allows reverse lookup from `profileID` to email.
-- **User → Profile**: No direct link. To get a user's profile, you must look up their member record first to get the `profileID`.
+- **User -> Member**: Linked by `id` (lowercase email). A user may or may not have a member record. `isMember` on the user record tracks current membership state.
+- **User -> Profile**: Linked by `biztechUsers.profileID`. This is the canonical profile identity link.
+- **Member -> Profile**: Membership data can refresh profile fields like `pronouns`, `major`, and `year`, but membership rows do not own `profileID`.
 
 ---
 
-## Table Purposes
+## Table Schemas
 
-### biztechUsers Account Record
+### `biztechUsers`
 
-The user record is the core identity record. It holds authentication-related data and basic demographics.
+Purpose: stable account identity. This table is now the source of truth for `profileID`.
 
-| Field       | Type    | Notes                                                         |
-| ----------- | ------- | ------------------------------------------------------------- |
-| `id`        | String  | Email address (primary key)                                   |
-| `fname`     | String  | First name                                                    |
-| `lname`     | String  | Last name                                                     |
-| `admin`     | Boolean | Auto-set on creation for `@ubcbiztech.com` emails. Immutable. |
-| `isMember`  | Boolean | Set to `true` after membership payment or admin grant         |
-| `faculty`   | String  | Faculty name                                                  |
-| `year`      | Number  | Year of study                                                 |
-| `diet`      | String  | Dietary restrictions                                          |
-| `studentId` | Number  | UBC student number                                            |
+| Field | Type | Key / Index | Notes |
+| ----- | ---- | ----------- | ----- |
+| `id` | String | PK | Lowercase email. |
+| `profileID` | String | GSI `profileID-index` | Stable profile ID. Used to find the user's profile. |
+| `fname` | String | - | First name. |
+| `lname` | String | - | Last name. |
+| `education` | String | - | School/education status. |
+| `studentId` | String/Number | - | Student number. |
+| `faculty` | String | - | Faculty. |
+| `major` | String | - | Major/program. |
+| `year` | String/Number | - | Year of study. |
+| `gender` / `pronouns` | String | - | Existing code mostly uses `gender` on users; profiles use `pronouns`. |
+| `diet` | String | - | Dietary restrictions. |
+| `isMember` | Boolean | - | Current membership flag. |
+| `admin` | Boolean | - | Auto-set for `ubcbiztech.com`; immutable via user API. |
+| `favedEventsID;year` | StringSet | - | Favorite events. |
+| `createdAt` | Number | - | Epoch ms. |
+| `updatedAt` | Number | - | Epoch ms. |
+
+**Indexes**
+
+| Index | Key | Purpose |
+| ----- | --- | ------- |
+| table primary key | `id` | Email to user. |
+| `profileID-index` | `profileID` | Profile ID to user/email. |
 
 **Owner service:** `services/users/handler.js`
 
-### biztechMembers2026 Membership Record
+### `biztechMembers2027`
 
-The member record is created when a user becomes a paid member (or is granted membership by an admin). It holds membership-specific data and the link to the profile.
+Purpose: yearly membership record. It should no longer own profile identity.
 
-| Field        | Type   | Notes                                              |
-| ------------ | ------ | -------------------------------------------------- |
-| `id`         | String | Email address (primary key)                        |
-| `firstName`  | String | First name (duplicated from user)                  |
-| `lastName`   | String | Last name (duplicated from user)                   |
-| `cardNumber` | String | Physical NFC card number (assigned later)          |
-| `cardCount`  | Number | Starts at 0, incremented when NFC card is written  |
-| `profileID`  | String | Human-readable profile ID (set by `createProfile`) |
-| `faculty`    | String | Faculty name                                       |
-| `year`       | Mixed  | Year of study                                      |
+| Field | Type | Key / Index | Notes |
+| ----- | ---- | ----------- | ----- |
+| `id` | String | PK | Lowercase email. |
+| `profileType` | String | - | New field. Normal paid membership should set `"MEMBER"`. |
+| `education` | String | - | Membership form value. |
+| `firstName` | String | - | Membership form first name. |
+| `lastName` | String | - | Membership form last name. |
+| `pronouns` | String | - | Used to refresh profile. |
+| `studentNumber` | String | - | Membership form student number. |
+| `faculty` | String | - | Membership form faculty. |
+| `year` | String/Number | - | Used to refresh profile. |
+| `major` | String | - | Used to refresh profile. |
+| `prevMember` | Boolean/String | - | Previous member answer. |
+| `international` | Boolean/String | - | International student answer. |
+| `topics` | Array | - | Interest topics. |
+| `heardFrom` | String | - | Referral source. |
+| `heardFromSpecify` | String | - | Referral detail. |
+| `diet` | String | - | Dietary restrictions. |
+| `university` | String | - | School/university. |
+| `highSchool` | String | - | High school, if applicable. |
+| `admin` | Boolean | - | Existing admin snapshot. |
+| `cardCount` | Number | - | NFC/card tracking. |
+| `discordId` | String | - | Existing location for now, though eventually user-level is cleaner. |
+| `createdAt` | Number | - | Epoch ms. |
+| `updatedAt` | Number | - | Epoch ms. |
+
+**Indexes**
+
+| Index | Key | Purpose |
+| ----- | --- | ------- |
+| table primary key | `id` | Email to yearly membership. |
+
+**Deprecated/removed from docs as source of truth**
+
+| Field | Status |
+| ----- | ------ |
+| `profileID` | Deprecated. Do not read from membership table anymore. |
 
 **Owner service:** `services/members/handler.js`
 
 {% callout type="note" title="Year-Suffixed Table" %}
-The table name includes the membership year (e.g., `biztechMembers2026`). The constant `MEMBERS2026_TABLE` in `constants/tables.js` controls which year is active. When the membership year rolls over, this constant must be updated and a new table created.
+The table name includes the membership year. The active yearly members table is now `biztechMembers2027`; when the membership year rolls over, update the table constant and create the corresponding DynamoDB table.
 {% /callout %}
 
-### biztechProfiles Public Profile
+### `biztechProfiles`
 
-The profile record holds the user's public-facing profile for the companion app and networking. It uses a composite key structure that stores both profiles and connections in the same table.
+Purpose: public/private profile data and connection rows.
 
-| Field         | Type   | Notes                                                                    |
-| ------------- | ------ | ------------------------------------------------------------------------ |
-| `compositeID` | String | `PROFILE#<profileID>` (partition key)                                    |
-| `type`        | String | `PROFILE` for profile rows, `CONNECTION#<id>` for connections (sort key) |
-| `profileID`   | String | Human-readable ID (e.g., `SillyPandasDeny`)                              |
-| `profileType` | String | `ATTENDEE`, `PARTNER`, or `EXEC`                                         |
-| `fname`       | String | Copied from member record at creation (stored as `fname`, not `firstName`) |
-| `lname`       | String | Copied from member record at creation (stored as `lname`, not `lastName`)`)`)  |
-| `viewableMap` | Object | Privacy toggles per field                                                |
+#### Profile Row
+
+| Field | Type | Key / Index | Notes |
+| ----- | ---- | ----------- | ----- |
+| `compositeID` | String | PK | `PROFILE#{profileID}`. |
+| `type` | String | SK | `"PROFILE"` for profile row. |
+| `profileID` | String | - | Stored explicitly now for convenience. |
+| `profileType` | String | - | `"MEMBER"`, `"EXEC"`, `"PARTNER"`, etc. |
+| `fname` | String | - | Public profile first name. |
+| `lname` | String | - | Public profile last name. |
+| `pronouns` | String | - | Refreshed from membership purchase. |
+| `major` | String | - | Refreshed from membership purchase. |
+| `year` | String/Number | - | Refreshed from membership purchase. |
+| `hobby1` | String | - | Editable profile field. |
+| `hobby2` | String | - | Editable profile field. |
+| `funQuestion1` | String | - | Editable profile field. |
+| `funQuestion2` | String | - | Editable profile field. |
+| `linkedIn` | String | - | Editable. |
+| `profilePictureURL` | String | - | Editable/uploaded. |
+| `additionalLink` | String | - | Editable. |
+| `resumeURL` | String | - | New planned field. |
+| `description` | String | - | Bio. |
+| `viewableMap` | Object | - | Visibility flags. |
+| `createdAt` | Number | - | Epoch ms. |
+| `updatedAt` | Number | - | Epoch ms. |
+
+#### Connection Row
+
+| Field | Type | Key / Index | Notes |
+| ----- | ---- | ----------- | ----- |
+| `compositeID` | String | PK | `PROFILE#{sourceProfileID}`. |
+| `type` | String | SK | `CONNECTION#{targetProfileID}`. |
+| `connectionID` | String | - | Target profileID. |
+| `connectionType` | String | - | Target profile type. |
+| `createdAt` | Number | - | First connection timestamp. |
+| `fname`, `lname`, `pronouns`, `major`, `year`, `company`, `title` | Mixed | - | Denormalized target snapshot. |
+
+**Indexes**
+
+| Index | Key | Purpose |
+| ----- | --- | ------- |
+| table primary key | `compositeID`, `type` | Profile row and profile-scoped connection rows. |
 
 **Owner service:** `services/profiles/handler.js`
 
 ---
 
-## When Each Record Gets Created
-
-### Scenario 1: New User Signs Up + Pays for Membership
-
-```
-1. Cognito account created (via signUp or OAuth)
-2. User goes to /membership, fills form, redirected to Stripe
-3. Stripe webhook fires checkout.session.completed
-4. webhook() → userMemberSignup() or OAuthMemberSignup():
-   a. biztechUsers record created (isMember: true, admin: auto-set)
-   b. biztechMembers2026 record created (cardCount: 0)
-   c. createProfile() runs → biztechProfiles record created
-      + biztechMembers2026.profileID updated via TransactWrite
-```
-
-All three records are created atomically in the webhook handler.
-
-### Scenario 2: Existing User Buys Membership
-
-The user already has a `biztechUsers` record (e.g., they registered for a free event before becoming a member).
-
-```
-1. Stripe webhook fires
-2. webhook() → memberSignup():
-   a. biztechUsers record updated (isMember: true)
-   b. biztechMembers2026 record created
-   c. createProfile() runs → profile created + member.profileID set
-```
-
-### Scenario 3: Admin Grants Membership
-
-```
-1. Admin calls POST /members/grant with user data
-2. grantMembership():
-   a. biztechUsers record upserted (creates if doesn't exist, isMember: true)
-   b. biztechMembers2026 record created if doesn't exist
-   c. createProfile() runs if member has no profileID
-```
-
-### Scenario 4: User Without Membership
-
-A user who has never paid for membership (e.g., attended a free event):
-
-```
-biztechUsers: EXISTS (isMember: false)
-biztechMembers2026: DOES NOT EXIST
-biztechProfiles: DOES NOT EXIST
-```
-
-The middleware redirects non-members to `/membership` on most routes.
-
----
-
 ## Lookup Patterns
 
-| I have...  | I need...      | How                                                                             |
-| ---------- | -------------- | ------------------------------------------------------------------------------- |
-| Email      | User record    | `db.getOne(email, USERS_TABLE)`                                                 |
-| Email      | Member record  | `db.getOne(email, MEMBERS2026_TABLE)`                                           |
-| Email      | Profile        | Get member → read `profileID` → query `PROFILES_TABLE` by `PROFILE#<profileID>` |
-| Profile ID | Email          | Query `MEMBERS2026_TABLE` GSI `profile-query` where `profileID = <id>`          |
-| Profile ID | Public profile | `GET /profiles/profile/{profileID}` (filtered by `viewableMap`)                 |
+| I have... | I need... | How |
+| --------- | --------- | --- |
+| Email | User record | Read `biztechUsers` by `id`. |
+| Email | Yearly member record | Read `biztechMembers2027` by `id`. |
+| Email | Profile | Read `biztechUsers.profileID`, then read `biztechProfiles` with `compositeID: "PROFILE#{profileID}"` and `type: "PROFILE"`. |
+| Profile ID | User/email | Query `biztechUsers.profileID-index` by `profileID`. |
+| Profile ID | Public profile | `GET /profiles/profile/{profileID}` filtered by `viewableMap`. |
 
----
-
-## Data Duplication
-
-Some fields are stored in multiple tables:
-
-| Field    | `biztechUsers` | `biztechMembers2026` | `biztechProfiles`    |
-| -------- | -------------- | -------------------- | -------------------- |
-| Name     | `fname/lname`  | `firstName/lastName` | `firstName/lastName` |
-| Faculty  | `faculty`      | `faculty`            | —                    |
-| Year     | `year`         | `year`               | `year`               |
-| Pronouns | `gender`       | `pronouns`           | `pronouns`           |
-| Major    | `major`        | `major`              | `major`              |
-
-Name, year, major, and pronouns on the profile are copied from the member record at profile creation time and are **not** kept in sync after creation. If a user updates their name on the user record, the profile still shows the old name. These fields are not in `MUTABLE_PROFILE_ATTRIBUTES` and cannot be changed via `PATCH /profiles/user/`.
-
----
-
-## Deletion
-
-There is no API endpoint for revoking membership. The `grantMembership` handler only grants — it does not accept a `membership: false` flag and has no deletion logic.
-
-To remove membership, a developer must manually:
-
-1. Set `isMember: false` on the `biztechUsers` record
-2. Delete the `biztechMembers2026` record
-3. Optionally delete the `biztechProfiles` record
-
-The `DELETE /members/{id}` endpoint deletes the member record only — it does not update the user or profile tables
-
-The `DELETE /members/{id}` endpoint deletes the member record only — it does not update the user or profile tables
-
-The `DELETE /members/{id}` endpoint deletes the member record only — it does not update the user or profile tables.
+{% callout type="warning" title="Deprecated Profile Lookup" %}
+Do not read `profileID` from `biztechMembers2027`. Membership rows no longer own profile identity.
+{% /callout %}
 
 ---
 
 ## Related Pages
 
-- [Account Creation](/docs/flows/account-creation) — How user records are created
-- [Membership Flow](/docs/flows/membership) — How member and profile records are created
-- [Profile Sync](/docs/flows/profile-sync) — Profile creation details and field mapping
-- [Users Service](/docs/users) — User CRUD endpoints
-- [Members API](/docs/members) — Member CRUD endpoints
-- [Profiles API](/docs/profiles) — Profile CRUD endpoints
-- [Table Ownership Map](/docs/database/table-ownership) — Which services access which tables
+- [Membership Flow](/docs/flows/membership) - How member and profile records are created
+- [Profile Sync](/docs/flows/profile-sync) - Profile creation details and field mapping
+- [Users Service](/docs/users) - User CRUD endpoints
+- [Members API](/docs/members) - Member CRUD endpoints
+- [Profiles API](/docs/profiles) - Profile CRUD endpoints
+- [Table Ownership Map](/docs/database/table-ownership) - Which services access which tables

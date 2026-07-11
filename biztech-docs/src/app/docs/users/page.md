@@ -3,7 +3,7 @@ title: Users Service
 nextjs:
   metadata:
     title: Users Service
-    description: API endpoints for the Users service — user CRUD, membership checks, favorites, and the GET /users/self pattern.
+    description: API endpoints for the Users service - user CRUD, membership checks, favorites, and the GET /users/self pattern.
 ---
 
 The Users service manages user accounts in the `biztechUsers` DynamoDB table. Handlers are in `services/users/handler.js`. {% .lead %}
@@ -12,16 +12,16 @@ The Users service manages user accounts in the `biztechUsers` DynamoDB table. Ha
 
 ## Endpoints
 
-| Method   | Path                             | Auth    | Handler               | Description                                   |
-| -------- | -------------------------------- | ------- | --------------------- | --------------------------------------------- |
-| `POST`   | `/users`                         | Public  | `create`              | Create a user                                 |
-| `GET`    | `/users/check/{email}`           | Public  | `checkUser`           | Check whether a user record exists            |
-| `GET`    | `/users/checkMembership/{email}` | Public  | `checkUserMembership` | Check `isMember` flag                         |
-| `GET`    | `/users/{email}`                 | Cognito | `get`                 | Get user record (see self pattern)            |
-| `GET`    | `/users`                         | Cognito | `getAll`              | List all users (no handler-level admin check) |
-| `PATCH`  | `/users/{email}`                 | Cognito | `update`              | Update a user                                 |
-| `PATCH`  | `/users/favEvent/{email}`        | Cognito | `favouriteEvent`      | Toggle a favorite event                       |
-| `DELETE` | `/users/{email}`                 | Cognito | `del`                 | Delete a user                                 |
+| Method | Path | Auth | Handler | Description |
+| ------ | ---- | ---- | ------- | ----------- |
+| `POST` | `/users` | Public | `create` | Create a user |
+| `GET` | `/users/check/{email}` | Public | `checkUser` | Check whether a user record exists |
+| `GET` | `/users/checkMembership/{email}` | Public | `checkUserMembership` | Check `isMember` flag |
+| `GET` | `/users/{email}` | Cognito | `get` | Get user record (see self pattern) |
+| `GET` | `/users` | Cognito | `getAll` | List all users (no handler-level admin check) |
+| `PATCH` | `/users/{email}` | Cognito | `update` | Update a user |
+| `PATCH` | `/users/favEvent/{email}` | Cognito | `favouriteEvent` | Toggle a favorite event |
+| `DELETE` | `/users/{email}` | Cognito | `del` | Delete a user |
 
 ---
 
@@ -42,34 +42,45 @@ if (
 }
 ```
 
-**This is why the frontend and middleware call `GET /users/self`.** The string `"self"` is not a real path segment — it's a placeholder that gets ignored. The handler resolves identity from the Cognito token, so any value in `{email}` works for non-admins. Admins can pass a real email to fetch any user.
+**This is why the frontend and middleware call `GET /users/self`.** The string `"self"` is not a real path segment - it's a placeholder that gets ignored. The handler resolves identity from the Cognito token, so any value in `{email}` works for non-admins. Admins can pass a real email to fetch any user.
 
 ---
 
 ## User Record Shape
 
-| Field                | Type      | Description                                                   |
-| -------------------- | --------- | ------------------------------------------------------------- |
-| `id`                 | String    | Email address (primary key)                                   |
-| `fname`              | String    | First name                                                    |
-| `lname`              | String    | Last name                                                     |
-| `email`              | String    | Email (redundant with `id`)                                   |
-| `education`          | String    | Education status                                              |
-| `studentId`          | Number    | UBC student number                                            |
-| `faculty`            | String    | Faculty                                                       |
-| `major`              | String    | Major/program                                                 |
-| `year`               | Number    | Year of study                                                 |
-| `gender`             | String    | Pronouns/gender                                               |
-| `diet`               | String    | Dietary restrictions                                          |
-| `isMember`           | Boolean   | `true` after membership payment or admin grant                |
-| `admin`              | Boolean   | Auto-set for `@ubcbiztech.com` emails. **Immutable via API.** |
-| `favedEventsID;year` | StringSet | Favorite event IDs in `"eventId;year"` format                 |
-| `createdAt`          | Number    | Unix timestamp (ms)                                           |
-| `updatedAt`          | Number    | Unix timestamp (ms)                                           |
+Table: `biztechUsers`
+
+Purpose: stable account identity. This table is now the source of truth for `profileID`.
+
+| Field | Type | Key / Index | Description |
+| ----- | ---- | ----------- | ----------- |
+| `id` | String | PK | Lowercase email. |
+| `profileID` | String | GSI `profileID-index` | Stable profile ID. Used to find the user's profile. |
+| `fname` | String | - | First name. |
+| `lname` | String | - | Last name. |
+| `education` | String | - | School/education status. |
+| `studentId` | String/Number | - | Student number. |
+| `faculty` | String | - | Faculty. |
+| `major` | String | - | Major/program. |
+| `year` | String/Number | - | Year of study. |
+| `gender` / `pronouns` | String | - | Existing code mostly uses `gender` on users; profiles use `pronouns`. |
+| `diet` | String | - | Dietary restrictions. |
+| `isMember` | Boolean | - | Current membership flag. |
+| `admin` | Boolean | - | Auto-set for `ubcbiztech.com`; immutable via user API. |
+| `favedEventsID;year` | StringSet | - | Favorite events in `"eventId;year"` format. |
+| `createdAt` | Number | - | Epoch ms. |
+| `updatedAt` | Number | - | Epoch ms. |
+
+**Indexes**
+
+| Index | Key | Purpose |
+| ----- | --- | ------- |
+| table primary key | `id` | Email to user. |
+| `profileID-index` | `profileID` | Profile ID to user/email. |
 
 ### Immutable Fields
 
-The `admin` field cannot be changed via `PATCH /users/{email}`. The handler checks for immutable props and **throws an error** (not a silent strip) if any are included in the update bodyhrows an error** (not a silent strip) if any are included in the update bodyhrows an error** (not a silent strip) if any are included in the update body. See `constants/tables.js` → `IMMUTABLE_USER_PROPS`.
+The `admin` field cannot be changed via `PATCH /users/{email}`. The handler checks for immutable props and **throws an error** if any are included in the update body. See `constants/tables.js` -> `IMMUTABLE_USER_PROPS`.
 
 ---
 
@@ -106,7 +117,7 @@ Returns the value of `isMember` if the user exists, `false` if the user does not
 
 **Auth:** Cognito
 
-Updates user fields. The handler validates the user exists first. If the request body contains any field in `IMMUTABLE_USER_PROPS` (currently `["admin"]`), the handler **throws an error** — it does not silently strip the fieldshe fieldshe fields.
+Updates user fields. The handler validates the user exists first. If the request body contains any field in `IMMUTABLE_USER_PROPS` (currently `["admin"]`), the handler **throws an error** - it does not silently strip the fields.
 
 ---
 
@@ -118,11 +129,11 @@ Toggles a favorite event on or off.
 
 **Request body:**
 
-| Field         | Type    | Required | Description                      |
-| ------------- | ------- | -------- | -------------------------------- |
-| `eventID`     | String  | Yes      | Event ID                         |
-| `year`        | Number  | Yes      | Event year                       |
-| `isFavourite` | Boolean | Yes      | `true` to add, `false` to remove |
+| Field | Type | Required | Description |
+| ----- | ---- | -------- | ----------- |
+| `eventID` | String | Yes | Event ID |
+| `year` | Number | Yes | Event year |
+| `isFavourite` | Boolean | Yes | `true` to add, `false` to remove |
 
 The handler validates that the event exists in `biztechEvents` and the user exists in `biztechUsers`. It uses DynamoDB `ADD`/`DELETE` operations on the `favedEventsID;year` StringSet.
 
@@ -140,15 +151,16 @@ Deletes the user record from `biztechUsers`. Validates the user exists first.
 
 The users service has IAM access to:
 
-- `biztechUsers*` — Scan, GetItem, PutItem, UpdateItem, DeleteItem
-- `biztechEvents*` — GetItem (for favourite event validation)
-- `inviteCodes*` — GetItem (legacy invite code system)
+- `biztechUsers*` - Scan, GetItem, PutItem, UpdateItem, DeleteItem
+- `biztechEvents*` - GetItem (for favourite event validation)
+- `inviteCodes*` - GetItem (legacy invite code system)
 
 ---
 
 ## Related Pages
 
-- [User, Member & Profile Relationships](/docs/identity/relationships) — How user, member, and profile records connect
-- [Account Creation](/docs/flows/account-creation) — How user records are created during signup
-- [Authentication Overview](/docs/authentication) — Cognito auth and the JWT claims used by this service
-- [Admin Detection](/docs/authentication/admin-detection) — How the `admin` field is set and enforced
+- [User, Member & Profile Relationships](/docs/identity/relationships) - How user, member, and profile records connect
+- [Membership Flow](/docs/flows/membership) - How `profileID` is created and written to `biztechUsers`
+- [Account Creation](/docs/flows/account-creation) - How user records are created during signup
+- [Authentication Overview](/docs/authentication) - Cognito auth and the JWT claims used by this service
+- [Admin Detection](/docs/authentication/admin-detection) - How the `admin` field is set and enforced
