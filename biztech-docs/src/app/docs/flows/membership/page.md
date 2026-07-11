@@ -50,8 +50,8 @@ For a brand-new user buying membership:
 1. Stripe checkout completes.
 2. The payments webhook receives `checkout.session.completed`.
 3. Create a `biztechUsers` record with `isMember: true`.
-4. Create a `biztechMembers2027` record with `profileType: "MEMBER"`.
-5. Call `createProfile(email, "MEMBER")`.
+4. Create a `biztechMembers2027` record with `profileType: "ATTENDEE"`.
+5. Call `createProfile(email, "ATTENDEE")`.
 6. `createProfile` reads membership form data.
 7. Create the `biztechProfiles` profile row.
 8. Write the generated `profileID` to `biztechUsers.profileID`.
@@ -63,8 +63,8 @@ Stripe checkout.session.completed
 payments webhook
     |
     +-- create biztechUsers { id: email, isMember: true, ... }
-    +-- create biztechMembers2027 { id: email, profileType: "MEMBER", ... }
-    +-- createProfile(email, "MEMBER")
+    +-- create biztechMembers2027 { id: email, profileType: "ATTENDEE", ... }
+    +-- createProfile(email, "ATTENDEE")
           +-- read membership form data
           +-- create biztechProfiles row
           +-- update biztechUsers.profileID
@@ -77,10 +77,10 @@ For an existing user buying 2027 membership:
 1. Stripe checkout completes.
 2. The payments webhook receives `checkout.session.completed`.
 3. Update the existing `biztechUsers` row with latest basic fields and `isMember: true`.
-4. Create a `biztechMembers2027` record with `profileType: "MEMBER"`.
+4. Create a `biztechMembers2027` record with `profileType: "ATTENDEE"`.
 5. Read `biztechUsers.profileID`.
 6. If `profileID` exists, update the existing `biztechProfiles` row with `pronouns`, `major`, and `year`.
-7. If `profileID` does not exist, call `createProfile(email, "MEMBER")`.
+7. If `profileID` does not exist, call `createProfile(email, "ATTENDEE")`.
 
 ```
 Stripe checkout.session.completed
@@ -89,10 +89,10 @@ Stripe checkout.session.completed
 payments webhook
     |
     +-- update biztechUsers { isMember: true, latest basic fields, ... }
-    +-- create biztechMembers2027 { id: email, profileType: "MEMBER", ... }
+    +-- create biztechMembers2027 { id: email, profileType: "ATTENDEE", ... }
     +-- read biztechUsers.profileID
           +-- exists: update biztechProfiles pronouns/major/year
-          +-- missing: createProfile(email, "MEMBER")
+          +-- missing: createProfile(email, "ATTENDEE")
 ```
 
 ---
@@ -107,10 +107,10 @@ Admins can grant membership without payment via `POST /members/grant`.
 Steps:
 
 1. Creates or updates `biztechUsers` and sets `isMember: true`.
-2. Creates a yearly row in `biztechMembers2027` and sets `profileType: "MEMBER"` unless another profile type is intentionally provided.
+2. Creates a yearly row in `biztechMembers2027` and sets `profileType: "ATTENDEE"` unless another profile type is intentionally provided.
 3. Reads `biztechUsers.profileID`.
 4. Updates the existing `biztechProfiles` row if `profileID` exists.
-5. Calls `createProfile(email, "MEMBER")` if `profileID` is missing.
+5. Calls `createProfile(email, "ATTENDEE")` if `profileID` is missing.
 
 This is the only membership path that does not go through Stripe.
 
@@ -138,7 +138,7 @@ All membership paths that need a new profile end with `createProfile(email, prof
 | Step | Table | Write |
 | ---- | ----- | ----- |
 | Create or update user | `biztechUsers` | Lowercase email in `id`, latest basic fields, `isMember: true`, and generated `profileID` when a new profile is created. |
-| Create yearly membership | `biztechMembers2027` | Lowercase email in `id`, membership form answers, and `profileType: "MEMBER"`. |
+| Create yearly membership | `biztechMembers2027` | Lowercase email in `id`, membership form answers, and `profileType: "ATTENDEE"`. |
 | Create profile | `biztechProfiles` | Profile row with `compositeID: "PROFILE#{profileID}"`, `type: "PROFILE"`, explicit `profileID`, and profile fields from the membership form. |
 | Refresh profile | `biztechProfiles` | Existing profile row refreshed with membership fields such as `pronouns`, `major`, and `year`. |
 
@@ -163,7 +163,7 @@ A record in `biztechMembers2027`:
 | Field | Type | Notes |
 | ----- | ---- | ----- |
 | `id` | String | Lowercase email. Primary key. |
-| `profileType` | String | Normal paid membership should set `"MEMBER"`. |
+| `profileType` | String | Allowed values are `"ATTENDEE"`, `"EXEC"`, and `"PARTNER"`. Normal paid membership should set `"ATTENDEE"`. |
 | `education` | String | Membership form value. |
 | `firstName` | String | Membership form first name. |
 | `lastName` | String | Membership form last name. |

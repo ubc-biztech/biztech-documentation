@@ -55,7 +55,7 @@ Purpose: yearly membership record. It should no longer own profile identity.
 | Field | Type | Key / Index | Notes |
 | ----- | ---- | ----------- | ----- |
 | `id` | String | PK | Lowercase email. |
-| `profileType` | String | - | New field. Normal paid membership should set `"MEMBER"`. |
+| `profileType` | String | - | New field. Allowed values are `"ATTENDEE"`, `"EXEC"`, and `"PARTNER"`. Normal paid membership should set `"ATTENDEE"`. |
 | `education` | String | - | Membership form value. |
 | `firstName` | String | - | Membership form first name. |
 | `lastName` | String | - | Membership form last name. |
@@ -117,7 +117,7 @@ GET /members/student@example.com
 ```javascript
 {
   "id": "student@example.com",
-  "profileType": "MEMBER",
+  "profileType": "ATTENDEE",
   "firstName": "Alice",
   "lastName": "Wong",
   "faculty": "Commerce",
@@ -156,7 +156,7 @@ Fetch all members.
   "data": [
     {
       "id": "student@example.com",
-      "profileType": "MEMBER",
+      "profileType": "ATTENDEE",
       "firstName": "Alice",
       "lastName": "Wong",
       "year": "3",
@@ -166,7 +166,7 @@ Fetch all members.
     },
     {
       "id": "bob@example.com",
-      "profileType": "MEMBER",
+      "profileType": "ATTENDEE",
       "firstName": "Bob",
       "lastName": "Li",
       "year": "4",
@@ -285,7 +285,7 @@ The body should contain the member fields needed to create or refresh the yearly
 | Body Property | Type | Description |
 | ------------- | ---- | ----------- |
 | email | String | User email (required) |
-| profileType | String | New field. Normal paid membership should set `"MEMBER"` |
+| profileType | String | New field. Allowed values are `"ATTENDEE"`, `"EXEC"`, and `"PARTNER"`. Normal paid membership should set `"ATTENDEE"` |
 | firstName | String | First name |
 | lastName | String | Last name |
 | education | String | University or institution |
@@ -306,7 +306,7 @@ The body should contain the member fields needed to create or refresh the yearly
 ```javascript
 {
   "email": "isaacliu@gmail.com",
-  "profileType": "MEMBER",
+  "profileType": "ATTENDEE",
   "firstName": "Isaac",
   "lastName": "Liu",
   "education": "University of British Columbia",
@@ -335,10 +335,10 @@ The body should contain the member fields needed to create or refresh the yearly
 
 1. If the user does not exist in `biztechUsers`, creates a new user record with `isMember: true`.
 2. If the user exists, updates the user record with latest basic fields and sets `isMember: true`.
-3. Creates a yearly member row in `biztechMembers2027` with `profileType: "MEMBER"` if no explicit profile type is provided.
+3. Creates a yearly member row in `biztechMembers2027` with `profileType: "ATTENDEE"` if no explicit profile type is provided.
 4. Reads `biztechUsers.profileID`.
 5. If `profileID` exists, refreshes the existing `biztechProfiles` row with membership fields such as `pronouns`, `major`, and `year`.
-6. If `profileID` is missing, creates a profile via `createProfile(email, "MEMBER")` and writes the generated profile ID to `biztechUsers.profileID`.
+6. If `profileID` is missing, creates a profile via `createProfile(email, "ATTENDEE")` and writes the generated profile ID to `biztechUsers.profileID`.
 
 {% callout type="warning" title="No Revocation" %}
 Despite the handler name, `grantMembership` only grants. There is no `membership: false` flag and no code path for revoking membership or deleting records. To revoke membership, update the DynamoDB records directly.

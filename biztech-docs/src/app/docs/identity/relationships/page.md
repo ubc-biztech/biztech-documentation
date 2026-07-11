@@ -97,7 +97,7 @@ Purpose: yearly membership record. It should no longer own profile identity.
 | Field | Type | Key / Index | Notes |
 | ----- | ---- | ----------- | ----- |
 | `id` | String | PK | Lowercase email. |
-| `profileType` | String | - | New field. Normal paid membership should set `"MEMBER"`. |
+| `profileType` | String | - | New field. Allowed values are `"ATTENDEE"`, `"EXEC"`, and `"PARTNER"`. Normal paid membership should set `"ATTENDEE"`. |
 | `education` | String | - | Membership form value. |
 | `firstName` | String | - | Membership form first name. |
 | `lastName` | String | - | Membership form last name. |
@@ -149,7 +149,7 @@ Purpose: public/private profile data and connection rows.
 | `compositeID` | String | PK | `PROFILE#{profileID}`. |
 | `type` | String | SK | `"PROFILE"` for profile row. |
 | `profileID` | String | - | Stored explicitly now for convenience. |
-| `profileType` | String | - | `"MEMBER"`, `"EXEC"`, `"PARTNER"`, etc. |
+| `profileType` | String | - | `"ATTENDEE"`, `"EXEC"`, or `"PARTNER"`. |
 | `fname` | String | - | Public profile first name. |
 | `lname` | String | - | Public profile last name. |
 | `pronouns` | String | - | Refreshed from membership purchase. |
