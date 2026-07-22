@@ -36,7 +36,7 @@ The members service operates on multiple tables:
 
 | Table | Role |
 | ----- | ---- |
-| `biztechUsers` | Created or updated during grant/payment flow (`isMember` flag and canonical `profileID`) |
+| `biztechUsers` | Created or updated during grant/payment flow; owns the canonical `profileID` |
 | `biztechMembers2027` | Primary yearly member records |
 | `biztechProfiles` | Created or refreshed when membership changes |
 
@@ -50,7 +50,9 @@ The table name `biztechMembers2027` includes the membership year. When the year 
 
 Table: `biztechMembers2027`
 
-Purpose: yearly membership record. It should no longer own profile identity.
+Purpose: yearly membership record. Row existence means active membership for 2027; this row does not own profile identity.
+
+DynamoDB enforces only the `id` key. Other fields describe the effective write-path shape and may be absent; `cardCount` defaults to `0` on current create paths.
 
 | Field | Type | Key / Index | Notes |
 | ----- | ---- | ----------- | ----- |
@@ -60,20 +62,20 @@ Purpose: yearly membership record. It should no longer own profile identity.
 | `firstName` | String | - | Membership form first name. |
 | `lastName` | String | - | Membership form last name. |
 | `pronouns` | String | - | Used to refresh profile. |
-| `studentNumber` | String | - | Membership form student number. |
+| `studentNumber` | String/Number | - | Membership form student number. |
 | `faculty` | String | - | Membership form faculty. |
 | `year` | String/Number | - | Used to refresh profile. |
 | `major` | String | - | Used to refresh profile. |
-| `prevMember` | Boolean/String | - | Previous member answer. |
-| `international` | Boolean/String | - | International student answer. |
-| `topics` | Array | - | Interest topics. |
+| `prevMember` | Boolean | - | Previous member answer. |
+| `international` | Boolean | - | International student answer. |
+| `topics` | String[] | - | Interest topics. |
 | `heardFrom` | String | - | Referral source. |
 | `heardFromSpecify` | String | - | Referral detail. |
 | `diet` | String | - | Dietary restrictions. |
 | `university` | String | - | School/university. |
 | `highSchool` | String | - | High school, if applicable. |
 | `admin` | Boolean | - | Existing admin snapshot. |
-| `cardCount` | Number | - | NFC/card tracking. |
+| `cardCount` | Number | - | NFC/card tracking; defaults to `0`. |
 | `discordId` | String | - | Existing location for now, though eventually user-level is cleaner. |
 | `createdAt` | Number | - | Epoch ms. |
 | `updatedAt` | Number | - | Epoch ms. |
@@ -84,11 +86,13 @@ Purpose: yearly membership record. It should no longer own profile identity.
 | ----- | --- | ------- |
 | table primary key | `id` | Email to yearly membership. |
 
+There are no GSIs on the current members table.
+
 **Deprecated/removed from docs as source of truth**
 
 | Field | Status |
 | ----- | ------ |
-| `profileID` | Deprecated. Do not read from membership table anymore. |
+| `profileID` | Not part of the current row shape. Read it from `biztechUsers`. |
 
 ---
 
@@ -333,15 +337,15 @@ The body should contain the member fields needed to create or refresh the yearly
 
 **Behavior**
 
-1. If the user does not exist in `biztechUsers`, creates a new user record with `isMember: true`.
-2. If the user exists, updates the user record with latest basic fields and sets `isMember: true`.
+1. If the user does not exist in `biztechUsers`, creates a new user record with the latest basic fields.
+2. If the user exists, updates the user record with the latest basic fields.
 3. Creates a yearly member row in `biztechMembers2027` with `profileType: "ATTENDEE"` if no explicit profile type is provided.
 4. Reads `biztechUsers.profileID`.
 5. If `profileID` exists, refreshes the existing `biztechProfiles` row with membership fields such as `pronouns`, `major`, and `year`.
 6. If `profileID` is missing, creates a profile via `createProfile(email, "ATTENDEE")` and writes the generated profile ID to `biztechUsers.profileID`.
 
 {% callout type="warning" title="No Revocation" %}
-Despite the handler name, `grantMembership` only grants. There is no `membership: false` flag and no code path for revoking membership or deleting records. To revoke membership, update the DynamoDB records directly.
+Despite the handler name, `grantMembership` only grants. Membership is revoked by deleting the yearly member row; `DELETE /members/{id}` does not delete the user or profile.
 {% /callout %}
 
 **Errors**

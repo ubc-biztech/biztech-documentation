@@ -15,7 +15,7 @@ How the three identity tables - `biztechUsers`, `biztechMembers2027`, and `bizte
 | Area | Source of truth | Notes |
 | ---- | --------------- | ----- |
 | Account identity | `biztechUsers` | Stable user row keyed by lowercase email. This is the source of truth for `profileID`. |
-| Yearly membership | `biztechMembers2027` | Year-specific membership form data. This table should no longer own profile identity. |
+| Yearly membership | `biztechMembers2027` | Row existence means the user is a current 2027 member. This table does not own profile identity. |
 | Networking profile | `biztechProfiles` | Public/private profile data plus connection rows keyed by profile ID. |
 
 Important rule for docs and implementation:
@@ -38,7 +38,7 @@ biztechUsers          biztechMembers2027        biztechProfiles
 | fname       |       | firstName       |        | type: PROFILE      |
 | lname       |       | lastName        |        | profileID          |
 | admin       |       | profileType     |        | profileType        |
-| isMember    |       | cardCount       |        | fname, lname       |
+| education   |       | cardCount       |        | fname, lname       |
 | faculty     |       | pronouns        |        | pronouns           |
 | year        |       | major, year     |        | major, year        |
 | diet        |       | yearly answers  |        | viewableMap        |
@@ -50,13 +50,15 @@ biztechUsers          biztechMembers2027        biztechProfiles
 
 ### Key Relationships
 
-- **User -> Member**: Linked by `id` (lowercase email). A user may or may not have a member record. `isMember` on the user record tracks current membership state.
+- **User -> Member**: Linked by `id` (lowercase email). The existence of a `biztechMembers2027` row means the user is a current member.
 - **User -> Profile**: Linked by `biztechUsers.profileID`. This is the canonical profile identity link.
 - **Member -> Profile**: Membership data can refresh profile fields like `pronouns`, `major`, and `year`, but membership rows do not own `profileID`.
 
 ---
 
 ## Table Schemas
+
+DynamoDB enforces the key attributes. Other fields below describe the effective write-path shape and may be absent unless noted otherwise.
 
 ### `biztechUsers`
 
@@ -73,9 +75,8 @@ Purpose: stable account identity. This table is now the source of truth for `pro
 | `faculty` | String | - | Faculty. |
 | `major` | String | - | Major/program. |
 | `year` | String/Number | - | Year of study. |
-| `gender` / `pronouns` | String | - | Existing code mostly uses `gender` on users; profiles use `pronouns`. |
+| `gender` | String | - | Existing user write paths store pronouns/gender under `gender`; profiles use `pronouns`. |
 | `diet` | String | - | Dietary restrictions. |
-| `isMember` | Boolean | - | Current membership flag. |
 | `admin` | Boolean | - | Auto-set for `ubcbiztech.com`; immutable via user API. |
 | `favedEventsID;year` | StringSet | - | Favorite events. |
 | `createdAt` | Number | - | Epoch ms. |
@@ -86,13 +87,15 @@ Purpose: stable account identity. This table is now the source of truth for `pro
 | Index | Key | Purpose |
 | ----- | --- | ------- |
 | table primary key | `id` | Email to user. |
-| `profileID-index` | `profileID` | Profile ID to user/email. |
+| `profileID-index` | `profileID` | `KEYS_ONLY` projection; profile ID to user/email. |
 
 **Owner service:** `services/users/handler.js`
 
+`isMember` is not part of the current user write/read contract. Older rows may still contain it, but membership checks use the yearly members table and ignore the legacy attribute.
+
 ### `biztechMembers2027`
 
-Purpose: yearly membership record. It should no longer own profile identity.
+Purpose: yearly membership record. Row existence means active membership for 2027; this row does not own profile identity.
 
 | Field | Type | Key / Index | Notes |
 | ----- | ---- | ----------- | ----- |
@@ -102,20 +105,20 @@ Purpose: yearly membership record. It should no longer own profile identity.
 | `firstName` | String | - | Membership form first name. |
 | `lastName` | String | - | Membership form last name. |
 | `pronouns` | String | - | Used to refresh profile. |
-| `studentNumber` | String | - | Membership form student number. |
+| `studentNumber` | String/Number | - | Membership form student number. |
 | `faculty` | String | - | Membership form faculty. |
 | `year` | String/Number | - | Used to refresh profile. |
 | `major` | String | - | Used to refresh profile. |
-| `prevMember` | Boolean/String | - | Previous member answer. |
-| `international` | Boolean/String | - | International student answer. |
-| `topics` | Array | - | Interest topics. |
+| `prevMember` | Boolean | - | Previous member answer. |
+| `international` | Boolean | - | International student answer. |
+| `topics` | String[] | - | Interest topics. |
 | `heardFrom` | String | - | Referral source. |
 | `heardFromSpecify` | String | - | Referral detail. |
 | `diet` | String | - | Dietary restrictions. |
 | `university` | String | - | School/university. |
 | `highSchool` | String | - | High school, if applicable. |
 | `admin` | Boolean | - | Existing admin snapshot. |
-| `cardCount` | Number | - | NFC/card tracking. |
+| `cardCount` | Number | - | NFC/card tracking; defaults to `0`. |
 | `discordId` | String | - | Existing location for now, though eventually user-level is cleaner. |
 | `createdAt` | Number | - | Epoch ms. |
 | `updatedAt` | Number | - | Epoch ms. |
@@ -130,7 +133,7 @@ Purpose: yearly membership record. It should no longer own profile identity.
 
 | Field | Status |
 | ----- | ------ |
-| `profileID` | Deprecated. Do not read from membership table anymore. |
+| `profileID` | Not part of the current row shape. Read it from `biztechUsers`. |
 
 **Owner service:** `services/members/handler.js`
 
@@ -162,8 +165,10 @@ Purpose: public/private profile data and connection rows.
 | `linkedIn` | String | - | Editable. |
 | `profilePictureURL` | String | - | Editable/uploaded. |
 | `additionalLink` | String | - | Editable. |
-| `resumeURL` | String | - | New planned field. |
+| `resumeURL` | String | - | Resume link. |
 | `description` | String | - | Bio. |
+| `company` | String | - | Company name, when applicable. |
+| `position` | String | - | Position/title, when applicable. |
 | `viewableMap` | Object | - | Visibility flags. |
 | `createdAt` | Number | - | Epoch ms. |
 | `updatedAt` | Number | - | Epoch ms. |
@@ -178,6 +183,8 @@ Purpose: public/private profile data and connection rows.
 | `connectionType` | String | - | Target profile type. |
 | `createdAt` | Number | - | First connection timestamp. |
 | `fname`, `lname`, `pronouns`, `major`, `year`, `company`, `title` | Mixed | - | Denormalized target snapshot. |
+
+A connection normally writes two rows, one under each profile, so the relationship is bidirectional.
 
 **Indexes**
 

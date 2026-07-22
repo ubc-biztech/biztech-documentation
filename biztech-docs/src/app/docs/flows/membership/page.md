@@ -16,8 +16,8 @@ A paid member has records across three tables:
 
 | Table | Key | What's stored |
 | ----- | --- | ------------- |
-| `biztechUsers` | `id` (email), `profileID-index` on `profileID` | Stable account identity, current `isMember` flag, and canonical `profileID`. |
-| `biztechMembers2027` | `id` (email) | Yearly membership form data for the 2027 cycle. |
+| `biztechUsers` | `id` (email), `profileID-index` on `profileID` | Stable account identity and canonical `profileID`. |
+| `biztechMembers2027` | `id` (email) | Yearly membership form data; row existence means current membership for 2027. |
 | `biztechProfiles` | `compositeID` (`PROFILE#<profileID>`), `type` | Public/private networking profile and connection rows. |
 
 Important rule for implementation:
@@ -49,7 +49,7 @@ For a brand-new user buying membership:
 
 1. Stripe checkout completes.
 2. The payments webhook receives `checkout.session.completed`.
-3. Create a `biztechUsers` record with `isMember: true`.
+3. Create a `biztechUsers` record with the account fields.
 4. Create a `biztechMembers2027` record with `profileType: "ATTENDEE"`.
 5. Call `createProfile(email, "ATTENDEE")`.
 6. `createProfile` reads membership form data.
@@ -62,7 +62,7 @@ Stripe checkout.session.completed
     v
 payments webhook
     |
-    +-- create biztechUsers { id: email, isMember: true, ... }
+    +-- create biztechUsers { id: email, ... }
     +-- create biztechMembers2027 { id: email, profileType: "ATTENDEE", ... }
     +-- createProfile(email, "ATTENDEE")
           +-- read membership form data
@@ -76,7 +76,7 @@ For an existing user buying 2027 membership:
 
 1. Stripe checkout completes.
 2. The payments webhook receives `checkout.session.completed`.
-3. Update the existing `biztechUsers` row with latest basic fields and `isMember: true`.
+3. Update the existing `biztechUsers` row with the latest basic fields.
 4. Create a `biztechMembers2027` record with `profileType: "ATTENDEE"`.
 5. Read `biztechUsers.profileID`.
 6. If `profileID` exists, update the existing `biztechProfiles` row with `pronouns`, `major`, and `year`.
@@ -88,7 +88,7 @@ Stripe checkout.session.completed
     v
 payments webhook
     |
-    +-- update biztechUsers { isMember: true, latest basic fields, ... }
+    +-- update biztechUsers { latest basic fields, ... }
     +-- create biztechMembers2027 { id: email, profileType: "ATTENDEE", ... }
     +-- read biztechUsers.profileID
           +-- exists: update biztechProfiles pronouns/major/year
@@ -106,7 +106,7 @@ Admins can grant membership without payment via `POST /members/grant`.
 
 Steps:
 
-1. Creates or updates `biztechUsers` and sets `isMember: true`.
+1. Creates or updates `biztechUsers` with the latest basic fields.
 2. Creates a yearly row in `biztechMembers2027` and sets `profileType: "ATTENDEE"` unless another profile type is intentionally provided.
 3. Reads `biztechUsers.profileID`.
 4. Updates the existing `biztechProfiles` row if `profileID` exists.
@@ -137,7 +137,7 @@ All membership paths that need a new profile end with `createProfile(email, prof
 
 | Step | Table | Write |
 | ---- | ----- | ----- |
-| Create or update user | `biztechUsers` | Lowercase email in `id`, latest basic fields, `isMember: true`, and generated `profileID` when a new profile is created. |
+| Create or update user | `biztechUsers` | Lowercase email in `id`, latest basic fields, and generated `profileID` when a new profile is created. |
 | Create yearly membership | `biztechMembers2027` | Lowercase email in `id`, membership form answers, and `profileType: "ATTENDEE"`. |
 | Create profile | `biztechProfiles` | Profile row with `compositeID: "PROFILE#{profileID}"`, `type: "PROFILE"`, explicit `profileID`, and profile fields from the membership form. |
 | Refresh profile | `biztechProfiles` | Existing profile row refreshed with membership fields such as `pronouns`, `major`, and `year`. |
@@ -149,6 +149,7 @@ All membership paths that need a new profile end with `createProfile(email, prof
 | Need | Read from | Notes |
 | ---- | --------- | ----- |
 | Find user by email | `biztechUsers.id` | Email should be lowercase. |
+| Check current membership | `biztechMembers2027.id` | Row existence means the user is a current member. |
 | Find a user's profile ID | `biztechUsers.profileID` | This is the source of truth for profile identity. |
 | Find user/email from profile ID | `biztechUsers.profileID-index` | Use the `profileID-index` GSI. |
 | Find yearly membership | `biztechMembers2027.id` | Membership is keyed by lowercase email. |
@@ -168,28 +169,28 @@ A record in `biztechMembers2027`:
 | `firstName` | String | Membership form first name. |
 | `lastName` | String | Membership form last name. |
 | `pronouns` | String | Used to refresh profile. |
-| `studentNumber` | String | Membership form student number. |
+| `studentNumber` | String/Number | Membership form student number. |
 | `faculty` | String | Membership form faculty. |
 | `year` | String/Number | Used to refresh profile. |
 | `major` | String | Used to refresh profile. |
-| `prevMember` | Boolean/String | Previous member answer. |
-| `international` | Boolean/String | International student answer. |
-| `topics` | Array | Interest topics. |
+| `prevMember` | Boolean | Previous member answer. |
+| `international` | Boolean | International student answer. |
+| `topics` | String[] | Interest topics. |
 | `heardFrom` | String | Referral source. |
 | `heardFromSpecify` | String | Referral detail. |
 | `diet` | String | Dietary restrictions. |
 | `university` | String | School/university. |
 | `highSchool` | String | High school, if applicable. |
 | `admin` | Boolean | Existing admin snapshot. |
-| `cardCount` | Number | NFC/card tracking. |
+| `cardCount` | Number | NFC/card tracking; defaults to `0`. |
 | `discordId` | String | Existing location for now, though eventually user-level is cleaner. |
 | `createdAt` | Number | Epoch ms. |
 | `updatedAt` | Number | Epoch ms. |
 
 **Primary key:** `id`
 
-{% callout type="warning" title="Deprecated Field" %}
-`profileID` is deprecated on `biztechMembers2027`. Do not read it from the membership table.
+{% callout type="warning" title="Profile Identity" %}
+`profileID` is not part of the current `biztechMembers2027` row shape. Read it from `biztechUsers`.
 {% /callout %}
 
 ---

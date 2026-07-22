@@ -16,7 +16,7 @@ The Users service manages user accounts in the `biztechUsers` DynamoDB table. Ha
 | ------ | ---- | ---- | ------- | ----------- |
 | `POST` | `/users` | Public | `create` | Create a user |
 | `GET` | `/users/check/{email}` | Public | `checkUser` | Check whether a user record exists |
-| `GET` | `/users/checkMembership/{email}` | Public | `checkUserMembership` | Check `isMember` flag |
+| `GET` | `/users/checkMembership/{email}` | Public | `checkUserMembership` | Check for a current-year membership row |
 | `GET` | `/users/{email}` | Cognito | `get` | Get user record (see self pattern) |
 | `GET` | `/users` | Cognito | `getAll` | List all users (no handler-level admin check) |
 | `PATCH` | `/users/{email}` | Cognito | `update` | Update a user |
@@ -52,6 +52,8 @@ Table: `biztechUsers`
 
 Purpose: stable account identity. This table is now the source of truth for `profileID`.
 
+DynamoDB enforces only the `id` key. Other fields describe the effective write-path shape and may be absent unless noted otherwise.
+
 | Field | Type | Key / Index | Description |
 | ----- | ---- | ----------- | ----------- |
 | `id` | String | PK | Lowercase email. |
@@ -63,9 +65,8 @@ Purpose: stable account identity. This table is now the source of truth for `pro
 | `faculty` | String | - | Faculty. |
 | `major` | String | - | Major/program. |
 | `year` | String/Number | - | Year of study. |
-| `gender` / `pronouns` | String | - | Existing code mostly uses `gender` on users; profiles use `pronouns`. |
+| `gender` | String | - | Existing user write paths store pronouns/gender under `gender`; profiles use `pronouns`. |
 | `diet` | String | - | Dietary restrictions. |
-| `isMember` | Boolean | - | Current membership flag. |
 | `admin` | Boolean | - | Auto-set for `ubcbiztech.com`; immutable via user API. |
 | `favedEventsID;year` | StringSet | - | Favorite events in `"eventId;year"` format. |
 | `createdAt` | Number | - | Epoch ms. |
@@ -76,11 +77,11 @@ Purpose: stable account identity. This table is now the source of truth for `pro
 | Index | Key | Purpose |
 | ----- | --- | ------- |
 | table primary key | `id` | Email to user. |
-| `profileID-index` | `profileID` | Profile ID to user/email. |
+| `profileID-index` | `profileID` | `KEYS_ONLY` projection; profile ID to user/email. |
 
 ### Immutable Fields
 
-The `admin` field cannot be changed via `PATCH /users/{email}`. The handler checks for immutable props and **throws an error** if any are included in the update body. See `constants/tables.js` -> `IMMUTABLE_USER_PROPS`.
+The `admin` field cannot be changed via `PATCH /users/{email}`. The handler also rejects the legacy `isMember` property, which is no longer part of the user contract. Older DynamoDB rows may still physically contain `isMember`, but current membership logic does not use it. See `constants/tables.js` -> `IMMUTABLE_USER_PROPS`.
 
 ---
 
@@ -109,7 +110,7 @@ Returns `true` (200) if a user record exists, `false` (200) if not. Used before 
 
 **Auth:** Public
 
-Returns the value of `isMember` if the user exists, `false` if the user does not exist. Used by the membership signup flow to skip the payment step for existing members.
+Returns `true` when a row exists for the lowercase email in the current `biztechMembers2027` table, otherwise `false`.
 
 ---
 
